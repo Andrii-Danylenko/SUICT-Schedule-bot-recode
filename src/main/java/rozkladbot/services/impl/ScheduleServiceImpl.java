@@ -15,8 +15,8 @@ import rozkladbot.services.ScheduleService;
 import rozkladbot.utils.date.DateUtils;
 import rozkladbot.utils.deserializers.LessonDeserializer;
 import rozkladbot.utils.local.file.reader.LocalFileReader;
-import rozkladbot.web.requester.ParamsBuilder;
-import rozkladbot.web.requester.RequesterImpl;
+import rozkladbot.utils.web.requester.ParamsBuilder;
+import rozkladbot.utils.web.requester.RequesterImpl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static rozkladbot.constants.ErrorConstants.REQUEST_CREATION_FAILED;
 
-@Service
+@Service("scheduleServiceImpl")
 public class ScheduleServiceImpl implements ScheduleService {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleServiceImpl.class);
     private final RequesterImpl requester;

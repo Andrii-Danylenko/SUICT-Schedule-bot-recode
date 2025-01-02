@@ -12,7 +12,7 @@ public class ModelUtils {
     public static User getUser() {
         User user = new User();
         user.setGroup(getGroup());
-        user.setid(1);
+        user.setId(1);
         user.setUsername("Andrii Danylenko");
         return user;
     }

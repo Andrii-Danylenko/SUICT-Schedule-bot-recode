@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skedy</title>
+    <link th:rel="stylesheet" th:href="@{/css/styles.css}"></link>
+</head>
+<body>
+<div class="header">
+    <div class="logo">
+        <span th:text="'SUICT Schedule WebUI'"></span>
+    </div>
+    <div class="header-right">
+        <a th:href="@{/admin}">Login as admin</a>
+    </div>
+</div>
+<div class="content">
+    <div class="form-container">
+        <form th:action="@{/schedule/get}" th:object="${scheduleForm}" method="post">
+            <label for="institute">Заклад</label>
+            <select id="institute" name="institute" th:field="*{institute}">
+                <option th:each="option : ${institutes}" th:value="${option}" th:text="${option}"></option>
+            </select>
+
+            <label for="faculty">Факультет/Інститут</label>
+            <select id="faculty" name="faculty" th:field="*{faculty}">
+                <option th:each="option : ${faculties}" th:value="${option}" th:text="${option}"></option>
+            </select>
+
+            <label for="course">Курс</label>
+            <select id="course" name="course" th:field="*{course}">
+                <option th:each="course : ${courses}" th:value="${course}" th:text="${course}"></option>
+            </select>
+
+            <label for="group">Група</label>
+            <select id="group" name="group" th:field="*{group}">
+                <option th:each="group : ${groups}" th:value="${group}" th:text="${group}"></option>
+            </select>
+
+            <button type="submit">Завантажити розклад</button>
+        </form>
+    </div>
+</div>
+<div class="footer">
+    <span th:text="'SUICT WEB v1.0. Developed by Andrii Danylenko'"></span>
+</div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package rozkladbot.web.requester;
+package rozkladbot.utils.web.requester;
 
 import org.springframework.stereotype.Component;
 import rozkladbot.entities.User;

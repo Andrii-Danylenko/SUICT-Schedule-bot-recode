@@ -1,4 +1,4 @@
-package rozkladbot.web.requester;
+package rozkladbot.utils.web.requester;
 
 import rozkladbot.entities.User;
 

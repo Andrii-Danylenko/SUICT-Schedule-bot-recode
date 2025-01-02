@@ -1,13 +1,17 @@
 package rozkladbot.entities;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import rozkladbot.enums.UserRole;
 import rozkladbot.enums.UserState;
 
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @Id
     private long id;
     @Column(name = "username")
@@ -15,29 +19,47 @@ public class User {
     @ManyToOne
     Group group;
     @Transient
-    UserState userState;
+    UserState userState = UserState.UNREGISTERED;
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    UserRole userRole;
+    @Transient
+    private int lastSentMessageId;
 
 
     public User() {
     }
 
-    public User(long id, String username, Group group, UserState userState) {
+    public User(long id, String username, Group group, UserState userState, UserRole userRole, int lastSentMessageId) {
         this.id = id;
         this.username = username;
         this.group = group;
         this.userState = userState;
+        this.userRole = userRole;
+        this.lastSentMessageId = lastSentMessageId;
     }
 
-    public long getid() {
-        return id;
-    }
-
-    public void setid(long id) {
+    public void setId(long id) {
         this.id = id;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority(userRole.toString()));
+        return grantedAuthorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
     }
 
     public String getUsername() {
         return username;
+    }
+    public long getId() {
+        return id;
     }
 
     public void setUsername(String username) {
@@ -65,19 +87,27 @@ public class User {
         return Objects.hashCode(id);
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public UserState getUserState() {
         return userState;
     }
 
     public void setUserState(UserState userState) {
         this.userState = userState;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
+
+    public int getLastSentMessageId() {
+        return lastSentMessageId;
+    }
+
+    public void setLastSentMessageId(int lastSentMessageId) {
+        this.lastSentMessageId = lastSentMessageId;
     }
 }

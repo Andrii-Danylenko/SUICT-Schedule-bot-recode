@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import rozkladbot.web.requester.RequesterImpl;
+import rozkladbot.utils.web.requester.RequesterImpl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

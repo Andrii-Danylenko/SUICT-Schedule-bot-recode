@@ -21,4 +21,9 @@
                                  referencedTableName="groups"
                                  referencedColumnNames="id"/>
     </changeSet>
+    <changeSet id="4" author="Andrii-Danylenko">
+        <addColumn tableName="users">
+            <column name="role" type="varchar"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
