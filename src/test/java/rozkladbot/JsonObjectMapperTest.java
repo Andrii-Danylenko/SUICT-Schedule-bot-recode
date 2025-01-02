@@ -8,6 +8,8 @@ import rozkladbot.entities.Lesson;
 import rozkladbot.utils.deserializers.LessonDeserializer;
 import rozkladbot.web.requester.RequesterImpl;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class JsonObjectMapperTest {
     private static final HashMap<String, String> params = getParams();
 
     @Test
-    public void testJsonObjectMapper() {
+    public void testJsonObjectMapper() throws IOException, URISyntaxException {
         String json = requester.makeRequest(params);
         List<Lesson> lessons = lessonDeserializer.deserialize(json);
         Assertions.assertFalse(lessons.isEmpty());

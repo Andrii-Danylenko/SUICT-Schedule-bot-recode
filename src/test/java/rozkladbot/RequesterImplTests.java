@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import rozkladbot.web.requester.RequesterImpl;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 @SpringBootTest
@@ -16,7 +18,7 @@ public class RequesterImplTests {
 
 
     @Test
-    void validRequestTest() {
+    void validRequestTest() throws IOException, URISyntaxException {
         String result = requester.makeRequest(params);
         Assertions.assertFalse(result.isEmpty());
         System.out.println(result);

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import rozkladbot.utils.deserializers.LocalDateDeserializer;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 
 public class Lesson {
@@ -13,6 +14,8 @@ public class Lesson {
     private LocalDate date;
     @JsonProperty("number")
     private String pairNumber;
+    @JsonProperty("type")
+    private String type;
     @JsonProperty("cabinet")
     private String cabinet;
     @JsonProperty("shortName")
@@ -31,7 +34,8 @@ public class Lesson {
             String lessonShortName,
             String lessonFullName,
             String lectorFullName,
-            String lectorShortName) {
+            String lectorShortName,
+            String type) {
         this.date = date;
         this.pairNumber = pairNumber;
         this.cabinet = cabinet;
@@ -39,6 +43,7 @@ public class Lesson {
         this.lessonFullName = lessonFullName;
         this.lectorFullName = lectorFullName;
         this.lectorShortName = lectorShortName;
+        this.type = type;
     }
 
     public Lesson() {
@@ -111,5 +116,37 @@ public class Lesson {
 
     public void setLectorShortName(String lectorShortName) {
         this.lectorShortName = lectorShortName;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    public static String getPairTime(String pairNumber) {
+        return switch (pairNumber) {
+            case "1" -> "8:00-9:35";
+            case "2" -> "9:45-11:20";
+            case "3" -> "11:45-13:20";
+            case "4" -> "13:30-15:05";
+            case "5" -> "15:15-16:50";
+            case "6" -> "17:00-18:35";
+            default -> "18:45-20:15";
+        };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Lesson lesson = (Lesson) o;
+        return Objects.equals(date, lesson.date) && Objects.equals(pairNumber, lesson.pairNumber) && Objects.equals(type, lesson.type) && Objects.equals(cabinet, lesson.cabinet) && Objects.equals(lessonShortName, lesson.lessonShortName) && Objects.equals(lessonFullName, lesson.lessonFullName) && Objects.equals(lectorFullName, lesson.lectorFullName) && Objects.equals(lectorShortName, lesson.lectorShortName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(date, pairNumber, type, cabinet, lessonShortName, lessonFullName, lectorFullName, lectorShortName);
     }
 }

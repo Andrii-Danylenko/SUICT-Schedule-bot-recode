@@ -1,6 +1,7 @@
 package rozkladbot.entities;
 
 import jakarta.persistence.*;
+import rozkladbot.enums.UserState;
 
 import java.util.Objects;
 
@@ -11,20 +12,20 @@ public class User {
     private long id;
     @Column(name = "username")
     private String username;
-    @Column(name = "course")
-    private long course;
     @ManyToOne
     Group group;
+    @Transient
+    UserState userState;
 
 
     public User() {
     }
 
-    public User(long id, String username, long course, Group group) {
+    public User(long id, String username, Group group, UserState userState) {
         this.id = id;
         this.username = username;
-        this.course = course;
         this.group = group;
+        this.userState = userState;
     }
 
     public long getid() {
@@ -51,14 +52,6 @@ public class User {
         this.group = group;
     }
 
-    public long getCourse() {
-        return course;
-    }
-
-    public void setCourse(long course) {
-        this.course = course;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -72,4 +65,19 @@ public class User {
         return Objects.hashCode(id);
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public UserState getUserState() {
+        return userState;
+    }
+
+    public void setUserState(UserState userState) {
+        this.userState = userState;
+    }
 }

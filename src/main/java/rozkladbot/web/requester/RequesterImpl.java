@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import rozkladbot.constants.ErrorConstants;
 import rozkladbot.exceptions.EmptyRequestParametersException;
-import rozkladbot.exceptions.RequestCreationFailedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,7 +28,7 @@ public class RequesterImpl implements Requester {
     }
 
     @Override
-    public String makeRequest(HashMap<String, String> params) {
+    public String makeRequest(HashMap<String, String> params) throws IOException, URISyntaxException {
         if (params.isEmpty()) {
             logger.error(ErrorConstants.PARAMS_ARE_EMPTY);
             throw new EmptyRequestParametersException(ErrorConstants.PARAMS_ARE_EMPTY);
@@ -46,14 +45,9 @@ public class RequesterImpl implements Requester {
         return link.toString();
     }
 
-    private String makeRequest(String requestLink) {
-        try {
-            HttpURLConnection connection = buildConnection(requestLink);
-            return readResponse(connection);
-        } catch (IOException | URISyntaxException e) {
-            logger.error(e.getMessage());
-            throw new RequestCreationFailedException(ErrorConstants.REQUEST_CREATION_FAILED);
-        }
+    private String makeRequest(String requestLink) throws IOException, URISyntaxException {
+        HttpURLConnection connection = buildConnection(requestLink);
+        return readResponse(connection);
     }
 
     private HttpURLConnection buildConnection(String requestLink) throws IOException, URISyntaxException {

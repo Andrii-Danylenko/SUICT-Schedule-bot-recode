@@ -9,19 +9,21 @@ import java.util.Objects;
 @Table(name = "groups")
 public class Group {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "name")
     private String name;
     @ManyToOne
     private Faculty faculty;
+    @Column(name = "course")
+    private long course;
     @OneToMany(mappedBy = "group")
     private List<User> users;
 
-    public Group(long id, String name, Faculty faculty, List<User> users) {
+    public Group(long id, String name, Faculty faculty, long course, List<User> users) {
         this.id = id;
         this.name = name;
         this.faculty = faculty;
+        this.course = course;
         this.users = users;
     }
 
@@ -70,5 +72,13 @@ public class Group {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    public long getCourse() {
+        return course;
+    }
+
+    public void setCourse(long course) {
+        this.course = course;
     }
 }
