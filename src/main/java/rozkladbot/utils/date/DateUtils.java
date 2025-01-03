@@ -3,6 +3,7 @@ package rozkladbot.utils.date;
 import rozkladbot.constants.AppConstants;
 
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -41,7 +42,9 @@ public class DateUtils {
     public static String getFullDayName(LocalDate date) {
         return date.atStartOfDay(zoneId).format(FULL_DAY_NAME);
     }
-
+    public static LocalDate instantToLocalDate(Instant instant) {
+        return LocalDate.ofInstant(instant, zoneId);
+    }
     public static String getMonthName(LocalDate date) {
         return switch (date.getMonthValue()) {
             case 1 -> "січня";

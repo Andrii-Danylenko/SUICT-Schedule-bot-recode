@@ -1,6 +1,7 @@
 package rozkladbot.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,8 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -27,6 +28,10 @@ public class SecurityConfig {
     private static final String FACULTIES_ENDPOINT = SCHEDULE_ENDPOINT + "/faculties";
     private static final String COURSES_ENDPOINT = SCHEDULE_ENDPOINT + "/courses";
     private static final String GROUPS_ENDPOINT = SCHEDULE_ENDPOINT + "/groups";
+    @Value("${server.link.1}")
+    private static String SERVER_LINK_1;
+    @Value("${server.link.1}")
+    private static String SERVER_LINK_2;
 
     @Autowired
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
@@ -42,10 +47,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
-                    config.setAllowedOrigins(Collections.singletonList("http://185.237.206.64:8080"));
+                    config.setAllowedOrigins(Collections.singletonList(SERVER_LINK_1));
+                    config.setAllowedOrigins(Collections.singletonList(SERVER_LINK_2));
                     config.setAllowedMethods(
-                            Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
+                            List.of("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
                     config.setAllowCredentials(true);
                     config.setAllowedHeaders(Collections.singletonList("*"));
                     config.setMaxAge(3600L);

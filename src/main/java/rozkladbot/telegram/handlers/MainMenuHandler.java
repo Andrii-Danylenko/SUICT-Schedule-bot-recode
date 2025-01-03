@@ -8,6 +8,7 @@ import rozkladbot.entities.User;
 import rozkladbot.enums.UserState;
 import rozkladbot.telegram.factories.KeyBoardFactory;
 import rozkladbot.telegram.utils.message.MessageSender;
+import rozkladbot.telegram.utils.message.MessageUtils;
 
 @Component("mainMenuHandler")
 public class MainMenuHandler {
@@ -17,12 +18,13 @@ public class MainMenuHandler {
         this.messageSender = messageSender;
     }
 
-    public void sendMenu(Update update, User user) {
+    public void sendMenu(Update update, User user, boolean override) {
         messageSender.sendMessage(
                 user,
                 BotMessageConstants.AVAILABLE_USER_COMMANDS,
                 KeyBoardFactory.getCommandsList(),
                 true);
         user.setUserState(UserState.IDLE);
+        user.setLastSentMessageId(MessageUtils.getCorrectMessageIdWithOffset(update));
     }
 }

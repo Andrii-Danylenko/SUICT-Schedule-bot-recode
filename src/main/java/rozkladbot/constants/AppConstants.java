@@ -11,5 +11,11 @@ public class AppConstants {
     public static final String DAY_FORMAT = "EEEE";
     public static final String APP_LOCALE_LANGUAGE = "uk";
     public static final String APP_LOCALE_COUNTRY = "UA";
+    public static final String SCHEDULE_DUMP_CRON = "0 0 3 * * *";
+    public static final String THIS_WEEK_SCHEDULE_FILE_NAME = "%s(%d)_thisWeek.json";
+    public static final String NEXT_WEEK_SCHEDULE_FILE_NAME = "%s(%d)_nextWeek.json";
+    public static final String GROUP_SCHEDULES_FOLDER_NAME = "groupsSchedules";
+    public static final String MONDAY = "Понеділок";
+    public static final String JSON_TREE_OBJECT_NAME = "schedule";
     private AppConstants() {}
 }

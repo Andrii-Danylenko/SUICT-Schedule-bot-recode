@@ -13,6 +13,8 @@ import rozkladbot.entities.Lesson;
 
 import java.util.List;
 
+import static rozkladbot.constants.AppConstants.JSON_TREE_OBJECT_NAME;
+
 @Component("lessonDeserializer")
 public class LessonDeserializer implements JsonDeserializer<Lesson> {
     private static final Logger logger = LoggerFactory.getLogger(LessonDeserializer.class);
@@ -26,7 +28,7 @@ public class LessonDeserializer implements JsonDeserializer<Lesson> {
     @Override
     public List<Lesson> deserialize(String json) {
         try {
-            JsonNode jsonNode = mapper.readTree(json).get("schedule");
+            JsonNode jsonNode = mapper.readTree(json).get(JSON_TREE_OBJECT_NAME);
             return mapper.readValue(jsonNode.toString(), new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {

@@ -41,10 +41,10 @@ public final class KeyBoardFactory {
     public static InlineKeyboardMarkup getYesOrNoInline() {
         InlineKeyboardButton yesButton = new InlineKeyboardButton();
         yesButton.setText(EmojiList.TRUE);
-        yesButton.setCallbackData("ТАК");
+        yesButton.setCallbackData(BotButtons.YES_DATA);
         InlineKeyboardButton noButton = new InlineKeyboardButton();
         noButton.setText(EmojiList.FALSE);
-        noButton.setCallbackData("НІ");
+        noButton.setCallbackData(BotButtons.NO_DATA);
         List<InlineKeyboardButton> row = new ArrayList<>() {{
             add(yesButton);
             add(noButton);
@@ -153,7 +153,34 @@ public final class KeyBoardFactory {
         buttons.add(row6);
         return new InlineKeyboardMarkup(buttons);
     }
-
+    public static InlineKeyboardMarkup getSettings(boolean isInBroadCast) {
+        return new InlineKeyboardMarkup(new ArrayList<>() {{
+            add(new ArrayList<>() {{
+                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                inlineKeyboardButton.setText(BotButtons.CHANGE_GROUP_BUTTON);
+                inlineKeyboardButton.setCallbackData(BotButtons.CHANGE_GROUP_DATA);
+                add(inlineKeyboardButton);
+            }});
+            add(new ArrayList<>() {{
+                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                inlineKeyboardButton.setText(isInBroadCast ? BotButtons.DISABLE_BROADCASTING : BotButtons.ENABLED_BROADCASTING);
+                inlineKeyboardButton.setCallbackData(isInBroadCast ? BotButtons.DISABLED_DATA : BotButtons.ENABLED_DATA);
+                add(inlineKeyboardButton);
+            }});
+            add(new ArrayList<>() {{
+                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                inlineKeyboardButton.setText(BotButtons.REPORT_BUG);
+                inlineKeyboardButton.setUrl(AppConstants.DEVELOPER_TG_LINK);
+                add(inlineKeyboardButton);
+            }});
+            add(new ArrayList<>() {{
+                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                inlineKeyboardButton.setText(BotButtons.BACK);
+                inlineKeyboardButton.setCallbackData(BotButtons.BACK_DATA);
+                add(inlineKeyboardButton);
+            }});
+        }});
+    }
     private KeyBoardFactory() {
     }
 }

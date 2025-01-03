@@ -60,6 +60,14 @@ public class BotMessageConstants {
     public static final String WEEKLY_SCHEDULE = "\uD83E\uDD13 Розклад на цей тиждень:\n\n";
     public static final String NEXT_WEEK_SCHEDULE = "\uD83E\uDD13 Розклад на наступний тиждень:\n\n";
     public static final String BROADCASTING_FAILED = "Не вдалося отримати розклад під час широкомовної розсилки :(";
+    public static final String SETTINGS_MENU = """
+            Група: %s
+            Номер групи: %d
+            Курс: %s
+            Щоденні повідомлення: %s
+            """;
+    public static final String IS_BROADCASTED = "Увімкнені";
+    public static final String IS_NOT_BROADCASTED = "Вимкнені";
     private BotMessageConstants() {
     }
 }

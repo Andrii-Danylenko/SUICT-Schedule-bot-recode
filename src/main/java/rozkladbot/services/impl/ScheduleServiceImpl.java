@@ -75,12 +75,21 @@ public class ScheduleServiceImpl implements ScheduleService {
         List<Lesson> lessons = getSchedule(buildScheduleParams(user, queryDateStart, queryDateEnd), user);
         return new ScheduleTable(splitByDays(lessons, queryDateStart, queryDateEnd));
     }
+
     private Map<String, String> buildScheduleParams(User user, LocalDate startDate, LocalDate endDate) {
         HashMap<String, String> params = paramsBuilder.build(user);
         params.put("dateFrom", DateUtils.getDateAsString(startDate));
         params.put("dateTo", DateUtils.getDateAsString(endDate));
         return params;
     }
+
+    public String getRawSchedule(User user, LocalDate startDate, LocalDate endDate) throws IOException, URISyntaxException {
+        HashMap<String, String> params = paramsBuilder.build(user);
+        params.put("dateFrom", DateUtils.getDateAsString(startDate));
+        params.put("dateTo", DateUtils.getDateAsString(endDate));
+        return requester.makeRequest(params);
+    }
+
     private List<Day> splitByDays(List<Lesson> lessons, LocalDate startDate, LocalDate endDate) {
         TreeMap<LocalDate, List<Lesson>> lessonsByDay = lessons.stream()
                 .collect(Collectors.groupingBy(Lesson::getDate, TreeMap::new, Collectors.toList()));
