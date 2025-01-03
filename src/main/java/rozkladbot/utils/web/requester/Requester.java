@@ -2,8 +2,8 @@ package rozkladbot.utils.web.requester;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
+import java.util.Map;
 
 public interface Requester {
-    String makeRequest(HashMap<String, String> params) throws IOException, URISyntaxException;
+    String makeRequest(Map<String, String> params) throws IOException, URISyntaxException;
 }

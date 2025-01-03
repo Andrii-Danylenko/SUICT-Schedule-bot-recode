@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skedy</title>
-    <link th:rel="stylesheet" th:href="@{/css/styles.css}"></link>
+    <title>Schedule Form</title>
+    <link th:rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="header">
     <div class="logo">
         <span th:text="'SUICT Schedule WebUI'"></span>
-    </div>
-    <div class="header-right">
-        <a th:href="@{/admin}">Login as admin</a>
     </div>
 </div>
 <div class="content">
@@ -20,30 +18,85 @@
         <form th:action="@{/schedule/get}" th:object="${scheduleForm}" method="post">
             <label for="institute">Заклад</label>
             <select id="institute" name="institute" th:field="*{institute}">
-                <option th:each="option : ${institutes}" th:value="${option}" th:text="${option}"></option>
+                <option value="">Выберите институт</option>
+                <option th:each="option : ${institutes}" th:value="${option.id}"
+                        th:text="${option.instituteName}"></option>
             </select>
 
             <label for="faculty">Факультет/Інститут</label>
             <select id="faculty" name="faculty" th:field="*{faculty}">
-                <option th:each="option : ${faculties}" th:value="${option}" th:text="${option}"></option>
+                <option value="">Выберите факультет</option>
             </select>
 
             <label for="course">Курс</label>
             <select id="course" name="course" th:field="*{course}">
-                <option th:each="course : ${courses}" th:value="${course}" th:text="${course}"></option>
+                <option value="">Выберите курс</option>
             </select>
 
             <label for="group">Група</label>
             <select id="group" name="group" th:field="*{group}">
-                <option th:each="group : ${groups}" th:value="${group}" th:text="${group}"></option>
+                <option value="">Выберите группу</option>
             </select>
 
             <button type="submit">Завантажити розклад</button>
         </form>
     </div>
 </div>
-<div class="footer">
-    <span th:text="'SUICT WEB v1.0. Developed by Andrii Danylenko'"></span>
-</div>
+<script>
+    $(document).ready(function () {
+        $('#institute').change(function () {
+            const instituteId = $(this).val();
+            console.log("Selected instituteId:", instituteId);
+            $.ajax({
+                url: '/schedule/faculties',
+                method: 'GET',
+                data: {instituteId: instituteId},
+                success: function (faculties) {
+                    console.log("Received faculties:", faculties);
+                    let options = '<option value="">Выберите факультет</option>';
+                    faculties.forEach(function (faculty) {
+                        options += `<option value="${faculty.id}">${faculty.facultyName}</option>`;
+                    });
+                    $('#faculty').html(options);
+                },
+                error: function (error) {
+                    console.error("Error fetching faculties:", error);
+                }
+            });
+        });
+
+        $('#faculty').change(function () {
+            const facultyId = $(this).val();
+            $.ajax({
+                url: '/schedule/courses',
+                method: 'GET',
+                data: {facultyId: facultyId},
+                success: function (courses) {
+                    let options = '<option value="">Выберите курс</option>';
+                    courses.forEach(function (course) {
+                        options += `<option value="${course}">${course}</option>`;
+                    });
+                    $('#course').html(options);
+                }
+            });
+        });
+
+        $('#course').change(function () {
+            const course = $(this).val();
+            $.ajax({
+                url: '/schedule/groups',
+                method: 'GET',
+                data: {course: course},
+                success: function (groups) {
+                    let options = '<option value="">Выберите группу</option>';
+                    groups.forEach(function (group) {
+                        options += `<option value="${group.id}">${group.name}</option>`;
+                    });
+                    $('#group').html(options);
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

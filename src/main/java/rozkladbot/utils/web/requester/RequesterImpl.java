@@ -14,7 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Map;
 
 @Component("requestImpl")
 public class RequesterImpl implements Requester {
@@ -28,7 +28,7 @@ public class RequesterImpl implements Requester {
     }
 
     @Override
-    public String makeRequest(HashMap<String, String> params) throws IOException, URISyntaxException {
+    public String makeRequest(Map<String, String> params) throws IOException, URISyntaxException {
         if (params.isEmpty()) {
             logger.error(ErrorConstants.PARAMS_ARE_EMPTY);
             throw new EmptyRequestParametersException(ErrorConstants.PARAMS_ARE_EMPTY);
@@ -37,7 +37,7 @@ public class RequesterImpl implements Requester {
         return makeRequest(requestLink);
     }
 
-    private String buildLink(HashMap<String, String> params) {
+    private String buildLink(Map<String, String> params) {
         StringBuilder link = new StringBuilder(BASE_LINK);
         for (String key : params.keySet()) {
             link.append("&").append(key).append("=").append(params.get(key));
@@ -47,7 +47,6 @@ public class RequesterImpl implements Requester {
 
     private String makeRequest(String requestLink) throws IOException, URISyntaxException {
         HttpURLConnection connection = buildConnection(requestLink);
-        System.out.println(requestLink);
         return readResponse(connection);
     }
 

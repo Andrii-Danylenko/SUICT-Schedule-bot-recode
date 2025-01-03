@@ -24,6 +24,9 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private static final String LOGIN_ENDPOINT = "login";
     private static final String SCHEDULE_ENDPOINT = "/schedule";
+    private static final String FACULTIES_ENDPOINT = SCHEDULE_ENDPOINT + "/faculties";
+    private static final String COURSES_ENDPOINT = SCHEDULE_ENDPOINT + "/courses";
+    private static final String GROUPS_ENDPOINT = SCHEDULE_ENDPOINT + "/groups";
 
     @Autowired
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
@@ -52,7 +55,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(HttpMethod.POST, LOGIN_ENDPOINT, SCHEDULE_ENDPOINT + "/get")
                                 .permitAll()
-                                .requestMatchers(HttpMethod.GET, LOGIN_ENDPOINT, SCHEDULE_ENDPOINT + "/get")
+                                .requestMatchers(HttpMethod.GET,
+                                        LOGIN_ENDPOINT,
+                                        SCHEDULE_ENDPOINT + "/get",
+                                        SCHEDULE_ENDPOINT,
+                                        FACULTIES_ENDPOINT,
+                                        GROUPS_ENDPOINT,
+                                        COURSES_ENDPOINT)
                                 .permitAll()
                                 .requestMatchers("/css/**")
                                 .permitAll()

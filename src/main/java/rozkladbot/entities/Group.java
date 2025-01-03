@@ -87,7 +87,7 @@ public class Group {
         return "Group{" +
                "id=" + id +
                ", name='" + name + '\'' +
-               ", faculty=" + faculty +
+               ", faculty=" + faculty.getFacultyName() +
                ", course=" + course +
                '}';
     }

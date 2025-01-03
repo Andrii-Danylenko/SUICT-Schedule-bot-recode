@@ -17,4 +17,5 @@ public interface GroupRepo extends JpaRepository<Group, Long> {
     List<Group> findByFacultyId(long facultyId);
     @Query(value = "SELECT g FROM Group g WHERE g.faculty.facultyName = ?1 AND g.course = ?2")
     List<Group> findByFacultyAndCourse(String facultyName, long course);
+    List<Group> findByCourse(long course);
 }

@@ -3,35 +3,35 @@ package rozkladbot.constants;
 public class BotMessageConstants {
     public static final String USER_IS_UNREGISTERED =
             """
-            Схоже, що ви не зареєстровані.
-            """;
+                    Схоже, що ви не зареєстровані.
+                    """;
     public static final String INSTITUTE_SELECTION =
             """
-            Виберіть інститут.
-            Інститути, які наразі підтримуються:
-            """;
+                    Виберіть інститут.
+                    Інститути, які наразі підтримуються:
+                    """;
     public static final String FACULTY_SELECTION =
             """
-            Виберіть факультет.
-            Факультети, які наразі підтримуються:
-            """;
+                    Виберіть факультет.
+                    Факультети, які наразі підтримуються:
+                    """;
     public static final String COURSE_SELECTION =
             """
-            Виберіть курс.
-            Курси, які наразі підтримуються:
-            """;
+                    Виберіть курс.
+                    Курси, які наразі підтримуються:
+                    """;
     public static final String GROUP_SELECTION =
             """
-            Виберіть групу.
-            Групи, які наразі підтримуються:
-            """;
+                    Виберіть групу.
+                    Групи, які наразі підтримуються:
+                    """;
     public static final String GREETING_MESSAGE =
             """
-            Привіт! Цей бот створений, щоб зручно проглядати розклад ДУІКТ.
-            """;
+                    Привіт! Цей бот створений, щоб зручно проглядати розклад ДУІКТ.
+                    """;
 
     public static final String AVAILABLE_USER_COMMANDS =
-                    """
+            """
                     Ось команди, які ти можеш використати:
                     
                     /day - розклад на сьогодні.
@@ -45,16 +45,21 @@ public class BotMessageConstants {
     public static final String DOES_NOT_CONTAIN_COURSE = "Немає твого курса?";
     public static final String DOES_NOT_CONTAIN_GROUP = "Немає твоєї групи?";
     public static final String CONFIRM_REGISTRATION_DATA = "Твоя група: %s?";
-    public static final String TRY_AGAIN = "\u200E(ﾉಥ益ಥ）ﾉ\uFEFF ┻━┻";
+    public static final String REGISTRATION_FAILED = "\u200E(ﾉಥ益ಥ）ﾉ\uFEFF ┻━┻";
+    public static final String REGISTRATION_SUCCESSFUL = """
+            Ти успішно зареєструвався!
+            Тепер можна користуватися ботом.
+            """;
     public static final String SCHEDULE_FETCHING_FAILED = """
-                        Виникла помилка під час отримання розкладу.
-                        Спробуйте пізніше. 🥺
-                        """;
+            Виникла помилка під час отримання розкладу.
+            Спробуйте пізніше. 🥺
+            """;
     public static final String GET_SCHEDULE_ATTEMPT = "Намагаюся отримати розклад...";
     public static final String TODAY_SCHEDULE = "\uD83E\uDD13 Розклад на сьогодні:\n\n";
     public static final String TOMORROW_SCHEDULE = "\uD83E\uDD13 Розклад на завтра:\n\n";
     public static final String WEEKLY_SCHEDULE = "\uD83E\uDD13 Розклад на цей тиждень:\n\n";
     public static final String NEXT_WEEK_SCHEDULE = "\uD83E\uDD13 Розклад на наступний тиждень:\n\n";
+
     private BotMessageConstants() {
     }
 }

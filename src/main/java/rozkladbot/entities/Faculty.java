@@ -78,7 +78,6 @@ public class Faculty {
         return "Faculty{" +
                "id=" + id +
                ", facultyName='" + facultyName + '\'' +
-               ", institute=" + institute +
                '}';
     }
 }

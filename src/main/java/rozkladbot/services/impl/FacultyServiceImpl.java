@@ -39,4 +39,9 @@ public class FacultyServiceImpl implements FacultyService {
     public List<Faculty> getFacultiesByInstituteName(String instituteName) {
         return facultyRepo.getFacultyByInstituteName(instituteName);
     }
+
+    @Override
+    public List<Faculty> findByInstituteId(Long instituteId) {
+        return facultyRepo.findByInstituteId(instituteId);
+    }
 }

@@ -144,11 +144,16 @@ public class RegistrationHandler {
             user.setGroup(group);
             userService.save(user);
             user.setUserState(UserState.MAIN_MENU);
+            messageSender.sendMessage(
+                    user,
+                    BotMessageConstants.REGISTRATION_SUCCESSFUL,
+                    KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU),
+                    true);
         } else if (BotButtons.NO_DATA.equals(callbackData)) {
             user.setUserState(UserState.AWAITING_INSTITUTE);
             messageSender.sendMessage(
                     user,
-                    BotMessageConstants.TRY_AGAIN,
+                    BotMessageConstants.REGISTRATION_FAILED,
                     KeyBoardFactory.getCustomButton(BotButtons.TRY_AGAIN, BotButtons.TRY_AGAIN),
                     true);
         } else {
@@ -168,7 +173,10 @@ public class RegistrationHandler {
                     user.setUserState(UserState.MAIN_MENU);
                 }
             }
-            case AWAITING_FACULTY, AWAITING_COURSE, AWAITING_GROUP -> user.setUserState(UserState.AWAITING_INSTITUTE);
+            case AWAITING_FACULTY,
+                 AWAITING_COURSE,
+                 AWAITING_GROUP,
+                 AWAITING_REGISTRATION_DATA_CONFIRMATION -> user.setUserState(UserState.AWAITING_INSTITUTE);
         }
     }
 }

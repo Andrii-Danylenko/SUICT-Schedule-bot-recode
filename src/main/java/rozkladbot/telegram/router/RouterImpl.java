@@ -9,6 +9,7 @@ import rozkladbot.telegram.handlers.CommandsHandler;
 import rozkladbot.telegram.handlers.MainMenuHandler;
 import rozkladbot.telegram.handlers.NewUsersHandler;
 import rozkladbot.telegram.handlers.RegistrationHandler;
+import rozkladbot.telegram.utils.MessageUtils;
 
 @Component("routerImpl")
 public class RouterImpl implements Router {
@@ -39,12 +40,7 @@ public class RouterImpl implements Router {
             user = registrationHandler.formUser(update, chatId);
             userCache.put(chatId, user);
         }
-        if (update.hasMessage()) {
-            user.setLastSentMessageId(update.getMessage().getMessageId());
-        }
-        if (update.hasCallbackQuery()) {
-            user.setLastSentMessageId(update.getCallbackQuery().getMessage().getMessageId());
-        }
+        user.setLastSentMessageId(MessageUtils.getCorrectMessageIdWithOffset(update));
         switch (user.getUserState()) {
             case AWAITING_GREETINGS:
                 newUsersHandler.sendGreetings(user);

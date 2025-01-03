@@ -13,4 +13,5 @@ public interface FacultyService {
 
     Faculty save(Faculty faculty);
     List<Faculty> getFacultiesByInstituteName(String instituteName);
+    List<Faculty> findByInstituteId(Long instituteId);
 }

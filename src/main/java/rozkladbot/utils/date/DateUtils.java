@@ -2,15 +2,17 @@ package rozkladbot.utils.date;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class DateUtils {
+    private static final ZoneId zoneId = ZoneId.of("Europe/Kyiv");
     public static final DateTimeFormatter JSON_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     public static final DateTimeFormatter FULL_DAY_NAME = DateTimeFormatter.ofPattern("EEEE").withLocale(Locale.of("uk", "ua"));
 
     public static LocalDate getToday() {
-        return LocalDate.now();
+        return LocalDate.now(zoneId);
     }
 
     public static String getTodayDateString() {

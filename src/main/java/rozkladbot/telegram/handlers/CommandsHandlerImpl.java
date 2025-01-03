@@ -35,7 +35,6 @@ public class CommandsHandlerImpl implements CommandsHandler {
     }
 
     private void resolveTextMessages(String text, User user, boolean isCallback) {
-        System.out.println(text);
         switch (text.toLowerCase()) {
             case "/day",
                  "/day@rozkad_bot" -> user.setUserState(UserState.AWAITING_TODAY_SCHEDULE);
@@ -55,14 +54,13 @@ public class CommandsHandlerImpl implements CommandsHandler {
 
     private void resolveStates(User user, boolean isCallback) {
         try {
-            System.out.println(user.getUserState());
             String scheduleName;
             ScheduleTable scheduleTable;
             messageSender.sendMessage(
                     user,
                     BotMessageConstants.GET_SCHEDULE_ATTEMPT,
                     null,
-                    true);
+                    isCallback);
             switch (user.getUserState()) {
                 case AWAITING_TOMORROW_SCHEDULE -> {
                     scheduleName = BotMessageConstants.TOMORROW_SCHEDULE;
@@ -91,7 +89,7 @@ public class CommandsHandlerImpl implements CommandsHandler {
                     user,
                     BotMessageConstants.SCHEDULE_FETCHING_FAILED,
                     KeyBoardFactory.getBackButton(),
-                    isCallback);
+                    true);
         }
         user.setUserState(UserState.MAIN_MENU);
     }

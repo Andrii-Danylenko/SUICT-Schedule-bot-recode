@@ -48,47 +48,46 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleTable getTodayLessons(User user) throws ExecutionException, InterruptedException {
-        HashMap<String, String> params = paramsBuilder.build(user);
-        params.put("dateFrom", DateUtils.getTodayDateString());
-        params.put("dateTo", DateUtils.getTodayDateString());
-        List<Lesson> lessons = getSchedule(params, user);
-        return new ScheduleTable(splitByDays(lessons));
+        LocalDate queryDateStart = DateUtils.getToday();
+        List<Lesson> lessons = getSchedule(buildScheduleParams(user, queryDateStart, queryDateStart), user);
+        return new ScheduleTable(splitByDays(lessons, queryDateStart, queryDateStart));
     }
 
     @Override
     public ScheduleTable getTomorrowLessons(User user) throws ExecutionException, InterruptedException {
-        HashMap<String, String> params = paramsBuilder.build(user);
-        params.put("dateFrom", DateUtils.getTodayPlusDaysAsString(1));
-        params.put("dateTo", DateUtils.getTodayPlusDaysAsString(1));
-        List<Lesson> lessons = getSchedule(params, user);
-        return new ScheduleTable(splitByDays(lessons));
+        LocalDate queryDateStart = DateUtils.getToday().plusDays(1);
+        List<Lesson> lessons = getSchedule(buildScheduleParams(user, queryDateStart, queryDateStart), user);
+        return new ScheduleTable(splitByDays(lessons, queryDateStart, queryDateStart));
     }
 
     @Override
     public ScheduleTable getWeeklyLessons(User user) throws ExecutionException, InterruptedException {
-        LocalDate startOfWeek = DateUtils.getStartOfWeek(DateUtils.getTodayDateString());
-        HashMap<String, String> params = paramsBuilder.build(user);
-        params.put("dateFrom", DateUtils.getDateAsString(startOfWeek));
-        params.put("dateTo", DateUtils.getDateAsString(startOfWeek.plusDays(6)));
-        List<Lesson> lessons = getSchedule(params, user);
-        return new ScheduleTable(splitByDays(lessons));
+        LocalDate queryDateStart = DateUtils.getStartOfWeek(DateUtils.getTodayDateString());
+        LocalDate queryDateEnd = queryDateStart.plusDays(6);
+        List<Lesson> lessons = getSchedule(buildScheduleParams(user, queryDateStart, queryDateEnd), user);
+        return new ScheduleTable(splitByDays(lessons, queryDateStart, queryDateEnd));
     }
 
     @Override
     public ScheduleTable getNextWeekLessons(User user) throws ExecutionException, InterruptedException {
-        LocalDate startOfWeek = DateUtils.getStartOfWeek(DateUtils.getTodayDateString());
-        HashMap<String, String> params = paramsBuilder.build(user);
-        params.put("dateFrom", DateUtils.getDateAsString(startOfWeek.plusDays(7)));
-        params.put("dateTo", DateUtils.getDateAsString(startOfWeek.plusDays(13)));
-        List<Lesson> lessons = getSchedule(params, user);
-        return new ScheduleTable(splitByDays(lessons));
+        LocalDate queryDateStart = DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(7);
+        LocalDate queryDateEnd = queryDateStart.plusDays(6);
+        List<Lesson> lessons = getSchedule(buildScheduleParams(user, queryDateStart, queryDateEnd), user);
+        return new ScheduleTable(splitByDays(lessons, queryDateStart, queryDateEnd));
     }
-
-    private List<Day> splitByDays(List<Lesson> lessons) {
+    private Map<String, String> buildScheduleParams(User user, LocalDate startDate, LocalDate endDate) {
+        HashMap<String, String> params = paramsBuilder.build(user);
+        params.put("dateFrom", DateUtils.getDateAsString(startDate));
+        params.put("dateTo", DateUtils.getDateAsString(endDate));
+        return params;
+    }
+    private List<Day> splitByDays(List<Lesson> lessons, LocalDate startDate, LocalDate endDate) {
         TreeMap<LocalDate, List<Lesson>> lessonsByDay = lessons.stream()
                 .collect(Collectors.groupingBy(Lesson::getDate, TreeMap::new, Collectors.toList()));
-        if (lessonsByDay.size() > 1) {
-            ensureNoBreaks(lessonsByDay);
+        if (lessonsByDay.isEmpty()) {
+            ensureNoBreaks(lessonsByDay, startDate, endDate);
+        } else {
+            ensureNoBreaks(lessonsByDay, lessonsByDay.firstKey(), lessonsByDay.lastKey());
         }
         List<Day> days = new ArrayList<>();
         for (Map.Entry<LocalDate, List<Lesson>> entry : lessonsByDay.entrySet()) {
@@ -104,18 +103,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         return days;
     }
 
-    private void ensureNoBreaks(TreeMap<LocalDate, List<Lesson>> lessonsByDay) {
-        if (lessonsByDay.isEmpty()) {
-            return;
-        }
-        LocalDate startDate = lessonsByDay.firstKey();
-        LocalDate endDate = lessonsByDay.lastKey();
+    private void ensureNoBreaks(TreeMap<LocalDate, List<Lesson>> lessonsByDay, LocalDate startDate, LocalDate endDate) {
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             lessonsByDay.putIfAbsent(date, Collections.emptyList());
         }
     }
 
-    private List<Lesson> getSchedule(HashMap<String, String> params, User user) throws ExecutionException, InterruptedException {
+    private List<Lesson> getSchedule(Map<String, String> params, User user) throws ExecutionException, InterruptedException {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return requester.makeRequest(params);

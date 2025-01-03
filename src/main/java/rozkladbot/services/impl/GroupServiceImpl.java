@@ -9,6 +9,7 @@ import rozkladbot.repos.GroupRepo;
 import rozkladbot.services.GroupService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("groupServiceImpl")
 public class GroupServiceImpl implements GroupService {
@@ -53,5 +54,21 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<Group> findByFacultyAndCourse(String facultyName, long course) {
         return groupRepo.findByFacultyAndCourse(facultyName, course);
+    }
+
+    @Override
+    public List<Group> findByCourse(long course) {
+        return groupRepo.findByCourse(course);
+    }
+
+    @Override
+    public List<Long> getCoursesByFacultyId(long facultyId) {
+        return findByFacultyId(facultyId)
+                .stream()
+                .map(Group::getCourse)
+                .mapToLong(x -> x).distinct()
+                .sorted()
+                .boxed()
+                .collect(Collectors.toList());
     }
 }

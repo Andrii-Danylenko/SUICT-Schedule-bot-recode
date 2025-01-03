@@ -16,4 +16,7 @@ public interface GroupService {
     List<String> getGroupCourses();
     List<Group> findByFacultyId(long facultyId);
     List<Group> findByFacultyAndCourse(String facultyName, long course);
+
+    List<Group> findByCourse(long course);
+    List<Long> getCoursesByFacultyId(long facultyId);
 }
