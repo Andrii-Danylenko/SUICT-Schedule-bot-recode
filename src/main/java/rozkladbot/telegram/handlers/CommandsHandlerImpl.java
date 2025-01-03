@@ -10,7 +10,7 @@ import rozkladbot.entities.User;
 import rozkladbot.enums.UserState;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.telegram.factories.KeyBoardFactory;
-import rozkladbot.telegram.utils.MessageSender;
+import rozkladbot.telegram.utils.message.MessageSender;
 
 import java.util.concurrent.ExecutionException;
 

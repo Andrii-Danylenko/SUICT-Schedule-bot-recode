@@ -15,7 +15,7 @@ import rozkladbot.services.GroupService;
 import rozkladbot.services.InstituteService;
 import rozkladbot.services.UserService;
 import rozkladbot.telegram.factories.KeyBoardFactory;
-import rozkladbot.telegram.utils.MessageSender;
+import rozkladbot.telegram.utils.message.MessageSender;
 
 import java.util.Comparator;
 import java.util.List;

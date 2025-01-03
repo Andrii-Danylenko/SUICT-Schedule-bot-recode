@@ -9,7 +9,7 @@ import rozkladbot.telegram.handlers.CommandsHandler;
 import rozkladbot.telegram.handlers.MainMenuHandler;
 import rozkladbot.telegram.handlers.NewUsersHandler;
 import rozkladbot.telegram.handlers.RegistrationHandler;
-import rozkladbot.telegram.utils.MessageUtils;
+import rozkladbot.telegram.utils.message.MessageUtils;
 
 @Component("routerImpl")
 public class RouterImpl implements Router {

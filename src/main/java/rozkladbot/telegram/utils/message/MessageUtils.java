@@ -1,4 +1,4 @@
-package rozkladbot.telegram.utils;
+package rozkladbot.telegram.utils.message;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;

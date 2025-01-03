@@ -1,13 +1,16 @@
-package rozkladbot.telegram.utils;
+package rozkladbot.telegram.utils.message;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.sender.SilentSender;
+import org.telegram.telegrambots.meta.api.methods.pinnedmessages.PinChatMessage;
+import org.telegram.telegrambots.meta.api.methods.pinnedmessages.UnpinChatMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import rozkladbot.entities.User;
 
 @Component("messageSender")
@@ -44,5 +47,21 @@ public class MessageSender {
         editMessageText.setParseMode("html");
         if (keyboard != null) editMessageText.setReplyMarkup((InlineKeyboardMarkup) keyboard);
         sender.execute(editMessageText);
+    }
+
+    public void unpinMessage(User user) throws TelegramApiException {
+        UnpinChatMessage unpinMessage = new UnpinChatMessage(
+                String.valueOf(user.getId()),
+                user.getLastPinnedMessageId());
+        this.abilityBot.execute(unpinMessage);
+    }
+
+    public void pinMessage(User user, int messageToPin) {
+        PinChatMessage pinMessage = new PinChatMessage(String.valueOf(user.getId()), messageToPin);
+        sender.execute(pinMessage);
+    }
+
+    public int executeSilentSender(SendMessage message) {
+        return sender.execute(message).orElseThrow(RuntimeException::new).getMessageId();
     }
 }

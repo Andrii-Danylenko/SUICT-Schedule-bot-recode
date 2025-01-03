@@ -5,6 +5,7 @@ public final class ErrorConstants {
     public final static String REQUEST_CREATION_FAILED = "An error occurred while creating the request! Please try again.";
     public final static String JSON_PROCESSING_FAILED = "An error occurred while processing the JSON file! Please try again.";
     public final static String ENTITY_NOT_FOUND_EXCEPTION = "No entity with such ID found!";
-
+    public final static String MESSAGE_CANNOT_BE_UNPINNED = "Message could not be unpinned!";
+    public final static String MESSAGE_CANNOT_BE_PINNED = "Message could not be pinned!";
     private ErrorConstants() {}
 }

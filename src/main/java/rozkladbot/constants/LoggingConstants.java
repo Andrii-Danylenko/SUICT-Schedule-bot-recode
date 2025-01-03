@@ -6,5 +6,11 @@ public class LoggingConstants {
     public static final String STARTED_READING_LOCAL_FILE_MESSAGE = "Started reading local saved data file by path: {}";
     public static final String USERS_MIGRATION_STARTED = "Loading users...";
     public static final String USERS_MIGRATION_FINISHED = "Successfully loaded {} users.";
+    public static final String BEGIN_BROADCAST_MESSAGE = "Beginning schedule broadcasting...";
+    public static final String END_BROADCAST_MESSAGE = "Successfully finished schedule broadcasting.";
+    public static final String TRYING_TO_UNPIN_MESSAGE = "Attempting to unpin user's (id: {}) message...";
+    public static final String MESSAGE_UNPINNED_SUCCESSFULLY = "Attempt to unpin user's (id: {}) message finished successfully.";
+    public static final String TRYING_TO_PIN_MESSAGE = "Attempting to pin user's (id: {}) message...";
+    public static final String MESSAGE_PINNED_SUCCESSFULLY = "Attempt to pin user's (id: {}) message finished successfully.";
     private LoggingConstants() {}
 }

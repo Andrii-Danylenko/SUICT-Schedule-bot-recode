@@ -59,7 +59,7 @@ public class BotMessageConstants {
     public static final String TOMORROW_SCHEDULE = "\uD83E\uDD13 Розклад на завтра:\n\n";
     public static final String WEEKLY_SCHEDULE = "\uD83E\uDD13 Розклад на цей тиждень:\n\n";
     public static final String NEXT_WEEK_SCHEDULE = "\uD83E\uDD13 Розклад на наступний тиждень:\n\n";
-
+    public static final String BROADCASTING_FAILED = "Не вдалося отримати розклад під час широкомовної розсилки :(";
     private BotMessageConstants() {
     }
 }

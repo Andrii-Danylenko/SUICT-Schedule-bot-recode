@@ -26,4 +26,16 @@
             <column name="role" type="varchar"/>
         </addColumn>
     </changeSet>
+    <changeSet id="5" author="Andrii-Danylenko">
+        <addColumn tableName="users">
+            <column name="is_broadcasted" type="bool">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="users">
+            <column name="last_pinned_message_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

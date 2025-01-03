@@ -26,6 +26,10 @@ public class User implements UserDetails {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     UserRole userRole = UserRole.USER;
+    @Column(name = "is_broadcasted")
+    boolean isBroadcasted = true;
+    @Column(name = "last_pinned_message_id")
+    int lastPinnedMessageId = 0;
     @Transient
     private int lastSentMessageId;
 
@@ -33,13 +37,23 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(long id, String username, Group group, UserState userState, UserRole userRole, int lastSentMessageId) {
+    public User(
+            long id,
+            String username,
+            Group group,
+            UserState userState,
+            UserRole userRole,
+            int lastSentMessageId,
+            boolean isBroadcasted,
+            int lastPinnedMessageId) {
         this.id = id;
         this.username = username;
         this.group = group;
         this.userState = userState;
         this.userRole = userRole;
         this.lastSentMessageId = lastSentMessageId;
+        this.isBroadcasted = isBroadcasted;
+        this.lastPinnedMessageId = lastPinnedMessageId;
     }
 
     public void setId(long id) {
@@ -125,5 +139,21 @@ public class User implements UserDetails {
                ", userRole=" + userRole +
                ", lastSentMessageId=" + lastSentMessageId +
                '}';
+    }
+
+    public boolean isBroadcasted() {
+        return isBroadcasted;
+    }
+
+    public void setBroadcasted(boolean broadcasted) {
+        isBroadcasted = broadcasted;
+    }
+
+    public int getLastPinnedMessageId() {
+        return lastPinnedMessageId;
+    }
+
+    public void setLastPinnedMessageId(int lastPinnedMessageId) {
+        this.lastPinnedMessageId = lastPinnedMessageId;
     }
 }
