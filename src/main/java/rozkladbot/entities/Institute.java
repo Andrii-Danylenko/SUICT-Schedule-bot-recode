@@ -14,7 +14,7 @@ public class Institute {
     long id;
     @Column(unique = true, nullable = false)
     String instituteName;
-    @OneToMany(mappedBy = "institute")
+    @OneToMany(mappedBy = "institute", cascade = CascadeType.ALL)
     List<Faculty> facultyList = new ArrayList<>();
 
     public Institute() {
@@ -62,4 +62,11 @@ public class Institute {
         return Objects.hash(id, instituteName);
     }
 
+    @Override
+    public String toString() {
+        return "Institute{" +
+               "id=" + id +
+               ", instituteName='" + instituteName + '\'' +
+               '}';
+    }
 }

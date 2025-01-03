@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.entities.User;
 import rozkladbot.telegram.caching.SimpleUserCache;
+import rozkladbot.telegram.handlers.CommandsHandler;
+import rozkladbot.telegram.handlers.MainMenuHandler;
 import rozkladbot.telegram.handlers.NewUsersHandler;
 import rozkladbot.telegram.handlers.RegistrationHandler;
 
@@ -13,12 +15,21 @@ public class RouterImpl implements Router {
     private final RegistrationHandler registrationHandler;
     private final NewUsersHandler newUsersHandler;
     private final SimpleUserCache userCache;
+    private final MainMenuHandler mainMenuHandler;
+    private final CommandsHandler commandsHandler;
 
     @Autowired
-    public RouterImpl(RegistrationHandler registrationHandler, SimpleUserCache userCache, NewUsersHandler newUsersHandler) {
+    public RouterImpl(
+            CommandsHandler commandsHandler,
+            RegistrationHandler registrationHandler,
+            SimpleUserCache userCache,
+            NewUsersHandler newUsersHandler,
+            MainMenuHandler mainMenuHandler) {
         this.registrationHandler = registrationHandler;
         this.userCache = userCache;
         this.newUsersHandler = newUsersHandler;
+        this.mainMenuHandler = mainMenuHandler;
+        this.commandsHandler = commandsHandler;
     }
 
     @Override
@@ -31,13 +42,26 @@ public class RouterImpl implements Router {
         if (update.hasMessage()) {
             user.setLastSentMessageId(update.getMessage().getMessageId());
         }
+        if (update.hasCallbackQuery()) {
+            user.setLastSentMessageId(update.getCallbackQuery().getMessage().getMessageId());
+        }
         switch (user.getUserState()) {
             case AWAITING_GREETINGS:
                 newUsersHandler.sendGreetings(user);
                 break;
-            case UNREGISTERED, AWAITING_INSTITUTE, AWAITING_FACULTY, AWAITING_COURSE, AWAITING_GROUP:
+            case UNREGISTERED,
+                 AWAITING_INSTITUTE,
+                 AWAITING_FACULTY,
+                 AWAITING_COURSE,
+                 AWAITING_GROUP,
+                 AWAITING_REGISTRATION_DATA_CONFIRMATION:
                 registrationHandler.registerUser(update, user);
                 break;
+            case MAIN_MENU:
+                mainMenuHandler.sendMenu(update, user);
+                break;
+            default:
+                commandsHandler.resolveCommand(update, user);
         }
     }
 

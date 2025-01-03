@@ -11,5 +11,6 @@ public interface FacultyService {
 
     Faculty getByName(String name);
 
-    Faculty save(Faculty institute);
+    Faculty save(Faculty faculty);
+    List<Faculty> getFacultiesByInstituteName(String instituteName);
 }

@@ -31,7 +31,12 @@ public class FacultyServiceImpl implements FacultyService {
         return facultyRepo.findByFacultyName(name).orElseThrow(() -> new NoSuchEntityFoundException(ErrorConstants.ENTITY_NOT_FOUND_EXCEPTION));
     }
 
-    public Faculty save(Faculty Faculty) {
-        return facultyRepo.save(Faculty);
+    public Faculty save(Faculty faculty) {
+        return facultyRepo.save(faculty);
+    }
+
+    @Override
+    public List<Faculty> getFacultiesByInstituteName(String instituteName) {
+        return facultyRepo.getFacultyByInstituteName(instituteName);
     }
 }

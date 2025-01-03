@@ -16,7 +16,7 @@ public class Group {
     private Faculty faculty;
     @Column(name = "course")
     private long course;
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<User> users;
 
     public Group(long id, String name, Faculty faculty, long course, List<User> users) {
@@ -80,5 +80,15 @@ public class Group {
 
     public void setCourse(long course) {
         this.course = course;
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", faculty=" + faculty +
+               ", course=" + course +
+               '}';
     }
 }

@@ -8,6 +8,7 @@ import rozkladbot.constants.AppConstants;
 import rozkladbot.constants.LoggingConstants;
 import rozkladbot.entities.Day;
 import rozkladbot.entities.Lesson;
+import rozkladbot.entities.ScheduleTable;
 import rozkladbot.entities.User;
 import rozkladbot.enums.UserState;
 import rozkladbot.exceptions.RequestCreationFailedException;
@@ -45,40 +46,42 @@ public class ScheduleServiceImpl implements ScheduleService {
         this.localFileReader = localFileReader;
     }
 
-    public List<Day> getTodayLessons(User user) throws ExecutionException, InterruptedException {
+    @Override
+    public ScheduleTable getTodayLessons(User user) throws ExecutionException, InterruptedException {
         HashMap<String, String> params = paramsBuilder.build(user);
         params.put("dateFrom", DateUtils.getTodayDateString());
         params.put("dateTo", DateUtils.getTodayDateString());
         List<Lesson> lessons = getSchedule(params, user);
-        return splitByDays(lessons);
+        return new ScheduleTable(splitByDays(lessons));
     }
 
-    public List<Day> getTomorrowLessons(User user) throws ExecutionException, InterruptedException {
+    @Override
+    public ScheduleTable getTomorrowLessons(User user) throws ExecutionException, InterruptedException {
         HashMap<String, String> params = paramsBuilder.build(user);
         params.put("dateFrom", DateUtils.getTodayPlusDaysAsString(1));
         params.put("dateTo", DateUtils.getTodayPlusDaysAsString(1));
         List<Lesson> lessons = getSchedule(params, user);
-        return splitByDays(lessons);
+        return new ScheduleTable(splitByDays(lessons));
     }
 
     @Override
-    public List<Day> getWeeklyLessons(User user) throws ExecutionException, InterruptedException {
+    public ScheduleTable getWeeklyLessons(User user) throws ExecutionException, InterruptedException {
         LocalDate startOfWeek = DateUtils.getStartOfWeek(DateUtils.getTodayDateString());
         HashMap<String, String> params = paramsBuilder.build(user);
         params.put("dateFrom", DateUtils.getDateAsString(startOfWeek));
         params.put("dateTo", DateUtils.getDateAsString(startOfWeek.plusDays(6)));
         List<Lesson> lessons = getSchedule(params, user);
-        return splitByDays(lessons);
+        return new ScheduleTable(splitByDays(lessons));
     }
 
     @Override
-    public List<Day> getNextWeekLessons(User user) throws ExecutionException, InterruptedException {
+    public ScheduleTable getNextWeekLessons(User user) throws ExecutionException, InterruptedException {
         LocalDate startOfWeek = DateUtils.getStartOfWeek(DateUtils.getTodayDateString());
         HashMap<String, String> params = paramsBuilder.build(user);
         params.put("dateFrom", DateUtils.getDateAsString(startOfWeek.plusDays(7)));
         params.put("dateTo", DateUtils.getDateAsString(startOfWeek.plusDays(13)));
         List<Lesson> lessons = getSchedule(params, user);
-        return splitByDays(lessons);
+        return new ScheduleTable(splitByDays(lessons));
     }
 
     private List<Day> splitByDays(List<Lesson> lessons) {
@@ -130,7 +133,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                                 user.getGroup().getId()));
             } else if (user.getUserState() == UserState.AWAITING_NEXT_WEEK_SCHEDULE) {
                 result = localFileReader.readLocalFile(
-                        AppConstants.CURRENT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
+                        AppConstants.NEXT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
                                 user.getGroup().getName(),
                                 user.getGroup().getId()));
             } else {

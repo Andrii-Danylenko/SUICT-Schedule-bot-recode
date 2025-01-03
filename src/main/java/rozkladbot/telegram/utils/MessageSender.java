@@ -40,7 +40,7 @@ public class MessageSender {
         EditMessageText editMessageText = new EditMessageText();
         editMessageText.setText(message);
         editMessageText.setChatId(currentUser.getId());
-        editMessageText.setMessageId(currentUser.getLastSentMessageId() + 1);
+        editMessageText.setMessageId(currentUser.getLastSentMessageId());
         editMessageText.setParseMode("html");
         if (keyboard != null) editMessageText.setReplyMarkup((InlineKeyboardMarkup) keyboard);
         sender.execute(editMessageText);

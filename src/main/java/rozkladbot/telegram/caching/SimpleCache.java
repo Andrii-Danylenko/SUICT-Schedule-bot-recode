@@ -25,4 +25,7 @@ public abstract class SimpleCache<K, V> {
     public boolean existsByKey(K key) {
         return localCache.containsKey(key);
     }
+    public int size() {
+        return localCache.size();
+    }
 }

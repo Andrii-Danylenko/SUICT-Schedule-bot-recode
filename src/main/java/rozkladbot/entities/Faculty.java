@@ -13,9 +13,9 @@ public class Faculty {
     private long id;
     @Column(unique = true, nullable = false)
     private String facultyName;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     Institute institute;
-    @OneToMany(mappedBy = "faculty")
+    @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL)
     List<Group> groups;
 
     public Faculty() {
@@ -71,5 +71,14 @@ public class Faculty {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Faculty{" +
+               "id=" + id +
+               ", facultyName='" + facultyName + '\'' +
+               ", institute=" + institute +
+               '}';
     }
 }

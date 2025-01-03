@@ -75,7 +75,7 @@ public class Day {
                 EmojiList.CALENDAR, dayOfWeek,
                 day.getDayOfMonth(),
                 DateUtils.getMonthName(day),
-                Day.getAmountOfPairs(this))).append("\n");
+                Day.getAmountOfPairs(lessons.size()))).append("\n");
         for (Lesson clazz : lessons) {
             hasPairs = true;
             builder.append("""
@@ -86,6 +86,7 @@ public class Day {
                     clazz.getLessonFullName(),
                     clazz.getType()));
         }
+        System.out.println(hasPairs);
         return hasPairs ? builder.toString() : builder.append(
                 AppConstants.HOORAY_FREE_DAY.formatted(EmojiList.HAPPY, EmojiList.BEER)
         ).toString();
@@ -99,7 +100,7 @@ public class Day {
                 dayOfWeek,
                 day.getDayOfMonth(),
                 DateUtils.getMonthName(day),
-                Day.getAmountOfPairs(this))).append("\n");
+                Day.getAmountOfPairs(lessons.size()))).append("\n");
         for (Lesson clazz : lessons) {
             hasPairs = true;
             builder.append("""
@@ -119,13 +120,14 @@ public class Day {
                     EmojiList.ROOM,
                     clazz.getCabinet()));
         }
+        System.out.println(hasPairs);
         return hasPairs ? builder.toString() : builder.append(
                         AppConstants.HOORAY_FREE_DAY.formatted(EmojiList.HAPPY, EmojiList.BEER))
                 .toString();
     }
 
-    public static String getAmountOfPairs(Day day) {
-        return switch (day.lessons.size()) {
+    public static String getAmountOfPairs(int amountOfDays) {
+        return switch (amountOfDays) {
             case 1 -> "(1 пара)";
             case 2 -> "(2 пари)";
             case 3 -> "(3 пари)";

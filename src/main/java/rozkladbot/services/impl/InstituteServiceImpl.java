@@ -19,18 +19,22 @@ public class InstituteServiceImpl implements InstituteService {
         this.instituteRepo = instituteRepo;
     }
 
+    @Override
     public List<Institute> getAll() {
         return instituteRepo.findAll();
     }
 
+    @Override
     public Institute getById(long id) {
         return instituteRepo.findById(id).orElseThrow(() -> new NoSuchEntityFoundException(ErrorConstants.ENTITY_NOT_FOUND_EXCEPTION));
     }
 
+    @Override
     public Institute getByName(String name) {
         return instituteRepo.findByName(name).orElseThrow(() -> new NoSuchEntityFoundException(ErrorConstants.ENTITY_NOT_FOUND_EXCEPTION));
     }
 
+    @Override
     public Institute save(Institute institute) {
         return instituteRepo.save(institute);
     }

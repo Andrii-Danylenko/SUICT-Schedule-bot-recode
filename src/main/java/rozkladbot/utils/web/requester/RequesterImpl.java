@@ -47,6 +47,7 @@ public class RequesterImpl implements Requester {
 
     private String makeRequest(String requestLink) throws IOException, URISyntaxException {
         HttpURLConnection connection = buildConnection(requestLink);
+        System.out.println(requestLink);
         return readResponse(connection);
     }
 

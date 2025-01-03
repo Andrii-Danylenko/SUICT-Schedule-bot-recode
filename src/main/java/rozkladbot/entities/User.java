@@ -7,7 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import rozkladbot.enums.UserRole;
 import rozkladbot.enums.UserState;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -16,13 +19,13 @@ public class User implements UserDetails {
     private long id;
     @Column(name = "username")
     private String username;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     Group group;
     @Transient
     UserState userState = UserState.UNREGISTERED;
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    UserRole userRole;
+    UserRole userRole = UserRole.USER;
     @Transient
     private int lastSentMessageId;
 
@@ -58,6 +61,7 @@ public class User implements UserDetails {
     public String getUsername() {
         return username;
     }
+
     public long getId() {
         return id;
     }
@@ -109,5 +113,17 @@ public class User implements UserDetails {
 
     public void setLastSentMessageId(int lastSentMessageId) {
         this.lastSentMessageId = lastSentMessageId;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+               "id=" + id +
+               ", username='" + username + '\'' +
+               ", group=" + group +
+               ", userState=" + userState +
+               ", userRole=" + userRole +
+               ", lastSentMessageId=" + lastSentMessageId +
+               '}';
     }
 }
