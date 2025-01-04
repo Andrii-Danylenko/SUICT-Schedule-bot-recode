@@ -28,8 +28,8 @@
 ### **Week Schedule Example**  
 ![Week Schedule](https://github.com/user-attachments/assets/d850ef91-bf1a-4c90-b77c-33b4847c5f41)  
 
-###**WEB-interface (WIP)** 
-![Web-interface](![image](https://github.com/user-attachments/assets/c25868a7-7043-4880-a3fa-e3f17bf00463))
+### **WEB-interface (WIP)** 
+![Web-interface](https://github.com/user-attachments/assets/c25868a7-7043-4880-a3fa-e3f17bf00463)
 
 ---
 This project is an improved version of RozkladBot: https://github.com/Andrii-Danylenko/DUIKTRozkladBot
