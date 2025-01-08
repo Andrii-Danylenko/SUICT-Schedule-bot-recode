@@ -1,11 +1,15 @@
 package rozkladbot.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import rozkladbot.enums.UserRole;
 import rozkladbot.enums.UserState;
+import rozkladbot.utils.deserializers.GroupDeserializer;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,24 +18,35 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements UserDetails {
     @Id
+    @JsonProperty("chatId")
     private long id;
     @Column(name = "username")
+    @JsonProperty("userName")
     private String username;
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JsonProperty("group")
+    @JsonDeserialize(using = GroupDeserializer.class)
     Group group;
     @Transient
     UserState userState = UserState.UNREGISTERED;
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
+    @JsonProperty("role")
     UserRole userRole = UserRole.USER;
     @Column(name = "is_broadcasted")
+    @JsonProperty("areInBroadcastGroup")
     boolean isBroadcasted = true;
     @Column(name = "last_pinned_message_id")
+    @JsonProperty("lastPinnedMessage")
     int lastPinnedMessageId = 0;
-    @Transient
+    @Column(name = "last_sent_message_id")
+    @JsonProperty("lastSentMessage")
     private int lastSentMessageId;
+    @Transient
+    private boolean isRegistered = false;
 
 
     public User() {
@@ -45,7 +60,8 @@ public class User implements UserDetails {
             UserRole userRole,
             int lastSentMessageId,
             boolean isBroadcasted,
-            int lastPinnedMessageId) {
+            int lastPinnedMessageId,
+            boolean isRegistered) {
         this.id = id;
         this.username = username;
         this.group = group;
@@ -54,6 +70,7 @@ public class User implements UserDetails {
         this.lastSentMessageId = lastSentMessageId;
         this.isBroadcasted = isBroadcasted;
         this.lastPinnedMessageId = lastPinnedMessageId;
+        this.isRegistered = isRegistered;
     }
 
     public void setId(long id) {
@@ -92,19 +109,6 @@ public class User implements UserDetails {
         this.group = group;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
-
     public UserState getUserState() {
         return userState;
     }
@@ -131,14 +135,14 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        return "User{" +
-               "id=" + id +
-               ", username='" + username + '\'' +
-               ", group=" + group +
-               ", userState=" + userState +
-               ", userRole=" + userRole +
-               ", lastSentMessageId=" + lastSentMessageId +
-               '}';
+        return
+                """
+                        Назва чату: %s
+                        Id-чату: %d
+                        Група: %s
+                        Курс: %d
+                        Роль: %s
+                        """;
     }
 
     public boolean isBroadcasted() {
@@ -155,5 +159,26 @@ public class User implements UserDetails {
 
     public void setLastPinnedMessageId(int lastPinnedMessageId) {
         this.lastPinnedMessageId = lastPinnedMessageId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    public boolean isRegistered() {
+        return isRegistered;
+    }
+
+    public void setRegistered(boolean registered) {
+        isRegistered = registered;
     }
 }
