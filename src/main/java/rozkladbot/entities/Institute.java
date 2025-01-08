@@ -1,5 +1,6 @@
 package rozkladbot.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class Institute {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     @Column(unique = true, nullable = false)
+    @JsonProperty("institute")
     String instituteName;
     @OneToMany(mappedBy = "institute", cascade = CascadeType.ALL)
     List<Faculty> facultyList = new ArrayList<>();

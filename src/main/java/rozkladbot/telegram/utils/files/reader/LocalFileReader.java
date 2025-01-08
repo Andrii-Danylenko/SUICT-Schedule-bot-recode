@@ -1,4 +1,4 @@
-package rozkladbot.utils.local.file.reader;
+package rozkladbot.telegram.utils.files.reader;
 
 public interface LocalFileReader {
     String readLocalFile(String pathToFile);

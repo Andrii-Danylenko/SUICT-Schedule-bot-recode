@@ -8,7 +8,7 @@ public class MessageUtils {
     public static int getCorrectMessageIdWithOffset(Update update) {
         int messageId = 0;
         if (update.hasMessage()) {
-            messageId = update.getMessage().getMessageId() + 1;
+            messageId = update.getMessage().getMessageId();
         } else if (update.hasCallbackQuery()) {
             messageId = update.getCallbackQuery().getMessage().getMessageId();
         }

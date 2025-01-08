@@ -8,9 +8,11 @@ import org.telegram.telegrambots.meta.api.methods.pinnedmessages.PinChatMessage;
 import org.telegram.telegrambots.meta.api.methods.pinnedmessages.UnpinChatMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import rozkladbot.constants.AppConstants;
 import rozkladbot.entities.User;
 
 @Component("messageSender")
@@ -24,14 +26,14 @@ public class MessageSender {
         this.sender = sender;
     }
 
-    public void sendMessage(User currentUser, String message, ReplyKeyboard keyboard, boolean overrideMessage) {
+    public void sendMessage(User currentUser, String message, ReplyKeyboard keyboard, boolean overrideMessage, Update update) {
         if (overrideMessage) {
-            overrideMessage(currentUser, message, keyboard);
+            overrideMessage(currentUser, message, keyboard, update);
         } else {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(currentUser.getId());
             sendMessage.setText(message);
-            sendMessage.setParseMode("html");
+            sendMessage.setParseMode(AppConstants.BOT_MESSAGE_PARSE_MODE);
             if (keyboard != null) {
                 sendMessage.setReplyMarkup(keyboard);
             }
@@ -39,12 +41,18 @@ public class MessageSender {
         }
     }
 
-    private void overrideMessage(User currentUser, String message, ReplyKeyboard keyboard) {
+    private void overrideMessage(User currentUser, String message, ReplyKeyboard keyboard, Update update) {
         EditMessageText editMessageText = new EditMessageText();
         editMessageText.setText(message);
         editMessageText.setChatId(currentUser.getId());
-        editMessageText.setMessageId(currentUser.getLastSentMessageId());
-        editMessageText.setParseMode("html");
+        // If update sent via callback query, then we just edit callback message
+        if (update.hasCallbackQuery()) {
+            editMessageText.setMessageId(currentUser.getLastSentMessageId());
+        } else if (update.hasMessage()) {
+            // If update sent via text message, then we must skip users message and edit next bot message
+            editMessageText.setMessageId(currentUser.getLastSentMessageId() + 1);
+        }
+        editMessageText.setParseMode(AppConstants.BOT_MESSAGE_PARSE_MODE);
         if (keyboard != null) editMessageText.setReplyMarkup((InlineKeyboardMarkup) keyboard);
         sender.execute(editMessageText);
     }

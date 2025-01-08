@@ -21,6 +21,7 @@ public class SettingsHandler {
     }
 
     public void sendSettingsMenu(Update update, User user, boolean override) {
+        user.setLastSentMessageId(MessageUtils.getCorrectMessageIdWithOffset(update));
         if (update.hasCallbackQuery()) {
             if (BotButtons.BACK_DATA.equals(update.getCallbackQuery().getData())) {
                 user.setUserState(UserState.MAIN_MENU);
@@ -45,7 +46,7 @@ public class SettingsHandler {
                         user.getGroup().getCourse(),
                         user.isBroadcasted() ? BotMessageConstants.IS_BROADCASTED : BotMessageConstants.IS_NOT_BROADCASTED
                 ),
-                KeyBoardFactory.getSettings(user.isBroadcasted()), override);
+                KeyBoardFactory.getSettings(user.isBroadcasted()), override, update);
         user.setLastSentMessageId(MessageUtils.getCorrectMessageIdWithOffset(update));
     }
 }

@@ -1,4 +1,4 @@
-package rozkladbot.utils.startup;
+package rozkladbot.telegram.startup;
 
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -30,7 +30,8 @@ public class Bootstrapper {
         logger.info(LoggingConstants.USERS_MIGRATION_STARTED);
         List<User> userList = userService.getAll();
         for (User user : userList) {
-            user.setUserState(UserState.MAIN_MENU);
+            user.setUserState(UserState.IDLE);
+            user.setRegistered(true);
             userCache.put(user.getId(), user);
         }
         logger.info(LoggingConstants.USERS_MIGRATION_FINISHED, userCache.size());

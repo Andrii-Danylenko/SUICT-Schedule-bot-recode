@@ -8,27 +8,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import rozkladbot.constants.AppConstants;
 import rozkladbot.constants.ErrorConstants;
-import rozkladbot.entities.Lesson;
+import rozkladbot.entities.Institute;
 
 import java.util.List;
 
-import static rozkladbot.constants.AppConstants.JSON_TREE_SCHEDULE_OBJECT_NAME;
-
-@Component("lessonDeserializer")
-public class LessonDeserializer implements JsonDeserializer<Lesson> {
-    private static final Logger logger = LoggerFactory.getLogger(LessonDeserializer.class);
+@Component("InstituteDeserializer")
+public class InstituteDeserializer implements JsonDeserializer<Institute> {
+    private static final Logger logger = LoggerFactory.getLogger(InstituteDeserializer.class);
     private final ObjectMapper mapper;
 
     @Autowired
-    public LessonDeserializer(ObjectMapper mapper) {
+    public InstituteDeserializer(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
+
     @Override
-    public List<Lesson> deserialize(String json) {
+    public List<Institute> deserialize(String json) {
         try {
-            JsonNode jsonNode = mapper.readTree(json).get(JSON_TREE_SCHEDULE_OBJECT_NAME);
+            JsonNode jsonNode = mapper.readTree(json).get(AppConstants.JSON_TREE_GROUPS_OBJECT_NAME);
             return mapper.readValue(jsonNode.toString(), new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {

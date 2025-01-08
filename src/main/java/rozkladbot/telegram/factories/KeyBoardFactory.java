@@ -176,7 +176,7 @@ public final class KeyBoardFactory {
             add(new ArrayList<>() {{
                 InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                 inlineKeyboardButton.setText(BotButtons.BACK);
-                inlineKeyboardButton.setCallbackData(BotButtons.BACK_DATA);
+                inlineKeyboardButton.setCallbackData(BotButtons.BACK_TO_MENU_DATA);
                 add(inlineKeyboardButton);
             }});
         }});

@@ -39,7 +39,14 @@ public class BotMessageConstants {
                     /week - розклад на цей тиждень.
                     /nextWeek - розклад на наступний тиждень.
                     /custom - розклад за своїми параметрами.
-                    /settings - змінити налаштування.""";
+                    /settings - змінити налаштування.
+                    """;
+    public static final String AVAILABLE_ADMIN_COMMANDS =
+            """
+                    /viewUsers - подивитися підключених юзерів.
+                    /synchronize [ключі: -u, -s, -all] - оновити офлайн-файли.
+                    /terminateSession - закриває сесію бота, попередньо оновлюючи всі офлайн-дані.
+                    """;
     public static final String DOES_NOT_CONTAIN_INSTITUTE = "Немає твого інститута?";
     public static final String DOES_NOT_CONTAIN_FACULTY = "Немає твого факультета?";
     public static final String DOES_NOT_CONTAIN_COURSE = "Немає твого курса?";
@@ -68,6 +75,17 @@ public class BotMessageConstants {
             """;
     public static final String IS_BROADCASTED = "Увімкнені";
     public static final String IS_NOT_BROADCASTED = "Вимкнені";
+    public static final String NO_CONNECTED_USERS_ARE_PRESENT_IN_DATABASE = "Під'єднаних користувачів немає.";
+    public static final String CONNECTED_USERS_LIST =
+            """
+                    Усього користувачів під'єднано: %d
+                    Ось список під'єднаних користувачів:
+                    
+                    """;
+    public static final String APP_TERMINATION_STARTED = "Починаю вимкнення додатку...";
+    public static final String APP_TERMINATION_FINISHED = "Закічив вимкнення додатку.";
+    public static final String LOCAL_DATA_SYNC_STARTED = "Починаю синхронизацію локальних даних із БД...";
+    public static final String LOCAL_DATA_SYNC_FINISHED = "Закічив синхронизацію локальних даних із БД.";
     private BotMessageConstants() {
     }
 }

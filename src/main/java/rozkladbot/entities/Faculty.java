@@ -1,5 +1,7 @@
 package rozkladbot.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -7,9 +9,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "faculties")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Faculty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("faculty")
     private long id;
     @Column(unique = true, nullable = false)
     private String facultyName;

@@ -16,6 +16,7 @@ import rozkladbot.services.InstituteService;
 import rozkladbot.services.UserService;
 import rozkladbot.telegram.factories.KeyBoardFactory;
 import rozkladbot.telegram.utils.message.MessageSender;
+import rozkladbot.telegram.utils.message.MessageUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -44,7 +45,7 @@ public class RegistrationHandler {
 
     public User formUser(Update update, long chatId) {
         User user = new User();
-        user.setUsername(update.getMessage().getFrom().getUserName());
+        user.setUsername(getCorrectName(update));
         user.setId(chatId);
         user.setLastSentMessageId(update.getMessage().getMessageId());
         user.setUserState(UserState.AWAITING_GREETINGS);
@@ -62,13 +63,14 @@ public class RegistrationHandler {
             if (BotButtons.BACK_DATA.equals(update.getCallbackQuery().getData())) {
                 resolveBackButton(update, user);
             }
-        }
-        switch (user.getUserState()) {
-            case AWAITING_INSTITUTE -> getInstitute(update, user);
-            case AWAITING_FACULTY -> getFaculty(update, user);
-            case AWAITING_COURSE -> getCourse(update, user);
-            case AWAITING_GROUP -> getGroup(update, user);
-            case AWAITING_REGISTRATION_DATA_CONFIRMATION -> confirmRegistration(update, user);
+            user.setLastSentMessageId(MessageUtils.getCorrectMessageIdWithOffset(update));
+            switch (user.getUserState()) {
+                case AWAITING_INSTITUTE -> getInstitute(update, user);
+                case AWAITING_FACULTY -> getFaculty(update, user);
+                case AWAITING_COURSE -> getCourse(update, user);
+                case AWAITING_GROUP -> getGroup(update, user);
+                case AWAITING_REGISTRATION_DATA_CONFIRMATION -> confirmRegistration(update, user);
+            }
         }
     }
 
@@ -77,6 +79,7 @@ public class RegistrationHandler {
             if (BotButtons.BACK_DATA.equals(update.getCallbackQuery().getData())) {
                 if (userService.existsById(user.getId())) {
                     user.setUserState(UserState.MAIN_MENU);
+                    return;
                 }
             }
         }
@@ -85,7 +88,7 @@ public class RegistrationHandler {
                 user,
                 BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.INSTITUTE_SELECTION,
                 KeyBoardFactory.getInstitutesKeyboardInline(instituteList),
-                true);
+                true, update);
         user.setUserState(UserState.AWAITING_FACULTY);
     }
 
@@ -98,7 +101,7 @@ public class RegistrationHandler {
                 user,
                 BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.FACULTY_SELECTION,
                 KeyBoardFactory.getFacultiesKeyboardInline(facultyList),
-                true);
+                true, update);
         user.setUserState(UserState.AWAITING_COURSE);
     }
 
@@ -112,7 +115,7 @@ public class RegistrationHandler {
                 user,
                 BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.COURSE_SELECTION,
                 KeyBoardFactory.getCourseKeyboardInline(courseList),
-                true);
+                true, update);
         user.setUserState(UserState.AWAITING_GROUP);
     }
 
@@ -126,7 +129,7 @@ public class RegistrationHandler {
                 user,
                 BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.GROUP_SELECTION,
                 KeyBoardFactory.getGroupKeyboardInline(groupList),
-                true);
+                true, update);
         user.setUserState(UserState.AWAITING_REGISTRATION_DATA_CONFIRMATION);
     }
 
@@ -144,29 +147,31 @@ public class RegistrationHandler {
             user.setGroup(group);
             userService.save(user);
             user.setUserState(UserState.MAIN_MENU);
+            user.setRegistered(true);
             messageSender.sendMessage(
                     user,
                     BotMessageConstants.REGISTRATION_SUCCESSFUL,
-                    KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU),
-                    true);
+                    KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA),
+                    true, update);
         } else if (BotButtons.NO_DATA.equals(callbackData)) {
             user.setUserState(UserState.AWAITING_INSTITUTE);
             messageSender.sendMessage(
                     user,
                     BotMessageConstants.REGISTRATION_FAILED,
                     KeyBoardFactory.getCustomButton(BotButtons.TRY_AGAIN, BotButtons.TRY_AGAIN),
-                    true);
+                    true, update);
         } else {
             user.getGroup().setName(update.getCallbackQuery().getData());
             messageSender.sendMessage(
                     user,
                     BotMessageConstants.CONFIRM_REGISTRATION_DATA.formatted(callbackData),
                     KeyBoardFactory.getYesOrNoInline(),
-                    true);
+                    true, update);
         }
     }
 
     private void resolveBackButton(Update update, User user) {
+        user.setLastSentMessageId(MessageUtils.getCorrectMessageIdWithOffset(update));
         switch (user.getUserState()) {
             case AWAITING_INSTITUTE -> {
                 if (userService.existsById(user.getId())) {
@@ -178,5 +183,17 @@ public class RegistrationHandler {
                  AWAITING_GROUP,
                  AWAITING_REGISTRATION_DATA_CONFIRMATION -> user.setUserState(UserState.AWAITING_INSTITUTE);
         }
+    }
+    private String getCorrectName(Update update) {
+        String userName = null;
+        if (update.hasMessage()) {
+            if (update.getMessage().isUserMessage()) {
+                userName = "@" +  update.getMessage().getFrom().getUserName();
+            }
+            else if (update.getMessage().isGroupMessage() || update.getMessage().isSuperGroupMessage()) {
+                userName = update.getMessage().getChat().getTitle();
+            }
+        }
+        return userName == null ? "N/A" : userName;
     }
 }

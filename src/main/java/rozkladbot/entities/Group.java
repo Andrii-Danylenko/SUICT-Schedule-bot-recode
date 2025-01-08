@@ -1,5 +1,7 @@
 package rozkladbot.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -7,14 +9,18 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "groups")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Group {
     @Id
+    @JsonProperty("groupNumber")
     private long id;
     @Column(name = "name")
+    @JsonProperty("group")
     private String name;
     @ManyToOne
     private Faculty faculty;
     @Column(name = "course")
+    @JsonProperty("course")
     private long course;
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<User> users;

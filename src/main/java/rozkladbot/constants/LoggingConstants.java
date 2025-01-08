@@ -19,5 +19,15 @@ public class LoggingConstants {
     public static final String SCHEDULE_DUMPED_SUCCESSFULLY = "File {} successfully written";
     public static final String SCHEDULE_DUMPING_SKIPPING_FILE = "File {} has already been dumped. Skipping...";
     public static final String SCHEDULE_CREATE_IF_NOT_EXISTS = "File {} does not exist. Writing began...";
+    public static final String PREDESTROY_USER_SYNC_STARTED = "Started attempt to synchronize local users with DB.";
+    public static final String PREDESTROY_USER_SYNC_FINISHED = "Finished attempt to synchronize local users with DB.";
+    public static final String PREDESTROY_SCHEDULE_SYNC_STARTED = "Started attempt to write schedules to local file.";
+    public static final String PREDESTROY_SCHEDULE_SYNC_FINISHED = "Finished attempt to write schedules to local file.";
+    public static final String SYNCHRONIZATION_STARTED = "Beginning synchronization with following keys: {}.";
+    public static final String SYNCHRONIZATION_FINISHED = "Finished synchronization with following keys: {}.";
+    public static final String APPLICATION_CONTEXT_TERMINATION_STARTED = "Application termination started.";
+    public static final String APPLICATION_CONTEXT_TERMINATION_FINISHED = "Application termination finished.";
+    public static final String USERS_LIST_FILE_FOUND = "File with users found. Trying to migrate...";
+    public static final String USERS_LIST_MIGRATION_FINISHED = "Finished migrating users to DB from local file.";
     private LoggingConstants() {}
 }

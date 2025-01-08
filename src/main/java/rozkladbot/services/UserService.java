@@ -3,6 +3,7 @@ package rozkladbot.services;
 import rozkladbot.entities.User;
 
 import java.util.List;
+import java.util.Set;
 
 public interface UserService {
     List<User> getAll();
@@ -14,4 +15,5 @@ public interface UserService {
     User save(User user);
 
     boolean existsById(long id);
+    Set<Long> getAllUserIds();
 }

@@ -9,13 +9,11 @@ import rozkladbot.constants.AppConstants;
 import rozkladbot.entities.User;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.services.UserService;
+import rozkladbot.telegram.utils.files.writer.LocalFileWriter;
 import rozkladbot.utils.date.DateUtils;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -29,10 +27,15 @@ public class ScheduleDumper {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleDumper.class);
     private final UserService userService;
     private final ScheduleService scheduleService;
+    private final LocalFileWriter localFileWriter;
 
-    public ScheduleDumper(UserService userService, ScheduleService scheduleService) {
+    public ScheduleDumper(
+            UserService userService,
+            ScheduleService scheduleService,
+            LocalFileWriter localFileWriter) {
         this.userService = userService;
         this.scheduleService = scheduleService;
+        this.localFileWriter = localFileWriter;
     }
 
     @Async
@@ -69,36 +72,12 @@ public class ScheduleDumper {
     }
 
     private void prepareForWriting(Path directoryPath, String fileName, User user, LocalDate dateFrom, LocalDate dateTo, boolean isForced) throws IOException, URISyntaxException {
-        if (checkIfAlreadyWritten(directoryPath, fileName, isForced)) {
-            String response;
-            response = scheduleService.getRawSchedule(user, dateFrom, dateTo);
-            writeFile(directoryPath, fileName, response);
+        if (localFileWriter.checkIfAlreadyWritten(directoryPath, fileName, isForced)) {
+            String response = scheduleService.getRawSchedule(user, dateFrom, dateTo);
+            localFileWriter.writeFile(directoryPath, fileName, response);
             logger.info(SCHEDULE_DUMPED_SUCCESSFULLY, fileName);
         } else {
             logger.info(SCHEDULE_DUMPING_SKIPPING_FILE, fileName);
-        }
-    }
-
-    private boolean checkIfAlreadyWritten(Path directoryPath, String fileName, boolean isForced) {
-        Path filePath = directoryPath.resolve(fileName);
-        try {
-            return isForced || DateUtils.instantToLocalDate(
-                            Files.getLastModifiedTime(filePath).toInstant())
-                    .isBefore(DateUtils.getToday().minusDays(1)) ||
-                   AppConstants.MONDAY.equalsIgnoreCase(DateUtils.getFullDayName(DateUtils.getToday()));
-        } catch (IOException exception) {
-            logger.info(SCHEDULE_CREATE_IF_NOT_EXISTS, fileName);
-            return true;
-        }
-    }
-
-    private void writeFile(Path directoryPath, String fileName, String data) throws IOException {
-        if (!Files.exists(directoryPath)) {
-            Files.createDirectories(directoryPath);
-        }
-        Path filePath = directoryPath.resolve(fileName);
-        try (FileOutputStream outputStream = new FileOutputStream(filePath.toFile(), false)) {
-            outputStream.write(data.getBytes(StandardCharsets.UTF_8));
         }
     }
 }

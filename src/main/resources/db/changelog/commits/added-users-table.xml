@@ -10,7 +10,7 @@
                 <constraints primaryKey="true"/>
             </column>
             <column name="username" type="varchar">
-                <constraints unique="true" nullable="false"/>
+                <constraints unique="false" nullable="false"/>
             </column>
             <column name="group_id" type="bigint"/>
         </createTable>
@@ -37,5 +37,13 @@
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+    </changeSet>
+    <changeSet id="6" author="Andrii-Danylenko">
+        <addColumn tableName="users">
+            <column name="last_sent_message_id" type="bigint" defaultValue="0"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="7" author="Andrii-Danylenko">
+        <addNotNullConstraint tableName="users" columnName="group_id"/>
     </changeSet>
 </databaseChangeLog>

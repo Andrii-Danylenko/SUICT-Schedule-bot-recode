@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,26 +16,26 @@
 <div class="content">
     <div class="form-container">
         <form th:action="@{/schedule/get}" th:object="${scheduleForm}" method="post">
-            <label for="institute">Заклад</label>
+            <label for="institute">Інститут</label>
             <select id="institute" name="institute" th:field="*{institute}">
-                <option value="">Выберите институт</option>
+                <option value="">Виберить институт</option>
                 <option th:each="option : ${institutes}" th:value="${option.id}"
                         th:text="${option.instituteName}"></option>
             </select>
 
-            <label for="faculty">Факультет/Інститут</label>
+            <label for="faculty">Факультет</label>
             <select id="faculty" name="faculty" th:field="*{faculty}">
-                <option value="">Выберите факультет</option>
+                <option value="">Виберить факультет</option>
             </select>
 
             <label for="course">Курс</label>
             <select id="course" name="course" th:field="*{course}">
-                <option value="">Выберите курс</option>
+                <option value="">Виберить курс</option>
             </select>
 
             <label for="group">Група</label>
             <select id="group" name="group" th:field="*{group}">
-                <option value="">Выберите группу</option>
+                <option value="">Виберить группу</option>
             </select>
 
             <button type="submit">Завантажити розклад</button>
@@ -53,7 +53,7 @@
                 data: {instituteId: instituteId},
                 success: function (faculties) {
                     console.log("Received faculties:", faculties);
-                    let options = '<option value="">Выберите факультет</option>';
+                    let options = '<option value="">Виберитьь факультет</option>';
                     faculties.forEach(function (faculty) {
                         options += `<option value="${faculty.id}">${faculty.facultyName}</option>`;
                     });
@@ -72,7 +72,7 @@
                 method: 'GET',
                 data: {facultyId: facultyId},
                 success: function (courses) {
-                    let options = '<option value="">Выберите курс</option>';
+                    let options = '<option value="">Виберить курс</option>';
                     courses.forEach(function (course) {
                         options += `<option value="${course}">${course}</option>`;
                     });
@@ -88,7 +88,7 @@
                 method: 'GET',
                 data: {course: course},
                 success: function (groups) {
-                    let options = '<option value="">Выберите группу</option>';
+                    let options = '<option value="">Виберить группу</option>';
                     groups.forEach(function (group) {
                         options += `<option value="${group.id}">${group.name}</option>`;
                     });

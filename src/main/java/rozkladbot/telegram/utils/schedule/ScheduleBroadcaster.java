@@ -68,7 +68,7 @@ public class ScheduleBroadcaster {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.enableHtml(true);
-        sendMessage.setParseMode("html");
+        sendMessage.setParseMode(AppConstants.BOT_MESSAGE_PARSE_MODE);
         try {
             sendMessage.setText(BotMessageConstants.TOMORROW_SCHEDULE + scheduleService.getTomorrowLessons(user));
             int messageToPin = messageSender.executeSilentSender(sendMessage);

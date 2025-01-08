@@ -15,7 +15,7 @@ import rozkladbot.exceptions.RequestCreationFailedException;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.utils.date.DateUtils;
 import rozkladbot.utils.deserializers.LessonDeserializer;
-import rozkladbot.utils.local.file.reader.LocalFileReader;
+import rozkladbot.telegram.utils.files.reader.LocalFileReader;
 import rozkladbot.utils.web.requester.ParamsBuilder;
 import rozkladbot.utils.web.requester.RequesterImpl;
 

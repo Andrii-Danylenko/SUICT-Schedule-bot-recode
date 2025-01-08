@@ -2,6 +2,7 @@ package rozkladbot.telegram.handlers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.constants.BotMessageConstants;
 import rozkladbot.entities.User;
 import rozkladbot.enums.UserState;
@@ -17,12 +18,12 @@ public class NewUsersHandler {
         this.messageSender = messageSender;
     }
 
-    public void sendGreetings(User user) {
+    public void sendGreetings(User user, Update update) {
         messageSender.sendMessage(
                 user,
                 BotMessageConstants.GREETING_MESSAGE + BotMessageConstants.AVAILABLE_USER_COMMANDS,
                 KeyBoardFactory.getCommandsList(),
-                false);
+                false, update);
         user.setUserState(UserState.AWAITING_INSTITUTE);
     }
 }

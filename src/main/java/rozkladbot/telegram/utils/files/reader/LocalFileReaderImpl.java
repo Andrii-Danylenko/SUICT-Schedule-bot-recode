@@ -1,4 +1,4 @@
-package rozkladbot.utils.local.file.reader;
+package rozkladbot.telegram.utils.files.reader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ public class LocalFileReaderImpl implements LocalFileReader {
 
     public String readLocalFile(String pathToFile) {
         try {
-            logger.info(LoggingConstants.STARTED_READING_LOCAL_FILE_MESSAGE + pathToFile);
+            logger.info(LoggingConstants.STARTED_READING_LOCAL_FILE_MESSAGE, pathToFile);
             return Files.readString(Path.of(pathToFile));
         } catch (IOException e) {
             logger.error(LoggingConstants.LOCAL_FILE_READING_FAILED_MESSAGE, e);

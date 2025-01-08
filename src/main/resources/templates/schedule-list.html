@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
 <head>
     <title>Skedy</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
 <div class="tabs">
-    <!-- Генерация заголовков табов -->
     <div class="tab-headers">
         <button th:each="day : ${days}"
                 th:classappend="${day == activeDay} ? 'active'"
@@ -14,8 +13,6 @@
                 th:onclick="'changeTab(\'' + ${day} + '\')'">
         </button>
     </div>
-
-    <!-- Контент табов -->
     <div class="tab-content">
         <div th:each="day : ${days}"
              th:if="${day == activeDay}"

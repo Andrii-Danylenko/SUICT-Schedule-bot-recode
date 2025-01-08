@@ -10,6 +10,7 @@ import rozkladbot.repos.UserRepo;
 import rozkladbot.services.UserService;
 
 import java.util.List;
+import java.util.Set;
 
 @Service("userServiceImpl")
 public class UserServiceImpl implements UserService {
@@ -44,5 +45,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsById(long id) {
         return userRepo.existsById(id);
+    }
+
+    @Override
+    public Set<Long> getAllUserIds() {
+        return userRepo.getAllIds();
     }
 }

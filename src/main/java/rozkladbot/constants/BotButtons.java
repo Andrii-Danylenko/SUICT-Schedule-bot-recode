@@ -7,6 +7,7 @@ public class BotButtons {
     public static final String NO_DATA = "НІ";
     public static final String BACK_DATA = "НЗД";
     public static final String BACK_TO_MENU = "Повернутися в меню";
+    public static final String BACK_TO_MENU_DATA = "/menu";
     public static final String DISABLED_DATA = "DIS";
     public static final String ENABLED_DATA = "ENA";
     public static final String CHANGE_GROUP_DATA = "CG";
