@@ -11,8 +11,8 @@
 	<groupId>rozkladbot</groupId>
 	<artifactId>rozklabbot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rozklabbot</name>
-	<description>rozklabbot</description>
+	<name>Schedule Bot recode</name>
+	<description>New version of schedule helper, implementing many features as persistence etc.</description>
 	<url/>
 	<licenses>
 		<license/>
