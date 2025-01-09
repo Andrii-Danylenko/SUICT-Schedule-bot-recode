@@ -14,4 +14,7 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="4" author="Andrii-Danylenko">
+        <addAutoIncrement tableName="institutes" columnName="id"/>
+    </changeSet>
 </databaseChangeLog>

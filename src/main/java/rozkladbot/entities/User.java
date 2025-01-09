@@ -26,7 +26,7 @@ public class User implements UserDetails {
     @Column(name = "username")
     @JsonProperty("userName")
     private String username;
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne
     @JsonProperty("group")
     @JsonDeserialize(using = GroupDeserializer.class)
     Group group;

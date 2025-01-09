@@ -75,12 +75,13 @@ public class RegistrationHandler {
     }
 
     private void getInstitute(Update update, User user) {
-        if (update.hasCallbackQuery()) {
-            if (BotButtons.BACK_DATA.equals(update.getCallbackQuery().getData())) {
-                if (userService.existsById(user.getId())) {
-                    user.setUserState(UserState.MAIN_MENU);
-                    return;
-                }
+        if (!update.hasCallbackQuery()) {
+            return;
+        }
+        if (BotButtons.BACK_DATA.equals(update.getCallbackQuery().getData())) {
+            if (userService.existsById(user.getId())) {
+                user.setUserState(UserState.MAIN_MENU);
+                return;
             }
         }
         List<Institute> instituteList = instituteService.getAll();
@@ -93,9 +94,10 @@ public class RegistrationHandler {
     }
 
     private void getFaculty(Update update, User user) {
-        if (update.hasCallbackQuery()) {
-            user.getGroup().getFaculty().getInstitute().setInstituteName(update.getCallbackQuery().getData());
+        if (!update.hasCallbackQuery()) {
+            return;
         }
+        user.getGroup().getFaculty().getInstitute().setInstituteName(update.getCallbackQuery().getData());
         List<Faculty> facultyList = facultyService.getFacultiesByInstituteName(update.getCallbackQuery().getData());
         messageSender.sendMessage(
                 user,
@@ -106,9 +108,10 @@ public class RegistrationHandler {
     }
 
     private void getCourse(Update update, User user) {
-        if (update.hasCallbackQuery()) {
-            user.getGroup().getFaculty().setFacultyName(update.getCallbackQuery().getData());
+        if (!update.hasCallbackQuery()) {
+            return;
         }
+        user.getGroup().getFaculty().setFacultyName(update.getCallbackQuery().getData());
         List<String> courseList = groupService.getGroupCourses();
         courseList.sort(String::compareTo);
         messageSender.sendMessage(
@@ -120,9 +123,10 @@ public class RegistrationHandler {
     }
 
     private void getGroup(Update update, User user) {
-        if (update.hasCallbackQuery()) {
-            user.getGroup().setCourse(Long.parseLong(update.getCallbackQuery().getData()));
+        if (!update.hasCallbackQuery()) {
+            return;
         }
+        user.getGroup().setCourse(Long.parseLong(update.getCallbackQuery().getData()));
         List<Group> groupList = groupService.findByFacultyAndCourse(user.getGroup().getFaculty().getFacultyName(), user.getGroup().getCourse());
         groupList.sort(Comparator.comparing(Group::getName));
         messageSender.sendMessage(

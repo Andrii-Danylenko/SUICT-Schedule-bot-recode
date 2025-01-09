@@ -72,7 +72,7 @@ public class RouterImpl implements Router {
             user.getUserState().equals(AWAITING_TODAY_SCHEDULE) ||
             user.getUserState().equals(AWAITING_TOMORROW_SCHEDULE) ||
             user.getUserState().equals(AWAITING_NEXT_WEEK_SCHEDULE)) {
-            scheduleFetchHandler.resolveStates(update, user);
+            scheduleFetchHandler.resolveStates(update, user, override);
         }
         if (user.getUserState().equals(MAIN_MENU)) {
             mainMenuHandler.sendMenu(update, user, override);

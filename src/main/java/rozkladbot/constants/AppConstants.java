@@ -12,6 +12,7 @@ public class AppConstants {
     public static final String DEVELOPER_TG_LINK = "https://t.me/optionalOfNullable";
     public static final String APPLICATION_TIME_ZONE = "Europe/Kyiv";
     public static final String BROADCASTING_CRON = "0 0 19 * * *";
+    public static final String USER_SYNC_CRON = "0 0 4 * * *";
     public static final String DATE_FORMAT = "dd.MM.yyyy";
     public static final String DAY_FORMAT = "EEEE";
     public static final String APP_LOCALE_LANGUAGE = "uk";

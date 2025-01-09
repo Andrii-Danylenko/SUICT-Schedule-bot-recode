@@ -109,7 +109,7 @@ public final class KeyBoardFactory {
         if (!keyboardRow.isEmpty()) {
             buttons.add(keyboardRow);
         }
-        buttons.add(getCustomButtonAsList(BotButtons.BACK, BotButtons.BACK_DATA));
+        buttons.add(getCustomButtonAsList(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA));
         return buttons;
     }
 

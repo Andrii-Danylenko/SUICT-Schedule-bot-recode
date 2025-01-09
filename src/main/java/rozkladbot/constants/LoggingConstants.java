@@ -29,5 +29,7 @@ public class LoggingConstants {
     public static final String APPLICATION_CONTEXT_TERMINATION_FINISHED = "Application termination finished.";
     public static final String USERS_LIST_FILE_FOUND = "File with users found. Trying to migrate...";
     public static final String USERS_LIST_MIGRATION_FINISHED = "Finished migrating users to DB from local file.";
+    public static final String USERS_SYNC_STARTED = "Started attempt to synchronize local users with DB.";
+    public static final String USERS_SYNC_FINISHED = "Finished attempt to synchronize local users with DB.";
     private LoggingConstants() {}
 }

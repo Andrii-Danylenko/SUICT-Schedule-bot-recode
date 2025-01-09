@@ -24,8 +24,7 @@ public class GroupServiceTest {
     @Test
     @Transactional
     void testGetFacultyByNameAndCourse() {
-        List<Group> groups = groupService.findByFacultyAndCourse("Fac1", 1);
-        System.out.println(groups);
+        List<Group> groups = groupService.findByFacultyAndCourse("Факультет IT", 1);
         Assertions.assertFalse(groups.isEmpty());
     }
 }

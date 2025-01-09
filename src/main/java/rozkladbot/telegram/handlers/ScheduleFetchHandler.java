@@ -23,7 +23,7 @@ public class ScheduleFetchHandler {
         this.messageSender = messageSender;
     }
 
-    public void resolveStates(Update update, User user) {
+    public void resolveStates(Update update, User user, boolean override) {
         try {
             ScheduleTable scheduleTable;
             String messageToSend = BotMessageConstants.GET_SCHEDULE_ATTEMPT;
@@ -31,7 +31,7 @@ public class ScheduleFetchHandler {
                     user,
                     messageToSend,
                     null,
-                    true,
+                    override,
                     update);
             switch (user.getUserState()) {
                 case AWAITING_TODAY_SCHEDULE -> {
