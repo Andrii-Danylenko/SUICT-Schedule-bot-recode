@@ -7,20 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rozkladbot.entities.User;
 import rozkladbot.services.UserService;
-import rozkladbot.telegram.caching.SimpleUserCache;
+import rozkladbot.telegram.caching.UserCache;
 import rozkladbot.telegram.utils.schedule.ScheduleDumper;
 
 @Component("localDataSynchronizer")
 public class LocalDataSynchronizer {
     private static final Logger logger = LoggerFactory.getLogger(LocalDataSynchronizer.class);
     private final UserService userService;
-    private final SimpleUserCache localUserCache;
+    private final UserCache localUserCache;
     private final ScheduleDumper scheduleDumper;
 
     @Autowired
     public LocalDataSynchronizer(
             UserService userService,
-            SimpleUserCache localUserCache,
+            UserCache localUserCache,
             ScheduleDumper scheduleDumper) {
         this.userService = userService;
         this.localUserCache = localUserCache;

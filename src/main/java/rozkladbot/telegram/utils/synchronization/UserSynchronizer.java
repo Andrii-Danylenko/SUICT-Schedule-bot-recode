@@ -10,18 +10,18 @@ import rozkladbot.constants.AppConstants;
 import rozkladbot.constants.LoggingConstants;
 import rozkladbot.entities.User;
 import rozkladbot.services.UserService;
-import rozkladbot.telegram.caching.SimpleUserCache;
+import rozkladbot.telegram.caching.UserCache;
 
 import java.util.Set;
 
 @Component("userSynchronizer")
 public class UserSynchronizer {
     private static final Logger logger = LoggerFactory.getLogger(UserSynchronizer.class);
-    private final SimpleUserCache userCache;
+    private final UserCache userCache;
     private final UserService userService;
 
     @Autowired
-    public UserSynchronizer(SimpleUserCache userCache, UserService userService) {
+    public UserSynchronizer(UserCache userCache, UserService userService) {
         this.userCache = userCache;
         this.userService = userService;
     }

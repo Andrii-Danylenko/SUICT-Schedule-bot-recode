@@ -14,7 +14,7 @@ import rozkladbot.constants.LoggingConstants;
 import rozkladbot.entities.User;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.services.UserService;
-import rozkladbot.telegram.caching.SimpleUserCache;
+import rozkladbot.telegram.caching.UserCache;
 import rozkladbot.telegram.utils.message.MessageSender;
 
 import java.util.Set;
@@ -24,27 +24,27 @@ import java.util.concurrent.CompletableFuture;
 public class ScheduleBroadcaster {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleBroadcaster.class);
     private final MessageSender messageSender;
-    private final SimpleUserCache simpleUserCache;
+    private final UserCache userCache;
     private final ScheduleService scheduleService;
     private final UserService userService;
 
     @Autowired
     public ScheduleBroadcaster(
             MessageSender messageSender,
-            SimpleUserCache simpleUserCache,
+            UserCache userCache,
             ScheduleService scheduleService,
             UserService userService) {
         this.messageSender = messageSender;
-        this.simpleUserCache = simpleUserCache;
+        this.userCache = userCache;
         this.scheduleService = scheduleService;
         this.userService = userService;
     }
 
-    @Scheduled(cron = AppConstants.BROADCASTING_CRON, zone = AppConstants.APPLICATION_TIME_ZONE)
+    @Scheduled(cron = "0 0 19 * * *", zone = AppConstants.APPLICATION_TIME_ZONE)
     public void broadcastAndPinTomorrowSchedule() {
         logger.info(LoggingConstants.BEGIN_BROADCAST_MESSAGE);
         try {
-            Set<User> users = simpleUserCache.getAll();
+            Set<User> users = userCache.getAll();
             CompletableFuture<?>[] futures = users.stream()
                     .filter(User::isBroadcasted)
                     .map(user -> CompletableFuture.runAsync(() -> processUser(user.getId(), user)))
@@ -80,6 +80,7 @@ public class ScheduleBroadcaster {
         } catch (Exception exception) {
             logger.error(ErrorConstants.MESSAGE_CANNOT_BE_PINNED);
             sendMessage.setText(BotMessageConstants.BROADCASTING_FAILED);
+            messageSender.executeSilentSender(sendMessage);
         }
     }
 }

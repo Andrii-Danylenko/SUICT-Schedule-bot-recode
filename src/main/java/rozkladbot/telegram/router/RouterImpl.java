@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.entities.User;
-import rozkladbot.telegram.caching.SimpleUserCache;
+import rozkladbot.telegram.caching.UserCache;
 import rozkladbot.telegram.handlers.*;
 import rozkladbot.telegram.utils.message.MessageUtils;
 
@@ -14,7 +14,7 @@ import static rozkladbot.enums.UserState.*;
 public class RouterImpl implements Router {
     private final RegistrationHandler registrationHandler;
     private final NewUsersHandler newUsersHandler;
-    private final SimpleUserCache userCache;
+    private final UserCache userCache;
     private final MainMenuHandler mainMenuHandler;
     private final CommandsResolver commandsResolver;
     private final SettingsHandler settingHandler;
@@ -25,7 +25,7 @@ public class RouterImpl implements Router {
     public RouterImpl(
             CommandsResolver commandsResolver,
             RegistrationHandler registrationHandler,
-            SimpleUserCache userCache,
+            UserCache userCache,
             NewUsersHandler newUsersHandler,
             MainMenuHandler mainMenuHandler,
             SettingsHandler settingHandler,

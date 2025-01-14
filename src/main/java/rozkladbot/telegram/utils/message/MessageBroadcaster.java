@@ -11,12 +11,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component("messageBroadcaster")
-public class MessageBroadCaster {
+public class MessageBroadcaster {
     private final MessageSender messageSender;
     private final UserService userService;
 
     @Autowired
-    public MessageBroadCaster(
+    public MessageBroadcaster(
             MessageSender messageSender,
             UserService userService
     ) {

@@ -9,18 +9,18 @@ import rozkladbot.constants.LoggingConstants;
 import rozkladbot.entities.User;
 import rozkladbot.enums.UserState;
 import rozkladbot.services.UserService;
-import rozkladbot.telegram.caching.SimpleUserCache;
+import rozkladbot.telegram.caching.UserCache;
 
 import java.util.List;
 
 @Component
 public class Bootstrapper {
     private static final Logger logger = LoggerFactory.getLogger(Bootstrapper.class);
-    private final SimpleUserCache userCache;
+    private final UserCache userCache;
     private final UserService userService;
 
     @Autowired
-    public Bootstrapper(SimpleUserCache userCache, UserService userService) {
+    public Bootstrapper(UserCache userCache, UserService userService) {
         this.userCache = userCache;
         this.userService = userService;
     }

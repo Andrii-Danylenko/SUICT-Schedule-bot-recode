@@ -9,7 +9,7 @@ import rozkladbot.entities.User;
 import rozkladbot.services.UserService;
 import rozkladbot.telegram.factories.KeyBoardFactory;
 import rozkladbot.telegram.shutdown.SessionShutdownManager;
-import rozkladbot.telegram.utils.message.MessageBroadCaster;
+import rozkladbot.telegram.utils.message.MessageBroadcaster;
 import rozkladbot.telegram.utils.message.MessageSender;
 import rozkladbot.telegram.utils.synchronization.LocalDataSynchronizer;
 
@@ -21,7 +21,7 @@ public class AdminCommandsHandler {
     private final MessageSender messageSender;
     private final SessionShutdownManager sessionShutdownManager;
     private final LocalDataSynchronizer localDataSynchronizer;
-    private final MessageBroadCaster messageBroadCaster;
+    private final MessageBroadcaster messageBroadCaster;
 
     @Autowired
     public AdminCommandsHandler(
@@ -29,7 +29,7 @@ public class AdminCommandsHandler {
             MessageSender messageSender,
             SessionShutdownManager sessionShutdownManager,
             LocalDataSynchronizer localDataSynchronizer,
-            MessageBroadCaster messageBroadCaster
+            MessageBroadcaster messageBroadCaster
     ) {
         this.userService = userService;
         this.messageSender = messageSender;
