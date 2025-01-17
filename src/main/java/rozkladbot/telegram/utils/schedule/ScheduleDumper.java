@@ -65,13 +65,13 @@ public class ScheduleDumper {
                         DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(14),
                         isForced);
                 alreadyDumpedGroups.add(groupNumber);
-            } catch (IOException | URISyntaxException e) {
+            } catch (IOException | URISyntaxException | InterruptedException e) {
                 logger.error(SCHEDULE_DUMPING_FAILED, user.getId(), e);
             }
         });
     }
 
-    private void prepareForWriting(Path directoryPath, String fileName, User user, LocalDate dateFrom, LocalDate dateTo, boolean isForced) throws IOException, URISyntaxException {
+    private void prepareForWriting(Path directoryPath, String fileName, User user, LocalDate dateFrom, LocalDate dateTo, boolean isForced) throws IOException, URISyntaxException, InterruptedException {
         if (localFileWriter.checkIfAlreadyWritten(directoryPath, fileName, isForced)) {
             String response = scheduleService.getRawSchedule(user, dateFrom, dateTo);
             localFileWriter.writeFile(directoryPath, fileName, response);

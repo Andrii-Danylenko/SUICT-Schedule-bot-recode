@@ -4,15 +4,14 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component("simpleCache")
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public abstract class SimpleCache<K, V> {
-    protected final Map<K, V> localCache = new HashMap<>();
+    protected final ConcurrentHashMap<K, V> localCache = new ConcurrentHashMap<>();
 
     public V get(K key) {
         return localCache.get(key);
@@ -34,7 +33,7 @@ public abstract class SimpleCache<K, V> {
         return localCache.containsKey(key);
     }
 
-    public Set<V> getAll() {
+    public Set<V> getAllValues() {
         return new HashSet<>(localCache.values());
     }
 

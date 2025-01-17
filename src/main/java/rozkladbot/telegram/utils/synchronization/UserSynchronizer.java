@@ -30,7 +30,7 @@ public class UserSynchronizer {
     @Scheduled(cron = AppConstants.USER_SYNC_CRON, zone = AppConstants.APPLICATION_TIME_ZONE)
     public void saveLocalUsers() {
         logger.info(LoggingConstants.USERS_SYNC_STARTED);
-        Set<User> userSet = userCache.getAll();
+        Set<User> userSet = userCache.getAllValues();
         for (User user : userSet) {
             userService.save(user);
         }

@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 import rozkladbot.constants.ErrorConstants;
 import rozkladbot.exceptions.EmptyRequestParametersException;
 
-import java.io.ByteArrayOutputStream;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -28,13 +28,19 @@ public class RequesterImpl implements Requester {
     }
 
     @Override
-    public String makeRequest(Map<String, String> params) throws IOException, URISyntaxException {
+    public String makeRequest(Map<String, String> params) throws IOException, URISyntaxException, InterruptedException {
         if (params.isEmpty()) {
             logger.error(ErrorConstants.PARAMS_ARE_EMPTY);
             throw new EmptyRequestParametersException(ErrorConstants.PARAMS_ARE_EMPTY);
         }
         String requestLink = buildLink(params);
-        return makeRequest(requestLink);
+        URL url = new URI(requestLink).toURL();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(30000);
+        connection.setReadTimeout(30000);
+        return readRequest(connection);
     }
 
     private String buildLink(Map<String, String> params) {
@@ -45,28 +51,16 @@ public class RequesterImpl implements Requester {
         return link.toString();
     }
 
-    private String makeRequest(String requestLink) throws IOException, URISyntaxException {
-        HttpURLConnection connection = buildConnection(requestLink);
-        return readResponse(connection);
-    }
-
-    private HttpURLConnection buildConnection(String requestLink) throws IOException, URISyntaxException {
-        URL url = new URI(requestLink).toURL();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setConnectTimeout(REQUEST_TIMEOUT * 1000);
-        connection.setReadTimeout(REQUEST_TIMEOUT * 1000);
-        return connection;
-    }
-
-    // This shit is fast AF. I love buffers
-    private String readResponse(HttpURLConnection connection) throws IOException {
-        InputStream inputStream = connection.getInputStream();
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        for (int length; (length = inputStream.read(buffer)) != -1; ) {
-            result.write(buffer, 0, length);
+    private String readRequest(HttpsURLConnection connection) throws IOException {
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
         }
-        return result.toString();
+        in.close();
+        connection.disconnect();
+        return content.toString();
     }
 }
