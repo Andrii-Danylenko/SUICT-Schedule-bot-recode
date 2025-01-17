@@ -83,7 +83,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return params;
     }
 
-    public String getRawSchedule(User user, LocalDate startDate, LocalDate endDate) throws IOException, URISyntaxException {
+    public String getRawSchedule(User user, LocalDate startDate, LocalDate endDate) throws IOException, URISyntaxException, InterruptedException {
         HashMap<String, String> params = paramsBuilder.build(user);
         params.put("dateFrom", DateUtils.getDateAsString(startDate));
         params.put("dateTo", DateUtils.getDateAsString(endDate));
@@ -122,8 +122,11 @@ public class ScheduleServiceImpl implements ScheduleService {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return requester.makeRequest(params);
-            } catch (IOException | URISyntaxException e) {
+            } catch (IOException | URISyntaxException | InterruptedException e) {
                 logger.error(REQUEST_CREATION_FAILED);
+                if (!user.getUserState().equals(UserState.AWAITING_NEXT_WEEK_SCHEDULE)) {
+                    user.setUserState(UserState.AWAITING_THIS_WEEK_SCHEDULE);
+                }
                 throw new RequestCreationFailedException(REQUEST_CREATION_FAILED);
             }
         }, Executors.newSingleThreadExecutor()).exceptionally((ex) -> {
@@ -142,6 +145,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             } else {
                 result = "null";
             }
+            user.setUserState(UserState.IDLE);
             return result;
         }).thenApply(lessonDeserializer::deserialize).get();
     }

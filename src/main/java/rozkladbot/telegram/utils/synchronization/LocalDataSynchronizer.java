@@ -43,7 +43,7 @@ public class LocalDataSynchronizer {
     }
 
     private synchronized void synchronizeUsers() {
-        for (User user : localUserCache.getAll()) {
+        for (User user : localUserCache.getAllValues()) {
             userService.save(user);
         }
     }

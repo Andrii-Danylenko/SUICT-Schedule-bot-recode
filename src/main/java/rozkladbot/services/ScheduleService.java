@@ -17,5 +17,5 @@ public interface ScheduleService {
 
     ScheduleTable getNextWeekLessons(User user) throws ExecutionException, InterruptedException;
 
-    String getRawSchedule(User user, LocalDate startDate, LocalDate endDate) throws IOException, URISyntaxException;
+    String getRawSchedule(User user, LocalDate startDate, LocalDate endDate) throws IOException, URISyntaxException, InterruptedException;
 }

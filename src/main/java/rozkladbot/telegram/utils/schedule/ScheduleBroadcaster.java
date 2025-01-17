@@ -19,6 +19,8 @@ import rozkladbot.telegram.utils.message.MessageSender;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component("scheduleBroadcaster")
 public class ScheduleBroadcaster {
@@ -40,11 +42,11 @@ public class ScheduleBroadcaster {
         this.userService = userService;
     }
 
-    @Scheduled(cron = "0 0 19 * * *", zone = AppConstants.APPLICATION_TIME_ZONE)
+    @Scheduled(cron = AppConstants.BROADCASTING_CRON, zone = AppConstants.APPLICATION_TIME_ZONE)
     public void broadcastAndPinTomorrowSchedule() {
         logger.info(LoggingConstants.BEGIN_BROADCAST_MESSAGE);
         try {
-            Set<User> users = userCache.getAll();
+            Set<User> users = userCache.getAllValues();
             CompletableFuture<?>[] futures = users.stream()
                     .filter(User::isBroadcasted)
                     .map(user -> CompletableFuture.runAsync(() -> processUser(user.getId(), user)))
@@ -78,6 +80,7 @@ public class ScheduleBroadcaster {
             userService.save(user);
             logger.info(LoggingConstants.MESSAGE_PINNED_SUCCESSFULLY, chatId);
         } catch (Exception exception) {
+            logger.error(exception.getMessage(), exception);
             logger.error(ErrorConstants.MESSAGE_CANNOT_BE_PINNED);
             sendMessage.setText(BotMessageConstants.BROADCASTING_FAILED);
             messageSender.executeSilentSender(sendMessage);

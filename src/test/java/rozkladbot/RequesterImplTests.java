@@ -18,7 +18,7 @@ public class RequesterImplTests {
 
 
     @Test
-    void validRequestTest() throws IOException, URISyntaxException {
+    void validRequestTest() throws IOException, URISyntaxException, InterruptedException {
         String result = requester.makeRequest(params);
         Assertions.assertFalse(result.isEmpty());
         System.out.println(result);

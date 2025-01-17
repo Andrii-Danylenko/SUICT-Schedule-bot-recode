@@ -22,7 +22,7 @@ public class JsonObjectMapperTest {
     private static final HashMap<String, String> params = getParams();
 
     @Test
-    public void testJsonObjectMapper() throws IOException, URISyntaxException {
+    public void testJsonObjectMapper() throws IOException, URISyntaxException, InterruptedException {
         String json = requester.makeRequest(params);
         List<Lesson> lessons = lessonDeserializer.deserialize(json);
         Assertions.assertFalse(lessons.isEmpty());
