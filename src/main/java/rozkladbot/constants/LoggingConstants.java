@@ -13,9 +13,9 @@ public class LoggingConstants {
     public static final String TRYING_TO_PIN_MESSAGE = "Attempting to pin user's (id: {}) message...";
     public static final String MESSAGE_PINNED_SUCCESSFULLY = "Attempt to pin user's (id: {}) message finished successfully.";
     public static final String SCHEDULE_DUMPING_BEGAN = "Attempting to create local copy of schedule tables...";
-    public static final String SCHEDULE_DUMPING_BEGAN_FOR_USER =
-            "Attempting to create local copy of schedule for user {}. His group id: {} and group name: {}.";
-    public static final String SCHEDULE_DUMPING_FAILED = "Failed to dump schedule for user with id: {}.";
+    public static final String SCHEDULE_DUMPING_BEGAN_FOR_GROUP =
+            "Attempting to create local copy of schedule for group. It's group id: {} and group name: {}.";
+    public static final String SCHEDULE_DUMPING_FAILED = "Failed to dump schedule for group with id: {}.";
     public static final String SCHEDULE_DUMPED_SUCCESSFULLY = "File {} successfully written";
     public static final String SCHEDULE_DUMPING_SKIPPING_FILE = "File {} has already been dumped. Skipping...";
     public static final String SCHEDULE_CREATE_IF_NOT_EXISTS = "File {} does not exist. Writing began...";

@@ -35,68 +35,12 @@
 
             <label for="group">Група</label>
             <select id="group" name="group" th:field="*{group}">
-                <option value="">Виберить группу</option>
+                <option value="">Виберить групу</option>
             </select>
-
-            <button type="submit">Завантажити розклад</button>
+            <button id="submitButton" type="submit">Завантажити розклад</button>
         </form>
     </div>
 </div>
-<script>
-    $(document).ready(function () {
-        $('#institute').change(function () {
-            const instituteId = $(this).val();
-            console.log("Selected instituteId:", instituteId);
-            $.ajax({
-                url: '/schedule/faculties',
-                method: 'GET',
-                data: {instituteId: instituteId},
-                success: function (faculties) {
-                    console.log("Received faculties:", faculties);
-                    let options = '<option value="">Виберитьь факультет</option>';
-                    faculties.forEach(function (faculty) {
-                        options += `<option value="${faculty.id}">${faculty.facultyName}</option>`;
-                    });
-                    $('#faculty').html(options);
-                },
-                error: function (error) {
-                    console.error("Error fetching faculties:", error);
-                }
-            });
-        });
-
-        $('#faculty').change(function () {
-            const facultyId = $(this).val();
-            $.ajax({
-                url: '/schedule/courses',
-                method: 'GET',
-                data: {facultyId: facultyId},
-                success: function (courses) {
-                    let options = '<option value="">Виберить курс</option>';
-                    courses.forEach(function (course) {
-                        options += `<option value="${course}">${course}</option>`;
-                    });
-                    $('#course').html(options);
-                }
-            });
-        });
-
-        $('#course').change(function () {
-            const course = $(this).val();
-            $.ajax({
-                url: '/schedule/groups',
-                method: 'GET',
-                data: {course: course},
-                success: function (groups) {
-                    let options = '<option value="">Виберить группу</option>';
-                    groups.forEach(function (group) {
-                        options += `<option value="${group.id}">${group.name}</option>`;
-                    });
-                    $('#group').html(options);
-                }
-            });
-        });
-    });
-</script>
+<script th:src="@{/js/login-page-menu.js}"></script>
 </body>
 </html>

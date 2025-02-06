@@ -1,5 +1,6 @@
 package rozkladbot.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import rozkladbot.utils.deserializers.LocalDateDeserializer;
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Lesson {
     @JsonProperty("date")
     @JsonDeserialize(using = LocalDateDeserializer.class)
@@ -26,6 +28,8 @@ public class Lesson {
     private String lectorFullName;
     @JsonProperty("whoShort")
     private String lectorShortName;
+    @JsonProperty("pairTime")
+    private String pairTime;
 
     public Lesson(
             LocalDate date,
@@ -94,10 +98,6 @@ public class Lesson {
         this.date = date;
     }
 
-    public void setPairNumber(String pairNumber) {
-        this.pairNumber = pairNumber;
-    }
-
     public void setCabinet(String cabinet) {
         this.cabinet = cabinet;
     }
@@ -125,6 +125,7 @@ public class Lesson {
     public void setType(String type) {
         this.type = type;
     }
+
     public static String getPairTime(String pairNumber) {
         return switch (pairNumber) {
             case "1" -> "8:00-9:35";
@@ -148,5 +149,18 @@ public class Lesson {
     @Override
     public int hashCode() {
         return Objects.hash(date, pairNumber, type, cabinet, lessonShortName, lessonFullName, lectorFullName, lectorShortName);
+    }
+
+    public void setPairNumber(String pairNumber) {
+        this.pairNumber = pairNumber;
+        this.pairTime = getPairTime(pairNumber); // Заполняем автоматически
+    }
+
+    @JsonProperty("pairTime")
+    public String getPairTime() {
+        if (pairTime == null && pairNumber != null) {
+            pairTime = getPairTime(pairNumber);
+        }
+        return pairTime;
     }
 }

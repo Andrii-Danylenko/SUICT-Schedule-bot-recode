@@ -71,4 +71,9 @@ public class GroupServiceImpl implements GroupService {
                 .boxed()
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Group> findByFacultyIdAndCourse(long facultyId, long course) {
+        return groupRepo.findByIdAndCourse(facultyId, course);
+    }
 }

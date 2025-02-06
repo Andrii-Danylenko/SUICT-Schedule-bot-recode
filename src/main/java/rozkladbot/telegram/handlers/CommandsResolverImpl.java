@@ -43,6 +43,9 @@ public class CommandsResolverImpl implements CommandsResolver {
             case "/menu", "/menu@rozkad_bot" -> {
                 user.setUserState(UserState.MAIN_MENU);
             }
+            case "/custom", "/custom@rozkad_bot" -> {
+                user.setUserState(UserState.AWAITING_CUSTOM_SCHEDULE_QUERY);
+            }
         }
         if (user.getUserRole().equals(UserRole.ADMIN)) {
             if ("/viewUsers".equalsIgnoreCase(text)) {

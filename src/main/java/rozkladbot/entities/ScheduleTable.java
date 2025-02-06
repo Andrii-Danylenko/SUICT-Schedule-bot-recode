@@ -1,14 +1,16 @@
 package rozkladbot.entities;
 
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class ScheduleTable {
-    private List<Day> days;
+    private Deque<Day> days;
 
     public ScheduleTable() {
+        days = new ArrayDeque<>();
     }
 
-    public ScheduleTable(List<Day> days) {
+    public ScheduleTable(Deque<Day> days) {
         this.days = days;
     }
 
@@ -22,7 +24,10 @@ public class ScheduleTable {
         return builder.toString();
     }
 
-    public List<Day> getDays() {
+    public Deque<Day> getDays() {
         return days;
+    }
+    public void setDays(Deque<Day> days) {
+        this.days = days;
     }
 }

@@ -1,7 +1,7 @@
 package rozkladbot.utils.deserializers;
 
-import java.util.List;
+import java.util.Deque;
 
 public interface JsonDeserializer<T> {
-    List<T> deserialize(String json);
+    Deque<T> deserialize(String json);
 }

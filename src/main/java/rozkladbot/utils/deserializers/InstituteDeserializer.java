@@ -12,7 +12,7 @@ import rozkladbot.constants.AppConstants;
 import rozkladbot.constants.ErrorConstants;
 import rozkladbot.entities.Institute;
 
-import java.util.List;
+import java.util.Deque;
 
 @Component("InstituteDeserializer")
 public class InstituteDeserializer implements JsonDeserializer<Institute> {
@@ -26,7 +26,7 @@ public class InstituteDeserializer implements JsonDeserializer<Institute> {
 
 
     @Override
-    public List<Institute> deserialize(String json) {
+    public Deque<Institute> deserialize(String json) {
         try {
             JsonNode jsonNode = mapper.readTree(json).get(AppConstants.JSON_TREE_GROUPS_OBJECT_NAME);
             return mapper.readValue(jsonNode.toString(), new TypeReference<>() {

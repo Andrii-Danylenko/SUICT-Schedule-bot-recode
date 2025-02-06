@@ -1,5 +1,6 @@
 package rozkladbot.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import rozkladbot.constants.AppConstants;
 import rozkladbot.constants.EmojiList;
 import rozkladbot.utils.date.DateUtils;
@@ -9,8 +10,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class Day {
+    @JsonProperty("dayOfWeek")
     private String dayOfWeek;
+    @JsonProperty("date")
     private LocalDate day;
+    @JsonProperty("lessons")
     private List<Lesson> lessons;
 
     public Day(String dayOfWeek, LocalDate day, List<Lesson> lessons) {
@@ -64,10 +68,6 @@ public class Day {
                '}';
     }
 
-    public boolean isStub() {
-        return lessons == null;
-    }
-
     public String toStringIfMany() {
         boolean hasPairs = false;
         StringBuilder builder = new StringBuilder();
@@ -86,7 +86,6 @@ public class Day {
                     clazz.getLessonFullName(),
                     clazz.getType()));
         }
-        System.out.println(hasPairs);
         return hasPairs ? builder.toString() : builder.append(
                 AppConstants.HOORAY_FREE_DAY.formatted(EmojiList.HAPPY, EmojiList.BEER)
         ).toString();
@@ -120,7 +119,6 @@ public class Day {
                     EmojiList.ROOM,
                     clazz.getCabinet()));
         }
-        System.out.println(hasPairs);
         return hasPairs ? builder.toString() : builder.append(
                         AppConstants.HOORAY_FREE_DAY.formatted(EmojiList.HAPPY, EmojiList.BEER))
                 .toString();
@@ -136,5 +134,9 @@ public class Day {
             case 6 -> "(6 пар)";
             default -> "(пар немає)";
         };
+    }
+
+    public String getDayOfWeek() {
+        return dayOfWeek;
     }
 }

@@ -9,11 +9,15 @@ import rozkladbot.entities.ScheduleTable;
 import rozkladbot.entities.User;
 import rozkladbot.enums.Command;
 import rozkladbot.enums.UserState;
+import rozkladbot.exceptions.CustomScheduleFetchException;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.telegram.factories.KeyBoardFactory;
 import rozkladbot.telegram.utils.delayed.executor.DelayedCommandCache;
 import rozkladbot.telegram.utils.message.MessageSender;
+import rozkladbot.utils.date.DateUtils;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
 @Component
@@ -34,6 +38,7 @@ public class ScheduleFetchHandler {
     public void resolveStates(Update update, User user, boolean override) {
         DelayedCommand delayedCommand = null;
         try {
+            boolean isCustom = false;
             ScheduleTable scheduleTable;
             String messageToSend = BotMessageConstants.GET_SCHEDULE_ATTEMPT;
             messageSender.sendMessage(
@@ -45,32 +50,82 @@ public class ScheduleFetchHandler {
             switch (user.getUserState()) {
                 case AWAITING_TODAY_SCHEDULE -> {
                     delayedCommand = new DelayedCommand(Command.GET_TODAY_SCHEDULE);
-                    scheduleTable = getThisDaySchedule(user);
-                    messageToSend = BotMessageConstants.TODAY_SCHEDULE;
+                    scheduleTable = scheduleService.getTodayLessons(user);
+                    messageToSend = BotMessageConstants.TODAY_SCHEDULE + scheduleTable.toString();
+                    user.setUserState(UserState.IDLE);
                 }
                 case AWAITING_TOMORROW_SCHEDULE -> {
                     delayedCommand = new DelayedCommand(Command.GET_TOMORROW_SCHEDULE);
-                    scheduleTable = getTomorrowSchedule(user);
-                    messageToSend = BotMessageConstants.TOMORROW_SCHEDULE;
+                    scheduleTable = scheduleService.getTomorrowLessons(user);
+                    messageToSend = BotMessageConstants.TOMORROW_SCHEDULE + scheduleTable.toString();
+                    user.setUserState(UserState.IDLE);
                 }
                 case AWAITING_THIS_WEEK_SCHEDULE -> {
                     delayedCommand = new DelayedCommand(Command.GET_THIS_WEEK_SCHEDULE);
-                    scheduleTable = getThisWeekSchedule(user);
-                    messageToSend = BotMessageConstants.WEEKLY_SCHEDULE;
+                    scheduleTable = scheduleService.getWeeklyLessons(user);
+                    messageToSend = BotMessageConstants.WEEKLY_SCHEDULE + scheduleTable.toString();
+                    user.setUserState(UserState.IDLE);
+                }
+                case UserState.AWAITING_CUSTOM_SCHEDULE_QUERY -> {
+                    messageToSend = BotMessageConstants.CUSTOM_SCHEDULE_QUERY_EXAMPLE
+                            .formatted(
+                                    user.getGroup().getName(),
+                                    DateUtils.getTodayDateString(),
+                                    DateUtils.getDateAsString(DateUtils.getToday().plusDays(7)));
+                    user.setUserState(UserState.AWAITING_CUSTOM_SCHEDULE);
+                }
+                case AWAITING_CUSTOM_SCHEDULE -> {
+                    scheduleTable = scheduleService.getScheduleWithCustomParameters(user, update);
+                    int scheduleTableSize = scheduleTable.getDays().size();
+                    int i = 0;
+                    do {
+                        messageSender.sendMessage(
+                                user,
+                                scheduleService.splitBigTableIntoSmall(scheduleTable).toString(),
+                                null,
+                                i == 0,
+                                update);
+                        i++;
+                    } while (scheduleTable.getDays().size() > 7);
+                    if (!scheduleTable.getDays().isEmpty() && scheduleTableSize > 7) {
+                        messageSender.sendMessage(
+                                user,
+                                scheduleService.splitBigTableIntoSmall(scheduleTable).toString(),
+                                null,
+                                false,
+                                update);
+                    }
+                    messageSender.sendMessage(
+                            user,
+                            BotMessageConstants.BACK_TO_MENU,
+                            KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA),
+                            false,
+                            update);
+                    isCustom = true;
+                    user.setUserState(UserState.IDLE);
+                }
+                case AWAITING_NEXT_WEEK_SCHEDULE -> {
+                    delayedCommand = new DelayedCommand(Command.GET_NEXT_WEEK_SCHEDULE);
+                    scheduleTable = scheduleService.getNextWeekLessons(user);
+                    messageToSend = BotMessageConstants.NEXT_WEEK_SCHEDULE + scheduleTable.toString();
+                    user.setUserState(UserState.IDLE);
                 }
                 default -> {
-                    delayedCommand = new DelayedCommand(Command.GET_NEXT_WEEK_SCHEDULE);
-                    scheduleTable = getNextWeekSchedule(user);
-                    messageToSend = BotMessageConstants.NEXT_WEEK_SCHEDULE;
+                    messageToSend = BotMessageConstants.UNRESOLVED_USER_STATE;
+                    user.setUserState(UserState.IDLE);
                 }
             }
-            messageSender.sendMessage(
-                    user,
-                    messageToSend + scheduleTable.toString(),
-                    KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA),
-                    true,
-                    update);
-        } catch (ExecutionException | InterruptedException e) {
+            if (!isCustom) {
+                messageSender.sendMessage(
+                        user,
+                        messageToSend,
+                        KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA),
+                        true,
+                        update);
+            }
+
+        } catch (ExecutionException | InterruptedException | URISyntaxException | CustomScheduleFetchException |
+                 IOException e) {
             if (delayedCommand != null) {
                 // Just in case Telegram API throws an exception into me
                 delayedCommandCache.add(user.getId(), delayedCommand);
@@ -81,23 +136,7 @@ public class ScheduleFetchHandler {
                     KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA),
                     true,
                     update);
+            user.setUserState(UserState.IDLE);
         }
-        user.setUserState(UserState.IDLE);
-    }
-
-    private ScheduleTable getThisDaySchedule(User user) throws ExecutionException, InterruptedException {
-        return scheduleService.getTodayLessons(user);
-    }
-
-    private ScheduleTable getTomorrowSchedule(User user) throws ExecutionException, InterruptedException {
-        return scheduleService.getTomorrowLessons(user);
-    }
-
-    private ScheduleTable getThisWeekSchedule(User user) throws ExecutionException, InterruptedException {
-        return scheduleService.getWeeklyLessons(user);
-    }
-
-    private ScheduleTable getNextWeekSchedule(User user) throws ExecutionException, InterruptedException {
-        return scheduleService.getNextWeekLessons(user);
     }
 }

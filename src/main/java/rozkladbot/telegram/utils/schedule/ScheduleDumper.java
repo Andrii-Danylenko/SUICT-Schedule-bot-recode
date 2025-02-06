@@ -6,11 +6,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import rozkladbot.constants.AppConstants;
-import rozkladbot.entities.User;
-import rozkladbot.services.ScheduleService;
-import rozkladbot.services.UserService;
+import rozkladbot.entities.Group;
+import rozkladbot.services.GroupService;
 import rozkladbot.telegram.utils.files.writer.LocalFileWriter;
 import rozkladbot.utils.date.DateUtils;
+import rozkladbot.utils.web.requester.ParamsBuilder;
+import rozkladbot.utils.web.requester.Requester;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static rozkladbot.constants.LoggingConstants.*;
@@ -25,17 +27,21 @@ import static rozkladbot.constants.LoggingConstants.*;
 @Component("scheduleDumper")
 public class ScheduleDumper {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleDumper.class);
-    private final UserService userService;
-    private final ScheduleService scheduleService;
+    private final GroupService groupService;
+    private final Requester requester;
     private final LocalFileWriter localFileWriter;
+    private final ParamsBuilder paramsBuilder;
 
     public ScheduleDumper(
-            UserService userService,
-            ScheduleService scheduleService,
-            LocalFileWriter localFileWriter) {
-        this.userService = userService;
-        this.scheduleService = scheduleService;
+            GroupService groupService,
+            Requester requester,
+            LocalFileWriter localFileWriter,
+            ParamsBuilder paramsBuilder
+    ) {
+        this.groupService = groupService;
+        this.requester = requester;
         this.localFileWriter = localFileWriter;
+        this.paramsBuilder = paramsBuilder;
     }
 
     @Async
@@ -48,32 +54,33 @@ public class ScheduleDumper {
     public void dumpSchedule(boolean isForced) {
         Set<Long> alreadyDumpedGroups = new HashSet<>();
         logger.info(SCHEDULE_DUMPING_BEGAN);
-        userService.getAll().forEach(user -> {
-            long groupNumber = user.getGroup().getId();
+        groupService.getAll().forEach(group -> {
+            long groupNumber = group.getId();
             if (groupNumber == 0 || alreadyDumpedGroups.contains(groupNumber)) return;
             try {
-                logger.info(SCHEDULE_DUMPING_BEGAN_FOR_USER, user.getId(), user.getGroup().getId(), user.getGroup().getName());
+                logger.info(SCHEDULE_DUMPING_BEGAN_FOR_GROUP, group.getId(), group.getName());
                 Path directoryPath = Paths.get(AppConstants.GROUP_SCHEDULES_FOLDER_NAME);
-                String fileName = AppConstants.THIS_WEEK_SCHEDULE_FILE_NAME.formatted(user.getGroup().getName(), user.getGroup().getId());
-                prepareForWriting(directoryPath, fileName, user,
+                String fileName = AppConstants.THIS_WEEK_SCHEDULE_FILE_NAME.formatted(group.getName(), group.getId());
+                prepareForWriting(directoryPath, fileName, group,
                         DateUtils.getStartOfWeek(DateUtils.getTodayDateString()),
                         DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(7),
                         isForced);
-                fileName = AppConstants.NEXT_WEEK_SCHEDULE_FILE_NAME.formatted(user.getGroup().getName(), user.getGroup().getId());
-                prepareForWriting(directoryPath, fileName, user,
+                fileName = AppConstants.NEXT_WEEK_SCHEDULE_FILE_NAME.formatted(group.getName(), group.getId());
+                prepareForWriting(directoryPath, fileName, group,
                         DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(7),
                         DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(14),
                         isForced);
                 alreadyDumpedGroups.add(groupNumber);
             } catch (IOException | URISyntaxException | InterruptedException e) {
-                logger.error(SCHEDULE_DUMPING_FAILED, user.getId(), e);
+                logger.error(SCHEDULE_DUMPING_FAILED, group, e);
             }
         });
     }
 
-    private void prepareForWriting(Path directoryPath, String fileName, User user, LocalDate dateFrom, LocalDate dateTo, boolean isForced) throws IOException, URISyntaxException, InterruptedException {
+    private void prepareForWriting(Path directoryPath, String fileName, Group group, LocalDate dateFrom, LocalDate dateTo, boolean isForced) throws IOException, URISyntaxException, InterruptedException {
         if (localFileWriter.checkIfAlreadyWritten(directoryPath, fileName, isForced)) {
-            String response = scheduleService.getRawSchedule(user, dateFrom, dateTo);
+            Map<String, String> params = paramsBuilder.buildFromGroupId(group.getId(), dateFrom, dateTo);
+            String response = requester.makeRequest(params);
             localFileWriter.writeFile(directoryPath, fileName, response);
             logger.info(SCHEDULE_DUMPED_SUCCESSFULLY, fileName);
         } else {

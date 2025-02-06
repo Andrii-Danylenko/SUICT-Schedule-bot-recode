@@ -10,8 +10,8 @@ import rozkladbot.utils.web.requester.RequesterImpl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 
 @SpringBootTest
 public class JsonObjectMapperTest {
@@ -24,7 +24,7 @@ public class JsonObjectMapperTest {
     @Test
     public void testJsonObjectMapper() throws IOException, URISyntaxException, InterruptedException {
         String json = requester.makeRequest(params);
-        List<Lesson> lessons = lessonDeserializer.deserialize(json);
+        Deque<Lesson> lessons = lessonDeserializer.deserialize(json);
         Assertions.assertFalse(lessons.isEmpty());
     }
 

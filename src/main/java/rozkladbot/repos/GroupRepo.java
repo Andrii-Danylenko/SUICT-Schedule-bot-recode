@@ -17,5 +17,8 @@ public interface GroupRepo extends JpaRepository<Group, Long> {
     List<Group> findByFacultyId(long facultyId);
     @Query(value = "SELECT g FROM Group g WHERE g.faculty.facultyName = ?1 AND g.course = ?2")
     List<Group> findByFacultyAndCourse(String facultyName, long course);
+    @Query(value = "SELECT * FROM groups WHERE course = ?1", nativeQuery = true)
     List<Group> findByCourse(long course);
+    @Query(value = "SELECT * FROM groups where faculty_id = ?1 and course = ?2", nativeQuery = true)
+    List<Group> findByIdAndCourse(long facultyId, long course);
 }

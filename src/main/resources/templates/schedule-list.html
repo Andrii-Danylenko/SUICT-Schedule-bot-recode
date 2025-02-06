@@ -1,25 +1,213 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="uk">
 <head>
-    <title>Skedy</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Form</title>
+    <link th:rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<div class="tabs">
-    <div class="tab-headers">
-        <button th:each="day : ${days}"
-                th:classappend="${day == activeDay} ? 'active'"
-                th:text="${day}"
-                th:onclick="'changeTab(\'' + ${day} + '\')'">
-        </button>
+<div class="header">
+    <div class="logo">
+        <a th:href="@{/login}" th:text="'SUICT Schedule WebUI'"></a>
     </div>
-    <div class="tab-content">
-        <div th:each="day : ${days}"
-             th:if="${day == activeDay}"
-             th:text="Hello wrodl">
-        </div>
+</div>
+<div class="dates">
+    <div class="tabs">
+        <button class="tab-button active" data-day="monday">Понеділок</button>
+        <button class="tab-button" data-day="tuesday">Вівторок</button>
+        <button class="tab-button" data-day="wednesday">Середа</button>
+        <button class="tab-button" data-day="thursday">Четвер</button>
+        <button class="tab-button" data-day="friday">П'ятниця</button>
+        <button class="tab-button" data-day="saturday">Субота</button>
+        <button class="tab-button" data-day="sunday">Неділя</button>
     </div>
 </div>
 
+<div class="schedule">
+    <div class="day-content active" id="monday">
+        <div class="schedule-container"></div>
+    </div>
+    <div class="day-content" id="tuesday">
+        <div class="schedule-container"></div>
+    </div>
+    <div class="day-content" id="wednesday">
+        <div class="schedule-container"></div>
+    </div>
+    <div class="day-content" id="thursday">
+        <div class="schedule-container"></div>
+    </div>
+    <div class="day-content" id="friday">
+        <div class="schedule-container"></div>
+    </div>
+    <div class="day-content" id="saturday">
+        <div class="schedule-container"></div>
+    </div>
+    <div class="day-content" id="sunday">
+        <div class="schedule-container"></div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    let scheduleForm = {
+        institute: [[${scheduleForm.institute}]],
+        faculty: [[${scheduleForm.faculty}]],
+        course: [[${scheduleForm.course}]],
+        group: [[${scheduleForm.group}]]
+    };
+    $(document).ready(function () {
+        $(".tab-button").click(function () {
+            $(".tab-button").removeClass("active");
+            $(this).addClass("active");
+
+            let day = $(this).data("day");
+            $(".day-content").removeClass("active");
+            $("#" + day).addClass("active");
+
+            fetchSchedule(day);
+        });
+
+        function fetchSchedule(day) {
+            let startDate = getWeekStart();
+            let endDate = getWeekEnd();
+
+            $.ajax({
+                url: "/schedule/get",
+                type: "GET",
+                data: {
+                    instituteId: scheduleForm.institute,
+                    faculty: scheduleForm.faculty,
+                    course: scheduleForm.course,
+                    group: scheduleForm.group,
+                    startDate: startDate,
+                    endDate: endDate,
+                    dayName: day
+                },
+                success: function (data) {
+                    renderSchedule(day, data);
+                },
+                error: function () {
+                    alert("Помилка завантаження розкладу");
+                }
+            });
+        }
+
+        function renderSchedule(day, schedule) {
+            let container = $("#" + day).find(".schedule-container");
+            container.empty();
+            let selectedDay = schedule.days.find(d => {
+                let resolvedDay = getDayName(day);
+                return d.dayOfWeek === resolvedDay;
+            });
+
+            container.append(`<div class="date-container">
+        <p>Розклад на ${getRightDayName(day)} - ${parseDate(selectedDay.date)}</p>
+    </div>`);
+
+            if (!selectedDay || !selectedDay.lessons || selectedDay.lessons.length === 0) {
+                container.append(
+                    `<div class="lesson-card">
+                <div class="no-lesson-header">
+                    <h2 class="no-lesson-title">Пар немає 🎉</h2>
+                </div>
+            </div>`
+                );
+                return;
+            }
+
+            selectedDay.lessons.forEach(lesson => {
+                let lessonTypeClass = getLessonTypeClass(lesson.type);
+                container.append(`
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <h2 class="lesson-title">${lesson.name}</h2>
+                <span class="lesson-type ${lessonTypeClass}">${lesson.type}</span>
+            </div>
+            <div class="lesson-info">
+                <span class="lesson-number">${lesson.number}</span>
+                <span class="lesson-time">${lesson.pairTime}</span>
+            </div>
+            <div class="lesson-footer">
+                <div class="lesson-teacher"><p>${lesson.who}</p></div>
+                <div class="lesson-room"><p>Аудиторія: ${lesson.cabinet}</p></div>
+            </div>
+        </div>`);
+            });
+        }
+
+        function getWeekStart() {
+            let date = new Date();
+            let day = date.getDay() || 7;
+            date.setDate(date.getDate() - day + 1);
+            return formatDate(date);
+        }
+
+        function getWeekEnd() {
+            let date = new Date();
+            let day = date.getDay() || 7;
+            date.setDate(date.getDate() - day + 7);
+            return formatDate(date);
+        }
+
+        function formatDate(date) {
+            let dd = String(date.getDate()).padStart(2, "0");
+            let mm = String(date.getMonth() + 1).padStart(2, "0");
+            let yyyy = date.getFullYear();
+            return `${dd}.${mm}.${yyyy}`;
+        }
+
+        function getDayName(day) {
+            const daysMap = {
+                monday: "понеділок",
+                tuesday: "вівторок",
+                wednesday: "середа",
+                thursday: "четвер",
+                friday: "пʼятниця",
+                saturday: "субота",
+                sunday: "неділя"
+            };
+            return daysMap[day] || "";
+        }
+
+        function getRightDayName(day) {
+            const daysMap = {
+                monday: "понеділок",
+                tuesday: "вівторок",
+                wednesday: "середу",
+                thursday: "четвер",
+                friday: "пʼятницю",
+                saturday: "суботу",
+                sunday: "неділю"
+            };
+            return daysMap[day] || "";
+        }
+
+        function getLessonTypeClass(type) {
+            switch (type.toLowerCase()) {
+                case 'лк':
+                    return 'lecture';
+                case 'сем':
+                    return 'seminar';
+                case 'пз':
+                    return 'practical';
+                case 'лб':
+                    return 'practical';
+                default:
+                    return 'other';
+            }
+        }
+
+        function parseDate(dateString) {
+            const dateParts = dateString.split("-");
+            const year = dateParts[0];
+            const month = dateParts[1];
+            const day = dateParts[2];
+            return `${day.padStart(2, "0")}.${month.padStart(2, "0")}.${year}`;
+        }
+
+        fetchSchedule("monday");
+    });
+</script>
 </body>
 </html>

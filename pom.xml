@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>rozkladbot</groupId>
 	<artifactId>rozklabbot</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.1.1-SNAPSHOT</version>
 	<name>Schedule Bot recode</name>
 	<description>New version of schedule helper, implementing many features as persistence etc.</description>
 	<url/>

@@ -7,5 +7,6 @@ public final class ErrorConstants {
     public final static String ENTITY_NOT_FOUND_EXCEPTION = "No entity with such ID found!";
     public final static String MESSAGE_CANNOT_BE_UNPINNED = "Message could not be unpinned!";
     public final static String MESSAGE_CANNOT_BE_PINNED = "Message could not be pinned!";
+    public final static String WRONG_AMOUNT_OF_SPLITTED_PARAMETERS = "Wrong amount of splited parameters! Expected 3, got: %d";
     private ErrorConstants() {}
 }

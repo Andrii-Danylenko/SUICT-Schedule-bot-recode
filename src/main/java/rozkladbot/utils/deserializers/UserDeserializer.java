@@ -12,7 +12,7 @@ import rozkladbot.constants.AppConstants;
 import rozkladbot.constants.ErrorConstants;
 import rozkladbot.entities.User;
 
-import java.util.List;
+import java.util.Deque;
 
 
 @Component("userDeserializer")
@@ -26,7 +26,7 @@ public class UserDeserializer implements JsonDeserializer<User> {
     }
 
     @Override
-    public List<User> deserialize(String json) {
+    public Deque<User> deserialize(String json) {
         try {
             JsonNode jsonNode = mapper.readTree(json).get(AppConstants.JSON_TREE_USER_OBJECT_NAME);
             return mapper.readValue(jsonNode.toString(), new TypeReference<>() {

@@ -35,6 +35,10 @@ public class DateUtils {
         return inputDate.minusDays(daysUntilStartOfWeek);
     }
 
+    public static LocalDate parseFromString(String date) {
+        return LocalDate.parse(date, JSON_DATE_FORMATTER);
+    }
+
     public static String getDateAsString(LocalDate date) {
         return date.format(JSON_DATE_FORMATTER);
     }
@@ -42,9 +46,11 @@ public class DateUtils {
     public static String getFullDayName(LocalDate date) {
         return date.atStartOfDay(zoneId).format(FULL_DAY_NAME);
     }
+
     public static LocalDate instantToLocalDate(Instant instant) {
         return LocalDate.ofInstant(instant, zoneId);
     }
+
     public static String getMonthName(LocalDate date) {
         return switch (date.getMonthValue()) {
             case 1 -> "січня";
@@ -61,5 +67,34 @@ public class DateUtils {
             case 12 -> "грудня";
             default -> "undefined";
         };
+    }
+
+    public static String convertLatinDayNameToUkrainian(String dayName) {
+        switch (dayName.toLowerCase()) {
+            case "monday" -> {
+                return "понеділок";
+            }
+            case "tuesday" -> {
+                return "вівторок";
+            }
+            case "wednesday" -> {
+                return "середа";
+            }
+            case "thursday" -> {
+                return "четвер";
+            }
+            case "friday" -> {
+                return "пʼятниця";
+            }
+            case "saturday" -> {
+                return "субота";
+            }
+            case "sunday" -> {
+                return "неділя";
+            }
+            default -> {
+                return "undefined";
+            }
+        }
     }
 }

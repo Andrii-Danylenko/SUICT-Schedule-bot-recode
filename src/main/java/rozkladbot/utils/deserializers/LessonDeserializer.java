@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import rozkladbot.constants.ErrorConstants;
 import rozkladbot.entities.Lesson;
 
-import java.util.List;
+import java.util.Deque;
 
 import static rozkladbot.constants.AppConstants.JSON_TREE_SCHEDULE_OBJECT_NAME;
 
@@ -26,7 +26,7 @@ public class LessonDeserializer implements JsonDeserializer<Lesson> {
     }
 
     @Override
-    public List<Lesson> deserialize(String json) {
+    public Deque<Lesson> deserialize(String json) {
         try {
             JsonNode jsonNode = mapper.readTree(json).get(JSON_TREE_SCHEDULE_OBJECT_NAME);
             return mapper.readValue(jsonNode.toString(), new TypeReference<>() {

@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Objects;
 
 @Component("requestImpl")
 public class RequesterImpl implements Requester {
@@ -38,14 +39,17 @@ public class RequesterImpl implements Requester {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestMethod("GET");
-        connection.setConnectTimeout(30000);
-        connection.setReadTimeout(30000);
+        connection.setConnectTimeout(REQUEST_TIMEOUT * 1000);
+        connection.setReadTimeout(REQUEST_TIMEOUT * 1000);
         return readRequest(connection);
     }
 
     private String buildLink(Map<String, String> params) {
         StringBuilder link = new StringBuilder(BASE_LINK);
         for (String key : params.keySet()) {
+            if (Objects.equals("groupName", params.get(key))) {
+                continue;
+            }
             link.append("&").append(key).append("=").append(params.get(key));
         }
         return link.toString();

@@ -1,12 +1,12 @@
 package rozkladbot.entities;
 
 public class ScheduleForm {
-    private String institute;
-    private String faculty;
-    private String course;
-    private String group;
+    private Long institute;
+    private Long faculty;
+    private Long course;
+    private Long group;
 
-    public ScheduleForm(String institute, String faculty, String course, String group) {
+    public ScheduleForm(Long institute, Long faculty, Long course, Long group) {
         this.institute = institute;
         this.faculty = faculty;
         this.course = course;
@@ -16,35 +16,35 @@ public class ScheduleForm {
     public ScheduleForm() {
     }
 
-    public String getInstitute() {
+    public Long getInstitute() {
         return institute;
     }
 
-    public void setInstitute(String institute) {
+    public void setInstitute(Long institute) {
         this.institute = institute;
     }
 
-    public String getFaculty() {
+    public Long getFaculty() {
         return faculty;
     }
 
-    public void setFaculty(String faculty) {
+    public void setFaculty(Long faculty) {
         this.faculty = faculty;
     }
 
-    public String getCourse() {
+    public Long getCourse() {
         return course;
     }
 
-    public void setCourse(String course) {
+    public void setCourse(Long course) {
         this.course = course;
     }
 
-    public String getGroup() {
+    public Long getGroup() {
         return group;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(Long group) {
         this.group = group;
     }
 

@@ -25,7 +25,7 @@ public class AppConstants {
     public static final String JSON_TREE_USER_OBJECT_NAME = "users";
     public static final String JSON_TREE_GROUPS_OBJECT_NAME = "groups";
     public static final String BOT_MESSAGE_PARSE_MODE = "html";
-
+    public static final String CUSTOM_SCHEDULE_INPUT_FORMAT_REGEX = "\\sз\\s|\\sпо\\s";
     private AppConstants() {
     }
 }

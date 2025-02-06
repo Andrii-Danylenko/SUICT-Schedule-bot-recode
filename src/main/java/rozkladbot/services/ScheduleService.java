@@ -1,7 +1,9 @@
 package rozkladbot.services;
 
+import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.entities.ScheduleTable;
 import rozkladbot.entities.User;
+import rozkladbot.enums.OfflineReadingMode;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,5 +19,18 @@ public interface ScheduleService {
 
     ScheduleTable getNextWeekLessons(User user) throws ExecutionException, InterruptedException;
 
-    String getRawSchedule(User user, LocalDate startDate, LocalDate endDate) throws IOException, URISyntaxException, InterruptedException;
+
+    ScheduleTable getScheduleWithCustomParameters(User user, Update update) throws IOException, URISyntaxException, InterruptedException;
+
+    ScheduleTable splitBigTableIntoSmall(ScheduleTable scheduleTable);
+
+    ScheduleTable getSchedule(
+            long institute,
+            long faculty,
+            long course,
+            long group,
+            LocalDate queryDateStart,
+            LocalDate queryDateEnd,
+            OfflineReadingMode mode) throws ExecutionException, InterruptedException;
 }
+

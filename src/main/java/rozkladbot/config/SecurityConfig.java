@@ -23,11 +23,12 @@ import java.util.List;
 @EnableGlobalAuthentication
 public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
-    private static final String LOGIN_ENDPOINT = "login";
+    private static final String LOGIN_ENDPOINT = "/login";
     private static final String SCHEDULE_ENDPOINT = "/schedule";
     private static final String FACULTIES_ENDPOINT = SCHEDULE_ENDPOINT + "/faculties";
     private static final String COURSES_ENDPOINT = SCHEDULE_ENDPOINT + "/courses";
     private static final String GROUPS_ENDPOINT = SCHEDULE_ENDPOINT + "/groups";
+    private static final String DATA_ENDPOINT = "/get";
     @Value("${server.link.1}")
     private static String SERVER_LINK_1;
     @Value("${server.link.1}")
@@ -66,9 +67,10 @@ public class SecurityConfig {
                                         SCHEDULE_ENDPOINT,
                                         FACULTIES_ENDPOINT,
                                         GROUPS_ENDPOINT,
-                                        COURSES_ENDPOINT)
+                                        COURSES_ENDPOINT,
+                                        DATA_ENDPOINT + "/**")
                                 .permitAll()
-                                .requestMatchers("/css/**")
+                                .requestMatchers("/static/**", "/css/**", "/js/**", "/favicon.ico")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated());

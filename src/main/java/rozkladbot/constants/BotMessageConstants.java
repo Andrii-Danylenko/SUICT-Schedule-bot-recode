@@ -82,10 +82,24 @@ public class BotMessageConstants {
                     Ось список під'єднаних користувачів:
                     
                     """;
+    public static final String UNRESOLVED_USER_STATE =
+            """
+            Виникла помилка під час отримання розкладу.
+            Привід: такого стану користувача не існує!
+            """;
+    public static final String CUSTOM_SCHEDULE_QUERY_EXAMPLE =
+                """
+                Для того, щоб отримати власні дані,
+                Використовуйте синтаксис:
+                <b>[група]</b> з <b>[дата початку]</b> по <b>[дата кінця]</b>
+                Наприклад: <b>%s</b> з <b>%s</b> по <b>%s</b>
+                """;
+    public static final String BACK_TO_MENU = "Натисність кнопку, щоб повернутися до меню.";
     public static final String APP_TERMINATION_STARTED = "Починаю вимкнення додатку...";
     public static final String APP_TERMINATION_FINISHED = "Закічив вимкнення додатку.";
     public static final String LOCAL_DATA_SYNC_STARTED = "Починаю синхронизацію локальних даних із БД...";
     public static final String LOCAL_DATA_SYNC_FINISHED = "Закічив синхронизацію локальних даних із БД.";
+
     private BotMessageConstants() {
     }
 }
