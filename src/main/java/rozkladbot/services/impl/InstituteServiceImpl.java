@@ -8,6 +8,7 @@ import rozkladbot.exceptions.NoSuchEntityFoundException;
 import rozkladbot.repos.InstituteRepo;
 import rozkladbot.services.InstituteService;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service("instituteServiceImpl")
@@ -37,5 +38,10 @@ public class InstituteServiceImpl implements InstituteService {
     @Override
     public Institute save(Institute institute) {
         return instituteRepo.save(institute);
+    }
+
+    @Override
+    public void saveAll(Collection<Institute> value) {
+        instituteRepo.saveAll(value);
     }
 }

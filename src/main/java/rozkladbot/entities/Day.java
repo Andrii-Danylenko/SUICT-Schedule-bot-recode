@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import static rozkladbot.constants.EmojiList.LINK_TO_ZOOM;
+
 public class Day {
     @JsonProperty("dayOfWeek")
     private String dayOfWeek;
@@ -107,7 +109,7 @@ public class Day {
                     %s <b>%s</b> [%s]
                     %s %s
                     %s каб. %s
-                    
+                    %s
                     """.formatted(
                     EmojiList.getPairEmoji(Integer.parseInt(clazz.getPairNumber())),
                     Lesson.getPairTime(clazz.getPairNumber()),
@@ -117,7 +119,10 @@ public class Day {
                     EmojiList.LECTOR,
                     clazz.getLectorFullName(),
                     EmojiList.ROOM,
-                    clazz.getCabinet()));
+                    clazz.getCabinet(),
+                    clazz.getPairLink() == null ? "" :
+                            LINK_TO_ZOOM +
+                            " Посилання на пару:  <a href=\"%s\">перейти</a>\n".formatted(clazz.getPairLink())));
         }
         return hasPairs ? builder.toString() : builder.append(
                         AppConstants.HOORAY_FREE_DAY.formatted(EmojiList.HAPPY, EmojiList.BEER))

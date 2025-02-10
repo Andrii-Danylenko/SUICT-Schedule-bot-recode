@@ -14,6 +14,7 @@ import rozkladbot.entities.User;
 import rozkladbot.enums.OfflineReadingMode;
 import rozkladbot.exceptions.CustomScheduleFetchException;
 import rozkladbot.exceptions.RequestCreationFailedException;
+import rozkladbot.services.PairLinkService;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.telegram.utils.files.reader.LocalFileReader;
 import rozkladbot.telegram.utils.parser.MessageParser;
@@ -41,6 +42,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final LessonDeserializer lessonDeserializer;
     private final LocalFileReader localFileReader;
     private final MessageParser messageParser;
+    private final PairLinkService pairLinkService;
 
     @Autowired
     public ScheduleServiceImpl(
@@ -48,12 +50,14 @@ public class ScheduleServiceImpl implements ScheduleService {
             Requester requester,
             ParamsBuilder paramsBuilder,
             LessonDeserializer lessonDeserializer,
-            MessageParser messageParser) {
+            MessageParser messageParser,
+            PairLinkService pairLinkService) {
         this.requester = requester;
         this.paramsBuilder = paramsBuilder;
         this.lessonDeserializer = lessonDeserializer;
         this.localFileReader = localFileReader;
         this.messageParser = messageParser;
+        this.pairLinkService = pairLinkService;
     }
 
     @Override
@@ -210,6 +214,16 @@ public class ScheduleServiceImpl implements ScheduleService {
             OfflineReadingMode mode) throws ExecutionException, InterruptedException {
         HashMap<String, String> params = paramsBuilder.buildFromGroupId(group, queryDateStart, queryDateEnd);
         Deque<Lesson> lessons = getSchedule(params, mode);
+        appendPairLinks(group, lessons);
         return new ScheduleTable(splitByDays(lessons, queryDateStart, queryDateEnd));
+    }
+
+    private void appendPairLinks(long groupId, Deque<Lesson> lessons) {
+        lessons.forEach(lesson -> lesson.setPairLink(pairLinkService.getByGroupIdAndLessonNameAndLessonType(
+                        groupId,
+                        lesson.getLessonFullName(),
+                        lesson.getType()
+                ).getLink()
+        ));
     }
 }

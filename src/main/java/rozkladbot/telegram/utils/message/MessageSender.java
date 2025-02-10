@@ -34,6 +34,7 @@ public class MessageSender {
             sendMessage.setChatId(currentUser.getId());
             sendMessage.setText(message);
             sendMessage.setParseMode(AppConstants.BOT_MESSAGE_PARSE_MODE);
+            sendMessage.disableWebPagePreview();
             if (keyboard != null) {
                 sendMessage.setReplyMarkup(keyboard);
             }
@@ -53,6 +54,7 @@ public class MessageSender {
             editMessageText.setMessageId(currentUser.getLastSentMessageId() + 1);
         }
         editMessageText.setParseMode(AppConstants.BOT_MESSAGE_PARSE_MODE);
+        editMessageText.disableWebPagePreview();
         if (keyboard != null) editMessageText.setReplyMarkup((InlineKeyboardMarkup) keyboard);
         sender.execute(editMessageText);
     }

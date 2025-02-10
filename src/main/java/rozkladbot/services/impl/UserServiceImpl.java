@@ -9,6 +9,7 @@ import rozkladbot.exceptions.NoSuchEntityFoundException;
 import rozkladbot.repos.UserRepo;
 import rozkladbot.services.UserService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -40,6 +41,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User save(User user) {
         return userRepo.save(user);
+    }
+
+    @Override
+    public void saveAll(Collection<User> value) {
+        userRepo.saveAll(value);
     }
 
     @Override

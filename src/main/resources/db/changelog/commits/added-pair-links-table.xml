@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="Andrii-Danylenko">
+        <createTable tableName="pair_links">
+            <column name="id" type="bigint">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="type" type="varchar">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="link" type="varchar">
+                <constraints nullable="false" unique="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="Andrii-Danylenko">
+        <addColumn tableName="pair_links">
+            <column name="group_id" type="bigint">
+                <constraints unique="false" nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="3" author="Andrii-Danylenko">
+        <addAutoIncrement tableName="pair_links" columnName="id"/>
+    </changeSet>
+    <changeSet id="4" author="Andrii-Danylenko">
+        <addPrimaryKey tableName="pair_links" columnNames="group_id, name, type, link"/>
+        <addAutoIncrement tableName="pair_links" columnName="id"/>
+    </changeSet>
+</databaseChangeLog>

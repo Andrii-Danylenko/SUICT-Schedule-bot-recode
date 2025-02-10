@@ -8,6 +8,7 @@ public class AppConstants {
     public static final String USERS_FILE_NAME = USERS_FOLDER_NAME + "/usersList.json";
     public static final String GROUPS_FOLDER_NAME = "groups";
     public static final String GROUPS_FILE_NAME = GROUPS_FOLDER_NAME + "/groupsList.json";
+    public static final String GROUPS_LINKS_FOLDER_NAME = "groupsPairLinks";
     public static final String HOORAY_FREE_DAY = "Пар немає %s! Відпочиваємо%s!%n";
     public static final String DEVELOPER_TG_LINK = "https://t.me/optionalOfNullable";
     public static final String APPLICATION_TIME_ZONE = "Europe/Kyiv";
@@ -22,10 +23,14 @@ public class AppConstants {
     public static final String NEXT_WEEK_SCHEDULE_FILE_NAME = "%s(%d)_nextWeek.json";
     public static final String MONDAY = "Понеділок";
     public static final String JSON_TREE_SCHEDULE_OBJECT_NAME = "schedule";
+    public static final String JSON_TREE_PAIR_LINKS_OBJECT_NAME = "pairLinks";
     public static final String JSON_TREE_USER_OBJECT_NAME = "users";
     public static final String JSON_TREE_GROUPS_OBJECT_NAME = "groups";
     public static final String BOT_MESSAGE_PARSE_MODE = "html";
     public static final String CUSTOM_SCHEDULE_INPUT_FORMAT_REGEX = "\\sз\\s|\\sпо\\s";
+    public static final String MIGRATION_STARTED = "Beginning migration...";
+    public static final String MIGRATION_FINISHED = "Finished migration.";
+    public static final String MIGRATION_FAILED = "Migration failed. Error message: {}";
     private AppConstants() {
     }
 }

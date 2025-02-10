@@ -9,4 +9,5 @@
     <include file="db/changelog/commits/added-faculty-table.xml"/>
     <include file="db/changelog/commits/added-groups-table.xml"/>
     <include file="db/changelog/commits/added-users-table.xml"/>
+    <include file="db/changelog/commits/added-pair-links-table.xml"/>
 </databaseChangeLog>

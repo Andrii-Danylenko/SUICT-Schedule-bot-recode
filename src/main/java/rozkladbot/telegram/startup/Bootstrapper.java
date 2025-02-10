@@ -20,13 +20,21 @@ public class Bootstrapper {
     private final UserService userService;
 
     @Autowired
-    public Bootstrapper(UserCache userCache, UserService userService) {
+    public Bootstrapper(
+            UserCache userCache,
+            UserService userService) {
         this.userCache = userCache;
         this.userService = userService;
     }
 
     @PostConstruct
-    public void loadUsers() {
+    public void init() {
+        logger.info(LoggingConstants.APPLICATION_INIT_JOB_STARTED);
+        loadUsers();
+        logger.info(LoggingConstants.APPLICATION_INIT_JOB_FINISHED);
+    }
+
+    private void loadUsers() {
         logger.info(LoggingConstants.USERS_MIGRATION_STARTED);
         List<User> userList = userService.getAll();
         for (User user : userList) {

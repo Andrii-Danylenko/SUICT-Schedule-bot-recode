@@ -30,6 +30,7 @@ public class Lesson {
     private String lectorShortName;
     @JsonProperty("pairTime")
     private String pairTime;
+    private String pairLink;
 
     public Lesson(
             LocalDate date,
@@ -162,5 +163,13 @@ public class Lesson {
             pairTime = getPairTime(pairNumber);
         }
         return pairTime;
+    }
+
+    public void setPairLink(String pairLink) {
+        this.pairLink = pairLink;
+    }
+
+    public String getPairLink() {
+        return pairLink;
     }
 }

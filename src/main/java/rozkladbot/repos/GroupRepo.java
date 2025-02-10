@@ -2,11 +2,13 @@ package rozkladbot.repos;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import rozkladbot.entities.Group;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface GroupRepo extends JpaRepository<Group, Long> {
     Optional<Group> findByName(String name);
 

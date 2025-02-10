@@ -11,7 +11,6 @@ public final class EmojiList {
     public static final String LECTOR = "\uD83E\uDDD1\u200D\uD83C\uDFEB";
     public static final String ROOM = "\uD83D\uDEAA";
     public static final String NERD_FACE = "\uD83E\uDD13";
-    // TODO: сделать динамические линки на конференции.
     public static final String LINK_TO_ZOOM = "\uD83D\uDD17";
     public static final String DISAPPOINTMENT = "\uD83E\uDD7A";
     private static final String PAIR_1 = "1️⃣";

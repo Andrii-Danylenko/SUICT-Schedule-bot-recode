@@ -8,6 +8,7 @@ import rozkladbot.exceptions.NoSuchEntityFoundException;
 import rozkladbot.repos.FacultyRepo;
 import rozkladbot.services.FacultyService;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service("facultyServiceImpl")
@@ -33,6 +34,11 @@ public class FacultyServiceImpl implements FacultyService {
 
     public Faculty save(Faculty faculty) {
         return facultyRepo.save(faculty);
+    }
+
+    @Override
+    public void saveAll(Collection<Faculty> value) {
+        facultyRepo.saveAll(value);
     }
 
     @Override

@@ -8,6 +8,7 @@ import rozkladbot.exceptions.NoSuchEntityFoundException;
 import rozkladbot.repos.GroupRepo;
 import rozkladbot.services.GroupService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,11 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group save(Group group) {
         return groupRepo.save(group);
+    }
+
+    @Override
+    public void saveAll(Collection<Group> value) {
+        groupRepo.saveAll(value);
     }
 
     @Override
