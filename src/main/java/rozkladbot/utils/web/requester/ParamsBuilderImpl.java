@@ -37,9 +37,9 @@ public class ParamsBuilderImpl implements ParamsBuilder {
         params.put("group", String.valueOf(group.getId()));
         params.put("course", String.valueOf(group.getCourse()));
         params.put("faculty", String.valueOf(group.getFaculty().getId()));
-        params.put("groupName", group.getName());
         params.put("dateFrom", DateUtils.getDateAsString(startDate));
         params.put("dateTo", DateUtils.getDateAsString(endDate));
+        params.put("institution", String.valueOf(group.getFaculty().getInstitute().getId()));
         return params;
     }
 }

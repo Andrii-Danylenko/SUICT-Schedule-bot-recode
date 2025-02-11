@@ -122,7 +122,7 @@ public class Day {
                     clazz.getCabinet(),
                     clazz.getPairLink() == null ? "" :
                             LINK_TO_ZOOM +
-                            " Посилання на пару:  <a href=\"%s\">перейти</a>\n".formatted(clazz.getPairLink())));
+                            " Посилання на пару: <a href=\"%s\">перейти</a>\n".formatted(clazz.getPairLink())));
         }
         return hasPairs ? builder.toString() : builder.append(
                         AppConstants.HOORAY_FREE_DAY.formatted(EmojiList.HAPPY, EmojiList.BEER))

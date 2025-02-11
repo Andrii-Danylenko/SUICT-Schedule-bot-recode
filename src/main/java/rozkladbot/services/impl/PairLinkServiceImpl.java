@@ -49,7 +49,6 @@ public class PairLinkServiceImpl implements PairLinkService {
                 value.getLink(),
                 value.getType())
         ) {
-            System.out.println("we are here");
             throw new EntityAlreadyExistsException();
         }
         return pairLinkRepo.save(value);

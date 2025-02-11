@@ -7,13 +7,11 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.constants.AppConstants;
 import rozkladbot.constants.LoggingConstants;
-import rozkladbot.entities.Day;
-import rozkladbot.entities.Lesson;
-import rozkladbot.entities.ScheduleTable;
-import rozkladbot.entities.User;
+import rozkladbot.entities.*;
 import rozkladbot.enums.OfflineReadingMode;
 import rozkladbot.exceptions.CustomScheduleFetchException;
 import rozkladbot.exceptions.RequestCreationFailedException;
+import rozkladbot.services.GroupService;
 import rozkladbot.services.PairLinkService;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.telegram.utils.files.reader.LocalFileReader;
@@ -43,6 +41,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final LocalFileReader localFileReader;
     private final MessageParser messageParser;
     private final PairLinkService pairLinkService;
+    private final GroupService groupService;
 
     @Autowired
     public ScheduleServiceImpl(
@@ -51,13 +50,15 @@ public class ScheduleServiceImpl implements ScheduleService {
             ParamsBuilder paramsBuilder,
             LessonDeserializer lessonDeserializer,
             MessageParser messageParser,
-            PairLinkService pairLinkService) {
+            PairLinkService pairLinkService,
+            GroupService groupService) {
         this.requester = requester;
         this.paramsBuilder = paramsBuilder;
         this.lessonDeserializer = lessonDeserializer;
         this.localFileReader = localFileReader;
         this.messageParser = messageParser;
         this.pairLinkService = pairLinkService;
+        this.groupService = groupService;
     }
 
     @Override
@@ -114,35 +115,36 @@ public class ScheduleServiceImpl implements ScheduleService {
                 OfflineReadingMode.NEXT_WEEK);
     }
 
-    private Map<String, String> buildScheduleParams(User user, LocalDate startDate, LocalDate endDate) {
-        return paramsBuilder.buildFromUser(user, startDate, endDate);
-    }
-
     @Override
     public ScheduleTable getScheduleWithCustomParameters(User user, Update update) throws InterruptedException {
         String[] parameters = messageParser.getParametersFromMessage(update.getMessage().getText());
         try {
-            String group = parameters[0];
+            String groupAsString = parameters[0];
             LocalDate queryDateStart = DateUtils.parseFromString(parameters[1]);
             LocalDate queryDateEnd = DateUtils.parseFromString(parameters[2]);
-            HashMap<String, String> params = paramsBuilder.buildFromGroupName(group, queryDateStart, queryDateEnd);
-            Deque<Lesson> lessons = getSchedule(params, OfflineReadingMode.NONE);
-            return new ScheduleTable(splitByDays(lessons, queryDateStart, queryDateEnd));
+            Group group = groupService.getByName(groupAsString);
+            return getSchedule(
+                    group.getFaculty().getInstitute().getId(),
+                    group.getFaculty().getId(),
+                    group.getCourse(),
+                    group.getId(),
+                    queryDateStart,
+                    queryDateEnd,
+                    OfflineReadingMode.NONE
+            );
         } catch (RuntimeException | ExecutionException e) {
             throw new CustomScheduleFetchException();
         }
     }
 
     private Deque<Day> splitByDays(Deque<Lesson> lessons, LocalDate startDate, LocalDate endDate) {
-        TreeMap<LocalDate, List<Lesson>> lessonsByDay = lessons.stream()
+        TreeMap<LocalDate, List<Lesson>> lessonsByDay = lessons
+                .stream()
+                .filter(lesson -> !lesson.getDate().isBefore(startDate) && !lesson.getDate().isAfter(endDate))
                 .collect(Collectors.groupingBy(Lesson::getDate, TreeMap::new, Collectors.toList()));
-        ensureNoBreaks(lessonsByDay, startDate, endDate);
+        System.out.println(lessonsByDay);
         Deque<Day> days = new ArrayDeque<>();
         for (Map.Entry<LocalDate, List<Lesson>> entry : lessonsByDay.entrySet()) {
-            LocalDate date = entry.getKey();
-            if (date.isAfter(endDate) || date.isBefore(startDate)) {
-                continue;
-            }
             Day day = new Day();
             day.setDay(entry.getKey());
             day.setLessons(entry.getValue());
@@ -219,11 +221,17 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     private void appendPairLinks(long groupId, Deque<Lesson> lessons) {
-        lessons.forEach(lesson -> lesson.setPairLink(pairLinkService.getByGroupIdAndLessonNameAndLessonType(
-                        groupId,
-                        lesson.getLessonFullName(),
-                        lesson.getType()
-                ).getLink()
-        ));
+        lessons.forEach(lesson -> {
+                    PairLink pairlink = pairLinkService.getByGroupIdAndLessonNameAndLessonType(
+                            groupId,
+                            lesson.getLessonFullName(),
+                            lesson.getType()
+                    );
+                    System.out.println(pairlink);
+                    if (pairlink != null) {
+                        lesson.setPairLink(pairlink.getLink());
+                    }
+                }
+        );
     }
 }
