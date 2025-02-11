@@ -142,7 +142,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .stream()
                 .filter(lesson -> !lesson.getDate().isBefore(startDate) && !lesson.getDate().isAfter(endDate))
                 .collect(Collectors.groupingBy(Lesson::getDate, TreeMap::new, Collectors.toList()));
-        System.out.println(lessonsByDay);
+        ensureNoBreaks(lessonsByDay, startDate, endDate);
         Deque<Day> days = new ArrayDeque<>();
         for (Map.Entry<LocalDate, List<Lesson>> entry : lessonsByDay.entrySet()) {
             Day day = new Day();
