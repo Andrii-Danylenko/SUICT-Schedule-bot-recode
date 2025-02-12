@@ -85,10 +85,14 @@ public class RegistrationHandler {
             }
         }
         List<Institute> instituteList = instituteService.getAll();
+        StringBuilder builder = new StringBuilder(BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.INSTITUTE_SELECTION);
+        for (Institute institute : instituteList) {
+            builder.append(institute.getId()).append(". ").append(institute.getInstituteName()).append("\n");
+        }
         messageSender.sendMessage(
                 user,
-                BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.INSTITUTE_SELECTION,
-                KeyBoardFactory.getInstitutesKeyboardInline(instituteList),
+                builder.toString(),
+                KeyBoardFactory.getInstitutesKeyboardInline(instituteList, user.isRegistered()),
                 true, update);
         user.setUserState(UserState.AWAITING_FACULTY);
     }
@@ -97,11 +101,16 @@ public class RegistrationHandler {
         if (!update.hasCallbackQuery()) {
             return;
         }
-        user.getGroup().getFaculty().getInstitute().setInstituteName(update.getCallbackQuery().getData());
-        List<Faculty> facultyList = facultyService.getFacultiesByInstituteName(update.getCallbackQuery().getData());
+        long instituteId = Long.parseLong(update.getCallbackQuery().getData());
+        user.getGroup().getFaculty().setInstitute(instituteService.getById(instituteId));
+        List<Faculty> facultyList = facultyService.findByInstituteId(instituteId);
+        StringBuilder builder = new StringBuilder(BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.INSTITUTE_SELECTION);
+        for (Faculty faculty : facultyList) {
+            builder.append(faculty.getFacultyId()).append(". ").append(faculty.getFacultyName()).append("\n");
+        }
         messageSender.sendMessage(
                 user,
-                BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.FACULTY_SELECTION,
+                builder.toString(),
                 KeyBoardFactory.getFacultiesKeyboardInline(facultyList),
                 true, update);
         user.setUserState(UserState.AWAITING_COURSE);
@@ -111,13 +120,20 @@ public class RegistrationHandler {
         if (!update.hasCallbackQuery()) {
             return;
         }
-        user.getGroup().getFaculty().setFacultyName(update.getCallbackQuery().getData());
-        List<String> courseList = groupService.getGroupCourses();
-        courseList.sort(String::compareTo);
+        long facultyId = Long.parseLong(update.getCallbackQuery().getData());
+        user.getGroup().setFaculty(facultyService.findByInstituteIdAndFacultyId(
+                        user.getGroup().getFaculty().getInstitute().getId(),
+                        facultyId
+                )
+        );
+        List<String> courseList = groupService.findAllCoursesByFacultyIdAndInstituteId(
+                user.getGroup().getFaculty().getFacultyId(),
+                user.getGroup().getFaculty().getInstitute().getId()
+        ).stream().sorted().map(String::valueOf).toList();
         messageSender.sendMessage(
                 user,
                 BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.COURSE_SELECTION,
-                KeyBoardFactory.getCourseKeyboardInline(courseList),
+                KeyBoardFactory.getCourseKeyboardInline(courseList, true),
                 true, update);
         user.setUserState(UserState.AWAITING_GROUP);
     }
@@ -126,13 +142,18 @@ public class RegistrationHandler {
         if (!update.hasCallbackQuery()) {
             return;
         }
-        user.getGroup().setCourse(Long.parseLong(update.getCallbackQuery().getData()));
-        List<Group> groupList = groupService.findByFacultyAndCourse(user.getGroup().getFaculty().getFacultyName(), user.getGroup().getCourse());
+        long course = Long.parseLong(update.getCallbackQuery().getData());
+        user.getGroup().setCourse(course);
+        List<Group> groupList = groupService.findByIdAndCourseAndInstituteId(
+                user.getGroup().getFaculty().getFacultyId(),
+                course,
+                user.getGroup().getFaculty().getInstitute().getId()
+        );
         groupList.sort(Comparator.comparing(Group::getName));
         messageSender.sendMessage(
                 user,
                 BotMessageConstants.USER_IS_UNREGISTERED + BotMessageConstants.GROUP_SELECTION,
-                KeyBoardFactory.getGroupKeyboardInline(groupList),
+                KeyBoardFactory.getGroupKeyboardInline(groupList, true),
                 true, update);
         user.setUserState(UserState.AWAITING_REGISTRATION_DATA_CONFIRMATION);
     }
@@ -188,13 +209,13 @@ public class RegistrationHandler {
                  AWAITING_REGISTRATION_DATA_CONFIRMATION -> user.setUserState(UserState.AWAITING_INSTITUTE);
         }
     }
+
     private String getCorrectName(Update update) {
         String userName = null;
         if (update.hasMessage()) {
             if (update.getMessage().isUserMessage()) {
-                userName = "@" +  update.getMessage().getFrom().getUserName();
-            }
-            else if (update.getMessage().isGroupMessage() || update.getMessage().isSuperGroupMessage()) {
+                userName = "@" + update.getMessage().getFrom().getUserName();
+            } else if (update.getMessage().isGroupMessage() || update.getMessage().isSuperGroupMessage()) {
                 userName = update.getMessage().getChat().getTitle();
             }
         }

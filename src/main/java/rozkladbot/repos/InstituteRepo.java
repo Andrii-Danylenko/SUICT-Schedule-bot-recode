@@ -1,10 +1,12 @@
 package rozkladbot.repos;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import rozkladbot.entities.Institute;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +16,7 @@ public interface InstituteRepo extends JpaRepository<Institute, Long> {
 
     Optional<Institute> findById(long id);
 
+    @EntityGraph(attributePaths = "facultyList")
+    @Query("SELECT i FROM Institute i")
+    List<Institute> findAllEager();
 }

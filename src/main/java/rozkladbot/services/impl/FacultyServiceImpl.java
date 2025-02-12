@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rozkladbot.constants.ErrorConstants;
 import rozkladbot.entities.Faculty;
+import rozkladbot.exceptions.EntityAlreadyExistsException;
 import rozkladbot.exceptions.NoSuchEntityFoundException;
 import rozkladbot.repos.FacultyRepo;
 import rozkladbot.services.FacultyService;
@@ -33,12 +34,15 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     public Faculty save(Faculty faculty) {
+        if (facultyRepo.existsById(faculty.getFacultyId())) {
+            throw new EntityAlreadyExistsException();
+        }
         return facultyRepo.save(faculty);
     }
 
     @Override
     public void saveAll(Collection<Faculty> value) {
-        facultyRepo.saveAll(value);
+        value.forEach(facultyRepo::save);
     }
 
     @Override
@@ -49,5 +53,10 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public List<Faculty> findByInstituteId(Long instituteId) {
         return facultyRepo.findByInstituteId(instituteId);
+    }
+
+    @Override
+    public Faculty findByInstituteIdAndFacultyId(long instituteId, long facultyId) {
+        return facultyRepo.findByInstituteIdAndFacultyId(instituteId, facultyId);
     }
 }

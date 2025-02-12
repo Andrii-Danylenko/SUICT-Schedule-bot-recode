@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import rozkladbot.constants.ApiEndpoints;
 import rozkladbot.utils.web.requester.RequesterImpl;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class RequesterImplTests {
 
     @Test
     void validRequestTest() throws IOException, URISyntaxException, InterruptedException {
-        String result = requester.makeRequest(params);
+        String result = requester.makeRequest(params, ApiEndpoints.API_SCHEDULE);
         Assertions.assertFalse(result.isEmpty());
         System.out.println(result);
     }

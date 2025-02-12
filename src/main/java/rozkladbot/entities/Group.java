@@ -3,6 +3,7 @@ package rozkladbot.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import rozkladbot.entities.json.response.GroupJsonResponse;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,8 +13,10 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Group {
     @Id
-    @JsonProperty("groupNumber")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @JsonProperty("groupNumber")
+    private long groupId;
     @Column(name = "name")
     @JsonProperty("group")
     private String name;
@@ -25,8 +28,8 @@ public class Group {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<User> users;
 
-    public Group(long id, String name, Faculty faculty, long course, List<User> users) {
-        this.id = id;
+    public Group(long groupId, String name, Faculty faculty, long course, List<User> users) {
+        this.groupId = groupId;
         this.name = name;
         this.faculty = faculty;
         this.course = course;
@@ -36,12 +39,12 @@ public class Group {
     public Group() {
     }
 
-    public long getId() {
-        return id;
+    public long getGroupId() {
+        return groupId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setGroupId(long id) {
+        this.groupId = id;
     }
 
     public String getName() {
@@ -67,6 +70,7 @@ public class Group {
     public void setUsers(List<User> users) {
         this.users = users;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -91,10 +95,25 @@ public class Group {
     @Override
     public String toString() {
         return "Group{" +
-               "id=" + id +
+               "id=" + groupId +
                ", name='" + name + '\'' +
                ", faculty=" + faculty.getFacultyName() +
                ", course=" + course +
                '}';
+    }
+
+    public static Group toGroupFromResponse(GroupJsonResponse jsonResponse) {
+        Group group = new Group();
+        group.setGroupId(jsonResponse.getGroupId());
+        group.setName(jsonResponse.getGroupName());
+        return group;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

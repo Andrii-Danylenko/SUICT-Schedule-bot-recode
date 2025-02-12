@@ -43,7 +43,7 @@ public class PairLinkServiceImpl implements PairLinkService {
     @Override
     @Transactional
     public PairLink save(PairLink value) {
-        if (pairLinkRepo.existsByGroupIdAndAndNameAndLinkAndType(
+        if (pairLinkRepo.existsByGroupIdAndNameAndLinkAndType(
                 value.getGroupId(),
                 value.getName(),
                 value.getLink(),
@@ -60,7 +60,8 @@ public class PairLinkServiceImpl implements PairLinkService {
         for (PairLink pairLink : value) {
             try {
                 save(pairLink);
-            } catch (EntityAlreadyExistsException ignored) {}
+            } catch (EntityAlreadyExistsException ignored) {
+            }
         }
     }
 }

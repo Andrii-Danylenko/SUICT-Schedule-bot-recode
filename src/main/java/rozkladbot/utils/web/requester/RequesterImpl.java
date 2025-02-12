@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import rozkladbot.constants.ErrorConstants;
-import rozkladbot.exceptions.EmptyRequestParametersException;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -29,13 +27,8 @@ public class RequesterImpl implements Requester {
     }
 
     @Override
-    public String makeRequest(Map<String, String> params) throws IOException, URISyntaxException, InterruptedException {
-        if (params.isEmpty()) {
-            logger.error(ErrorConstants.PARAMS_ARE_EMPTY);
-            throw new EmptyRequestParametersException(ErrorConstants.PARAMS_ARE_EMPTY);
-        }
-        String requestLink = buildLink(params);
-        URL url = new URI(requestLink).toURL();
+    public String makeRequest(Map<String, String> params, String additionalPaths) throws IOException, URISyntaxException, InterruptedException {
+        URL url = new URI(buildLink(params, additionalPaths)).toURL();
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestMethod("GET");
@@ -44,8 +37,11 @@ public class RequesterImpl implements Requester {
         return readRequest(connection);
     }
 
-    private String buildLink(Map<String, String> params) {
+    private String buildLink(Map<String, String> params, String additionalPaths) {
         StringBuilder link = new StringBuilder(BASE_LINK);
+        if (additionalPaths != null) {
+            link.append(additionalPaths);
+        }
         for (String key : params.keySet()) {
             if (Objects.equals("groupName", params.get(key))) {
                 continue;

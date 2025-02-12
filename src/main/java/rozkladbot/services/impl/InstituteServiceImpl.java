@@ -2,8 +2,10 @@ package rozkladbot.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rozkladbot.constants.ErrorConstants;
 import rozkladbot.entities.Institute;
+import rozkladbot.exceptions.EntityAlreadyExistsException;
 import rozkladbot.exceptions.NoSuchEntityFoundException;
 import rozkladbot.repos.InstituteRepo;
 import rozkladbot.services.InstituteService;
@@ -36,12 +38,23 @@ public class InstituteServiceImpl implements InstituteService {
     }
 
     @Override
+    @Transactional
+    public List<Institute> findAllEager() {
+        return instituteRepo.findAllEager();
+    }
+
+    @Override
+    @Transactional
     public Institute save(Institute institute) {
+        if (instituteRepo.existsById(institute.getId())) {
+            throw new EntityAlreadyExistsException();
+        }
         return instituteRepo.save(institute);
     }
 
     @Override
+    @Transactional
     public void saveAll(Collection<Institute> value) {
-        instituteRepo.saveAll(value);
+        instituteRepo.saveAllAndFlush(value);
     }
 }

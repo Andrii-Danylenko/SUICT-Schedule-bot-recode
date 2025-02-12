@@ -68,6 +68,8 @@ public class BotMessageConstants {
     public static final String NEXT_WEEK_SCHEDULE = "\uD83E\uDD13 Розклад на наступний тиждень:\n\n";
     public static final String BROADCASTING_FAILED = "Не вдалося отримати розклад під час широкомовної розсилки :(";
     public static final String SETTINGS_MENU = """
+            Університет: %s
+            Кафедра: %s
             Група: %s
             Номер групи: %d
             Курс: %s

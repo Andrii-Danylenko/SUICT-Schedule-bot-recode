@@ -18,6 +18,6 @@ public class PairLinksGroupDeserializer extends JsonDeserializer<Long> {
 
     @Override
     public Long deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-        return groupService.getByName(jsonParser.getText()).getId();
+        return groupService.getByName(jsonParser.getText()).getGroupId();
     }
 }

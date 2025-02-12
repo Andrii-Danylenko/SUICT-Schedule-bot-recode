@@ -12,6 +12,7 @@ import rozkladbot.entities.Institute;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 public final class KeyBoardFactory {
@@ -55,31 +56,39 @@ public final class KeyBoardFactory {
         return new InlineKeyboardMarkup(rows);
     }
 
-    public static InlineKeyboardMarkup getInstitutesKeyboardInline(List<Institute> institutes) {
+    public static InlineKeyboardMarkup getInstitutesKeyboardInline(List<Institute> institutes, boolean isRegistered) {
+        List<String> institutes1 = institutes.stream().sorted(Comparator.comparingLong(Institute::getId))
+                .map(value -> String.valueOf(value.getId()))
+                .toList();
         List<List<InlineKeyboardButton>> buttons =
-                buildKeyBoardFromData(institutes.stream().map(Institute::getInstituteName).sorted().toList(), 1);
+                buildKeyBoardFromData(institutes1, 1, isRegistered);
         buttons.add(getLinkButton(AppConstants.DEVELOPER_TG_LINK, BotMessageConstants.DOES_NOT_CONTAIN_INSTITUTE));
         return new InlineKeyboardMarkup(buttons);
     }
 
     public static InlineKeyboardMarkup getFacultiesKeyboardInline(List<Faculty> institutes) {
         List<List<InlineKeyboardButton>> buttons =
-                buildKeyBoardFromData(institutes.stream().map(Faculty::getFacultyName).sorted().toList(), 1);
+                buildKeyBoardFromData(institutes.stream()
+                        .map(faculty -> String.valueOf(faculty.getFacultyId())
+                        ).sorted().toList(), 1, false);
         buttons.add(getLinkButton(AppConstants.DEVELOPER_TG_LINK, BotMessageConstants.DOES_NOT_CONTAIN_FACULTY));
+        buttons.add(getBackButton().getKeyboard().getFirst());
         return new InlineKeyboardMarkup(buttons);
     }
 
-    public static InlineKeyboardMarkup getCourseKeyboardInline(List<String> courses) {
+    public static InlineKeyboardMarkup getCourseKeyboardInline(List<String> courses, boolean isRegistered) {
         List<List<InlineKeyboardButton>> buttons =
-                buildKeyBoardFromData(courses, 1);
+                buildKeyBoardFromData(courses, 1, isRegistered);
         buttons.add(getLinkButton(AppConstants.DEVELOPER_TG_LINK, BotMessageConstants.DOES_NOT_CONTAIN_COURSE));
+        buttons.add(getBackButton().getKeyboard().getFirst());
         return new InlineKeyboardMarkup(buttons);
     }
 
-    public static InlineKeyboardMarkup getGroupKeyboardInline(List<Group> groups) {
+    public static InlineKeyboardMarkup getGroupKeyboardInline(List<Group> groups, boolean isRegistered) {
         List<List<InlineKeyboardButton>> buttons =
-                buildKeyBoardFromData(groups.stream().map(Group::getName).toList(), 4);
+                buildKeyBoardFromData(groups.stream().map(Group::getName).toList(), 4, isRegistered);
         buttons.add(getLinkButton(AppConstants.DEVELOPER_TG_LINK, BotMessageConstants.DOES_NOT_CONTAIN_GROUP));
+        buttons.add(getBackButton().getKeyboard().getFirst());
         return new InlineKeyboardMarkup(buttons);
     }
 
@@ -92,7 +101,11 @@ public final class KeyBoardFactory {
         }};
     }
 
-    private static List<List<InlineKeyboardButton>> buildKeyBoardFromData(Collection<String> collection, int separator) {
+    private static List<List<InlineKeyboardButton>> buildKeyBoardFromData(
+            Collection<String> collection,
+            int separator,
+            boolean addBackToMenuButton
+    ) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
         int i = 0;
@@ -109,7 +122,9 @@ public final class KeyBoardFactory {
         if (!keyboardRow.isEmpty()) {
             buttons.add(keyboardRow);
         }
-        buttons.add(getCustomButtonAsList(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA));
+        if (addBackToMenuButton) {
+            buttons.add(getCustomButtonAsList(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA));
+        }
         return buttons;
     }
 
@@ -153,6 +168,7 @@ public final class KeyBoardFactory {
         buttons.add(row6);
         return new InlineKeyboardMarkup(buttons);
     }
+
     public static InlineKeyboardMarkup getSettings(boolean isInBroadCast) {
         return new InlineKeyboardMarkup(new ArrayList<>() {{
             add(new ArrayList<>() {{
@@ -181,6 +197,7 @@ public final class KeyBoardFactory {
             }});
         }});
     }
+
     private KeyBoardFactory() {
     }
 }

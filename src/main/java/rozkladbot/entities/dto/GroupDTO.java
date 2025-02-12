@@ -9,9 +9,9 @@ public class GroupDTO {
     private Long course;
 
     public GroupDTO(Group group) {
-        this.id = group.getId();
+        this.id = group.getGroupId();
         this.name = group.getName();
-        this.facultyId = group.getFaculty().getId();
+        this.facultyId = group.getFaculty().getFacultyId();
         this.course = group.getCourse();
     }
 

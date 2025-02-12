@@ -15,7 +15,8 @@ public interface GroupService extends BasicCrudService<Group> {
 
     List<Group> findByCourse(long course);
 
-    List<Long> getCoursesByFacultyId(long facultyId);
+    List<Long> findAllCoursesByFacultyIdAndInstituteId(long facultyId, long instituteId);
 
-    List<Group> findByFacultyIdAndCourse(long facultyId, long course);
+    List<Group> findByIdAndCourseAndInstituteId(long facultyId, long course, long instituteId);
+
 }

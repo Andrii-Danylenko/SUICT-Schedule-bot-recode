@@ -10,7 +10,6 @@ import rozkladbot.services.GroupService;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service("groupServiceImpl")
 public class GroupServiceImpl implements GroupService {
@@ -29,7 +28,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group getById(long id) {
-        return groupRepo.findById(id).orElseThrow(() -> new NoSuchEntityFoundException(ErrorConstants.ENTITY_NOT_FOUND_EXCEPTION));
+        return groupRepo.getByGroupId(id).orElseThrow(() -> new NoSuchEntityFoundException(ErrorConstants.ENTITY_NOT_FOUND_EXCEPTION));
     }
 
     @Override
@@ -68,18 +67,12 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<Long> getCoursesByFacultyId(long facultyId) {
-        return findByFacultyId(facultyId)
-                .stream()
-                .map(Group::getCourse)
-                .mapToLong(x -> x).distinct()
-                .sorted()
-                .boxed()
-                .collect(Collectors.toList());
+    public List<Long> findAllCoursesByFacultyIdAndInstituteId(long facultyId, long instituteId) {
+        return groupRepo.findAllCourseIdsByFacultyIdAndInstituteId(facultyId, instituteId);
     }
 
     @Override
-    public List<Group> findByFacultyIdAndCourse(long facultyId, long course) {
-        return groupRepo.findByIdAndCourse(facultyId, course);
+    public List<Group> findByIdAndCourseAndInstituteId(long facultyId, long course, long instituteId) {
+        return groupRepo.findByIdAndCourseAndInstituteId(facultyId, course, instituteId);
     }
 }

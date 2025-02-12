@@ -19,7 +19,7 @@ public class ModelUtils {
 
     public static Group getGroup() {
         Group group = new Group();
-        group.setId(1);
+        group.setGroupId(1);
         group.setCourse(2);
         group.setName("Group 1");
         group.setFaculty(getFaculty());
@@ -28,7 +28,7 @@ public class ModelUtils {
 
     public static Faculty getFaculty() {
         Faculty faculty = new Faculty();
-        faculty.setId(1);
+        faculty.setFacultyId(1);
         faculty.setFacultyName("Faculty 1");
         faculty.setInstitute(getInstitute());
         return faculty;

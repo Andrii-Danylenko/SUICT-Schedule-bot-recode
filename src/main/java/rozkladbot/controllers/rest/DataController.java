@@ -35,14 +35,14 @@ public class DataController {
     }
 
     @GetMapping("/courses")
-    public ResponseEntity<List<Long>> getCourses(@RequestParam Long facultyId) {
-        List<Long> courses = groupService.getCoursesByFacultyId(facultyId);
+    public ResponseEntity<List<Long>> getCourses(@RequestParam Long facultyId, @RequestParam Long instituteId) {
+        List<Long> courses = groupService.findAllCoursesByFacultyIdAndInstituteId(facultyId, instituteId);
         return ResponseEntity.ok(courses);
     }
 
     @GetMapping("/groups")
-    public ResponseEntity<List<GroupDTO>> getGroups(@RequestParam Long facultyId, @RequestParam Long course) {
-        List<GroupDTO> groupDTOs = groupService.findByFacultyIdAndCourse(facultyId, course).stream().map(GroupDTO::new).toList();
+    public ResponseEntity<List<GroupDTO>> getGroups(@RequestParam Long facultyId, @RequestParam Long course, @RequestParam Long instituteId) {
+        List<GroupDTO> groupDTOs = groupService.findByIdAndCourseAndInstituteId(facultyId, course, instituteId).stream().map(GroupDTO::new).toList();
         return ResponseEntity.ok(groupDTOs);
     }
 

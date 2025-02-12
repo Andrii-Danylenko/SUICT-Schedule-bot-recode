@@ -138,11 +138,22 @@ public class User implements UserDetails {
         return
                 """
                         Назва чату: %s
-                        Id-чату: %d
-                        Група: %s
+                        ID-чату: %d
+                        Назва університету: %s
+                        Назва кафедри: %s
+                        Група (Назва): %s
+                        Група (ID): %d
                         Курс: %d
                         Роль: %s
-                        """;
+                        """.formatted(
+                        username,
+                        id,
+                        group.getFaculty().getInstitute().getInstituteName(),
+                        group.getFaculty().getFacultyName(),
+                        group.getName(),
+                        group.getGroupId(),
+                        group.getCourse(),
+                        userRole);
     }
 
     public boolean isBroadcasted() {

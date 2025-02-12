@@ -7,7 +7,7 @@ public class FacultyDTO {
     private String facultyName;
 
     public FacultyDTO(Faculty faculty) {
-        this.id = faculty.getId();
+        this.id = faculty.getFacultyId();
         this.facultyName = faculty.getFacultyName();
     }
 

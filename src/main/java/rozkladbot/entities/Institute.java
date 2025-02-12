@@ -2,6 +2,7 @@ package rozkladbot.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import rozkladbot.entities.json.response.InstituteJsonResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +12,11 @@ import java.util.Objects;
 @Table(name = "institutes")
 public class Institute {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     @Column(unique = true, nullable = false)
     @JsonProperty("institute")
     String instituteName;
-    @OneToMany(mappedBy = "institute", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "institute", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     List<Faculty> facultyList = new ArrayList<>();
 
     public Institute() {
@@ -64,11 +64,21 @@ public class Institute {
         return Objects.hash(id, instituteName);
     }
 
+
+
+    public static Institute toInstituteFromJsonResponse(InstituteJsonResponse jsonResponse) {
+        Institute institute = new Institute();
+        institute.setId(jsonResponse.getId());
+        institute.setInstituteName(jsonResponse.getName());
+        return institute;
+    }
+
     @Override
     public String toString() {
         return "Institute{" +
                "id=" + id +
                ", instituteName='" + instituteName + '\'' +
+               ", facultyList=" + facultyList +
                '}';
     }
 }

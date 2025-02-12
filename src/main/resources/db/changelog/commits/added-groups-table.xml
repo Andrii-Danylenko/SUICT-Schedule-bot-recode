@@ -9,8 +9,11 @@
             <column name="id" type="bigint">
                 <constraints primaryKey="true"/>
             </column>
+            <column name="group_id" type="bigint">
+                <constraints nullable="false" unique="false"/>
+            </column>
             <column name="name" type="varchar">
-                <constraints unique="true" nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="faculty_id" type="bigint">
                 <constraints nullable="false"/>
@@ -25,5 +28,6 @@
                                  constraintName="FK_groups"
                                  referencedTableName="faculties"
                                  referencedColumnNames="id"/>
+        <addAutoIncrement tableName="groups" columnName="id"/>
     </changeSet>
 </databaseChangeLog>

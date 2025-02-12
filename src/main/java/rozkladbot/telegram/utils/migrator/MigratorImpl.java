@@ -50,7 +50,11 @@ public class MigratorImpl implements Migrator {
         Deque<PairLink> pairLinks = new LinkedList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
             for (Path file : stream) {
-                pairLinks.addAll(pairLinksDeserializer.deserialize(localFileReader.readLocalFile(file.toString())));
+                try {
+                    pairLinks.addAll(pairLinksDeserializer.deserialize(localFileReader.readLocalFile(file.toString())));
+                } catch (RuntimeException e) {
+                    logger.error(AppConstants.MIGRATION_FAILED, e.getMessage());
+                }
             }
         }
         pairLinkService.saveAll(pairLinks);

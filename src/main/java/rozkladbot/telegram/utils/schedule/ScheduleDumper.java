@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import rozkladbot.constants.ApiEndpoints;
 import rozkladbot.constants.AppConstants;
 import rozkladbot.entities.Group;
 import rozkladbot.services.GroupService;
@@ -55,17 +56,17 @@ public class ScheduleDumper {
         Set<Long> alreadyDumpedGroups = new HashSet<>();
         logger.info(SCHEDULE_DUMPING_BEGAN);
         groupService.getAll().forEach(group -> {
-            long groupNumber = group.getId();
+            long groupNumber = group.getGroupId();
             if (groupNumber == 0 || alreadyDumpedGroups.contains(groupNumber)) return;
             try {
-                logger.info(SCHEDULE_DUMPING_BEGAN_FOR_GROUP, group.getId(), group.getName());
+                logger.info(SCHEDULE_DUMPING_BEGAN_FOR_GROUP, group.getGroupId(), group.getName());
                 Path directoryPath = Paths.get(AppConstants.GROUP_SCHEDULES_FOLDER_NAME);
-                String fileName = AppConstants.THIS_WEEK_SCHEDULE_FILE_NAME.formatted(group.getName(), group.getId());
+                String fileName = AppConstants.THIS_WEEK_SCHEDULE_FILE_NAME.formatted(group.getName(), group.getGroupId());
                 prepareForWriting(directoryPath, fileName, group,
                         DateUtils.getStartOfWeek(DateUtils.getTodayDateString()),
                         DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(7),
                         isForced);
-                fileName = AppConstants.NEXT_WEEK_SCHEDULE_FILE_NAME.formatted(group.getName(), group.getId());
+                fileName = AppConstants.NEXT_WEEK_SCHEDULE_FILE_NAME.formatted(group.getName(), group.getGroupId());
                 prepareForWriting(directoryPath, fileName, group,
                         DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(7),
                         DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(14),
@@ -79,8 +80,8 @@ public class ScheduleDumper {
 
     private void prepareForWriting(Path directoryPath, String fileName, Group group, LocalDate dateFrom, LocalDate dateTo, boolean isForced) throws IOException, URISyntaxException, InterruptedException {
         if (localFileWriter.checkIfAlreadyWritten(directoryPath, fileName, isForced)) {
-            Map<String, String> params = paramsBuilder.buildFromGroupId(group.getId(), dateFrom, dateTo);
-            String response = requester.makeRequest(params);
+            Map<String, String> params = paramsBuilder.buildFromGroupId(group.getGroupId(), dateFrom, dateTo);
+            String response = requester.makeRequest(params, ApiEndpoints.API_SCHEDULE);
             localFileWriter.writeFile(directoryPath, fileName, response);
             logger.info(SCHEDULE_DUMPED_SUCCESSFULLY, fileName);
         } else {

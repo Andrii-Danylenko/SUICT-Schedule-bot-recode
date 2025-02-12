@@ -41,8 +41,10 @@ public class SettingsHandler {
         messageSender.sendMessage(
                 user,
                 BotMessageConstants.SETTINGS_MENU.formatted(
+                        user.getGroup().getFaculty().getInstitute().getInstituteName(),
+                        user.getGroup().getFaculty().getFacultyName(),
                         user.getGroup().getName(),
-                        user.getGroup().getId(),
+                        user.getGroup().getGroupId(),
                         user.getGroup().getCourse(),
                         user.isBroadcasted() ? BotMessageConstants.IS_BROADCASTED : BotMessageConstants.IS_NOT_BROADCASTED
                 ),

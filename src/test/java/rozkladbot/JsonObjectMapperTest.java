@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import rozkladbot.constants.ApiEndpoints;
 import rozkladbot.entities.Lesson;
 import rozkladbot.utils.deserializers.LessonDeserializer;
 import rozkladbot.utils.web.requester.RequesterImpl;
@@ -23,7 +24,7 @@ public class JsonObjectMapperTest {
 
     @Test
     public void testJsonObjectMapper() throws IOException, URISyntaxException, InterruptedException {
-        String json = requester.makeRequest(params);
+        String json = requester.makeRequest(params, ApiEndpoints.API_SCHEDULE);
         Deque<Lesson> lessons = lessonDeserializer.deserialize(json);
         Assertions.assertFalse(lessons.isEmpty());
     }

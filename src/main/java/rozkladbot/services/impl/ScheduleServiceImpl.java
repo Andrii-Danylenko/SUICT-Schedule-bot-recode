@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import rozkladbot.constants.ApiEndpoints;
 import rozkladbot.constants.AppConstants;
 import rozkladbot.constants.LoggingConstants;
 import rozkladbot.entities.*;
@@ -66,9 +67,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         LocalDate queryDateStart = DateUtils.getToday();
         return getSchedule(
                 user.getGroup().getFaculty().getInstitute().getId(),
-                user.getGroup().getFaculty().getId(),
+                user.getGroup().getFaculty().getFacultyId(),
                 user.getGroup().getCourse(),
-                user.getGroup().getId(),
+                user.getGroup().getGroupId(),
                 queryDateStart,
                 queryDateStart,
                 OfflineReadingMode.THIS_WEEK);
@@ -79,9 +80,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         LocalDate queryDateStart = DateUtils.getToday().plusDays(1);
         return getSchedule(
                 user.getGroup().getFaculty().getInstitute().getId(),
-                user.getGroup().getFaculty().getId(),
+                user.getGroup().getFaculty().getFacultyId(),
                 user.getGroup().getCourse(),
-                user.getGroup().getId(),
+                user.getGroup().getGroupId(),
                 queryDateStart,
                 queryDateStart,
                 OfflineReadingMode.THIS_WEEK);
@@ -93,9 +94,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         LocalDate queryDateEnd = queryDateStart.plusDays(6);
         return getSchedule(
                 user.getGroup().getFaculty().getInstitute().getId(),
-                user.getGroup().getFaculty().getId(),
+                user.getGroup().getFaculty().getFacultyId(),
                 user.getGroup().getCourse(),
-                user.getGroup().getId(),
+                user.getGroup().getGroupId(),
                 queryDateStart,
                 queryDateEnd,
                 OfflineReadingMode.THIS_WEEK);
@@ -107,9 +108,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         LocalDate queryDateEnd = queryDateStart.plusDays(6);
         return getSchedule(
                 user.getGroup().getFaculty().getInstitute().getId(),
-                user.getGroup().getFaculty().getId(),
+                user.getGroup().getFaculty().getFacultyId(),
                 user.getGroup().getCourse(),
-                user.getGroup().getId(),
+                user.getGroup().getGroupId(),
                 queryDateStart,
                 queryDateEnd,
                 OfflineReadingMode.NEXT_WEEK);
@@ -125,9 +126,9 @@ public class ScheduleServiceImpl implements ScheduleService {
             Group group = groupService.getByName(groupAsString);
             return getSchedule(
                     group.getFaculty().getInstitute().getId(),
-                    group.getFaculty().getId(),
+                    group.getFaculty().getFacultyId(),
                     group.getCourse(),
-                    group.getId(),
+                    group.getGroupId(),
                     queryDateStart,
                     queryDateEnd,
                     OfflineReadingMode.NONE
@@ -166,7 +167,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private Deque<Lesson> getSchedule(Map<String, String> params, OfflineReadingMode mode) throws ExecutionException, InterruptedException {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                return requester.makeRequest(params);
+                return requester.makeRequest(params, ApiEndpoints.API_SCHEDULE);
             } catch (IOException | URISyntaxException | InterruptedException e) {
                 logger.error(REQUEST_CREATION_FAILED);
                 throw new RequestCreationFailedException(REQUEST_CREATION_FAILED);
@@ -227,7 +228,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                             lesson.getLessonFullName(),
                             lesson.getType()
                     );
-                    System.out.println(pairlink);
                     if (pairlink != null) {
                         lesson.setPairLink(pairlink.getLink());
                     }

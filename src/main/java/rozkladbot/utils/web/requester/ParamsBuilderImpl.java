@@ -34,9 +34,9 @@ public class ParamsBuilderImpl implements ParamsBuilder {
 
     private HashMap<String, String> createParams(Group group, LocalDate startDate, LocalDate endDate) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("group", String.valueOf(group.getId()));
+        params.put("group", String.valueOf(group.getGroupId()));
         params.put("course", String.valueOf(group.getCourse()));
-        params.put("faculty", String.valueOf(group.getFaculty().getId()));
+        params.put("faculty", String.valueOf(group.getFaculty().getFacultyId()));
         params.put("dateFrom", DateUtils.getDateAsString(startDate));
         params.put("dateTo", DateUtils.getDateAsString(endDate));
         params.put("institution", String.valueOf(group.getFaculty().getInstitute().getId()));
