@@ -215,7 +215,14 @@ public class ScheduleServiceImpl implements ScheduleService {
             LocalDate queryDateStart,
             LocalDate queryDateEnd,
             OfflineReadingMode mode) throws ExecutionException, InterruptedException {
-        HashMap<String, String> params = paramsBuilder.buildFromGroupId(group, queryDateStart, queryDateEnd);
+        HashMap<String, String> params = paramsBuilder.createParams(
+                group,
+                course,
+                faculty,
+                institute,
+                queryDateStart,
+                queryDateEnd
+        );
         Deque<Lesson> lessons = getSchedule(params, mode);
         appendPairLinks(group, lessons);
         return new ScheduleTable(splitByDays(lessons, queryDateStart, queryDateEnd));

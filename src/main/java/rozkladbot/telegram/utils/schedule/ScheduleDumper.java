@@ -80,7 +80,14 @@ public class ScheduleDumper {
 
     private void prepareForWriting(Path directoryPath, String fileName, Group group, LocalDate dateFrom, LocalDate dateTo, boolean isForced) throws IOException, URISyntaxException, InterruptedException {
         if (localFileWriter.checkIfAlreadyWritten(directoryPath, fileName, isForced)) {
-            Map<String, String> params = paramsBuilder.buildFromGroupId(group.getGroupId(), dateFrom, dateTo);
+            Map<String, String> params = paramsBuilder.createParams(
+                    group.getGroupId(),
+                    group.getCourse(),
+                    group.getFaculty().getFacultyId(),
+                    group.getFaculty().getInstitute().getId(),
+                    dateFrom,
+                    dateTo
+            );
             String response = requester.makeRequest(params, ApiEndpoints.API_SCHEDULE);
             localFileWriter.writeFile(directoryPath, fileName, response);
             logger.info(SCHEDULE_DUMPED_SUCCESSFULLY, fileName);

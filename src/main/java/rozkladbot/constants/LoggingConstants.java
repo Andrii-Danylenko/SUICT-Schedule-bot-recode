@@ -33,5 +33,6 @@ public class LoggingConstants {
     public static final String USERS_SYNC_FINISHED = "Finished attempt to synchronize local users with DB.";
     public static final String APPLICATION_INIT_JOB_STARTED = "Bootstrapper is active. Performing initiation job...";
     public static final String APPLICATION_INIT_JOB_FINISHED = "Application initiation finished successfully.";
+    public static final String OPENED_CONNECTION_BY_URL = "Opened TCP connection by url: {}";
     private LoggingConstants() {}
 }

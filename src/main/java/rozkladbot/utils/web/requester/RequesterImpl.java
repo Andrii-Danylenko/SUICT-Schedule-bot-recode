@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import rozkladbot.constants.LoggingConstants;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -30,6 +31,7 @@ public class RequesterImpl implements Requester {
     public String makeRequest(Map<String, String> params, String additionalPaths) throws IOException, URISyntaxException, InterruptedException {
         URL url = new URI(buildLink(params, additionalPaths)).toURL();
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        logger.info(LoggingConstants.OPENED_CONNECTION_BY_URL, url);
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(REQUEST_TIMEOUT * 1000);

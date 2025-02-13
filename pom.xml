@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>rozkladbot</groupId>
-	<artifactId>rozklabbot</artifactId>
-	<version>0.2.2-SNAPSHOT</version>
+	<artifactId>rozkladbot</artifactId>
+	<version>1.0.1-BUGFIX</version>
 	<name>Schedule Bot recode</name>
 	<description>New version of schedule helper, implementing many features as persistence etc.</description>
 	<url/>
