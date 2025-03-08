@@ -18,7 +18,6 @@ public class GroupServiceTest {
     @Transactional
     void testGetAllFaculties() {
         List<Group> groupList = groupService.getAll();
-        System.out.println(groupList);
         Assertions.assertFalse(groupList.isEmpty());
     }
     @Test
