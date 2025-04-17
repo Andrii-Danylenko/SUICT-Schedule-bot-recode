@@ -218,6 +218,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         HashMap<String, String> params = paramsBuilder.createParams(
                 group,
                 course,
+                groupService.getById(group).getName(),
                 faculty,
                 institute,
                 queryDateStart,

@@ -13,6 +13,7 @@ public class ParamsBuilderImpl implements ParamsBuilder {
     public HashMap<String, String> createParams(
             long groupId,
             long course,
+            String groupName,
             long facultyId,
             long institutionId,
             LocalDate startDate,
@@ -21,6 +22,7 @@ public class ParamsBuilderImpl implements ParamsBuilder {
         return buildFromValues(
                 "group", String.valueOf(groupId),
                 "course", String.valueOf(course),
+                "groupName", groupName,
                 "faculty", String.valueOf(facultyId),
                 "institution", String.valueOf(institutionId),
                 "dateFrom", DateUtils.getDateAsString(startDate),

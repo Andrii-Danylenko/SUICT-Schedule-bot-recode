@@ -8,6 +8,7 @@ public interface ParamsBuilder {
     HashMap<String, String> createParams(
             long groupId,
             long course,
+            String groupName,
             long facultyId,
             long institutionId,
             LocalDate startDate,

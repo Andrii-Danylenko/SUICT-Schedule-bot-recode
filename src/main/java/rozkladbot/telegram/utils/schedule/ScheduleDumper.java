@@ -83,6 +83,7 @@ public class ScheduleDumper {
             Map<String, String> params = paramsBuilder.createParams(
                     group.getGroupId(),
                     group.getCourse(),
+                    group.getName(),
                     group.getFaculty().getFacultyId(),
                     group.getFaculty().getInstitute().getId(),
                     dateFrom,
