@@ -55,7 +55,7 @@ public class ScheduleDumper {
     public void dumpSchedule(boolean isForced) {
         Set<Long> alreadyDumpedGroups = new HashSet<>();
         logger.info(SCHEDULE_DUMPING_BEGAN);
-        groupService.getAll().forEach(group -> {
+        groupService.getAllGroupsThatAssignedToUsers().forEach(group -> {
             long groupNumber = group.getGroupId();
             if (groupNumber == 0 || alreadyDumpedGroups.contains(groupNumber)) return;
             try {

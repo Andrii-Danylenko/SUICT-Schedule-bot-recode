@@ -3,6 +3,7 @@ package rozkladbot.services;
 import rozkladbot.entities.Group;
 
 import java.util.List;
+import java.util.Set;
 
 public interface GroupService extends BasicCrudService<Group> {
     Group getByName(String name);
@@ -19,4 +20,5 @@ public interface GroupService extends BasicCrudService<Group> {
 
     List<Group> findByIdAndCourseAndInstituteId(long facultyId, long course, long instituteId);
 
+    Set<Group> getAllGroupsThatAssignedToUsers();
 }

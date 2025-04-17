@@ -10,6 +10,7 @@ import rozkladbot.services.GroupService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Service("groupServiceImpl")
 public class GroupServiceImpl implements GroupService {
@@ -74,5 +75,10 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<Group> findByIdAndCourseAndInstituteId(long facultyId, long course, long instituteId) {
         return groupRepo.findByIdAndCourseAndInstituteId(facultyId, course, instituteId);
+    }
+
+    @Override
+    public Set<Group> getAllGroupsThatAssignedToUsers() {
+        return groupRepo.getAllGroupsThatAssignedToUsers();
     }
 }

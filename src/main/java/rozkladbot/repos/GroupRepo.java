@@ -7,6 +7,7 @@ import rozkladbot.entities.Group;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface GroupRepo extends JpaRepository<Group, Long> {
@@ -35,4 +36,7 @@ public interface GroupRepo extends JpaRepository<Group, Long> {
     List<Long> findAllCourseIdsByFacultyIdAndInstituteId(long facultyId, long instituteId);
 
     Optional<Group> getByGroupId(long groupId);
+
+    @Query("SELECT g FROM Group g JOIN FETCH User u on u.group = g")
+    Set<Group> getAllGroupsThatAssignedToUsers();
 }
