@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import rozkladbot.constants.LoggingConstants;
-
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +13,14 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
+
+import static rozkladbot.constants.AppConstants.APPLICATION_JSON;
+import static rozkladbot.constants.AppConstants.CONTENT_TYPE;
+import static rozkladbot.constants.AppConstants.GROUP_NAME;
+import static rozkladbot.constants.AppConstants.HTTP_METHOD_GET;
+import static rozkladbot.constants.AppConstants.QUERY_PARAMETER_DELIMITER;
+import static rozkladbot.constants.AppConstants.QUERY_PARAMETER_KEY_SEPARATOR;
+import static rozkladbot.constants.LoggingConstants.OPENED_CONNECTION_BY_URL;
 
 @Component("requestImpl")
 public class RequesterImpl implements Requester {
@@ -28,12 +34,12 @@ public class RequesterImpl implements Requester {
     }
 
     @Override
-    public String makeRequest(Map<String, String> params, String additionalPaths) throws IOException, URISyntaxException, InterruptedException {
+    public String makeRequest(Map<String, String> params, String additionalPaths) throws IOException, URISyntaxException {
         URL url = new URI(buildLink(params, additionalPaths)).toURL();
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        logger.info(LoggingConstants.OPENED_CONNECTION_BY_URL, url);
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestMethod("GET");
+        logger.info(OPENED_CONNECTION_BY_URL, url);
+        connection.setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
+        connection.setRequestMethod(HTTP_METHOD_GET);
         connection.setConnectTimeout(REQUEST_TIMEOUT * 1000);
         connection.setReadTimeout(REQUEST_TIMEOUT * 1000);
         return readRequest(connection);
@@ -45,10 +51,10 @@ public class RequesterImpl implements Requester {
             link.append(additionalPaths);
         }
         for (String key : params.keySet()) {
-            if (Objects.equals("groupName", params.get(key))) {
+            if (Objects.equals(GROUP_NAME, key)) {
                 continue;
             }
-            link.append("&").append(key).append("=").append(params.get(key));
+            link.append(QUERY_PARAMETER_DELIMITER).append(key).append(QUERY_PARAMETER_KEY_SEPARATOR).append(params.get(key));
         }
         return link.toString();
     }

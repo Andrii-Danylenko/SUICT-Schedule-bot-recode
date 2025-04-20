@@ -13,7 +13,6 @@ import rozkladbot.telegram.utils.files.writer.LocalFileWriter;
 import rozkladbot.utils.date.DateUtils;
 import rozkladbot.utils.web.requester.ParamsBuilder;
 import rozkladbot.utils.web.requester.Requester;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -23,7 +22,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static rozkladbot.constants.LoggingConstants.*;
+import static rozkladbot.constants.LoggingConstants.SCHEDULE_DUMPED_SUCCESSFULLY;
+import static rozkladbot.constants.LoggingConstants.SCHEDULE_DUMPING_BEGAN;
+import static rozkladbot.constants.LoggingConstants.SCHEDULE_DUMPING_BEGAN_FOR_GROUP;
+import static rozkladbot.constants.LoggingConstants.SCHEDULE_DUMPING_FAILED;
+import static rozkladbot.constants.LoggingConstants.SCHEDULE_DUMPING_SKIPPING_FILE;
 
 @Component("scheduleDumper")
 public class ScheduleDumper {

@@ -5,5 +5,6 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 public interface Requester {
-    String makeRequest(Map<String, String> params, String additionalPaths) throws IOException, URISyntaxException, InterruptedException;
+    String makeRequest(Map<String, String> params, String additionalPaths)
+            throws IOException, URISyntaxException, InterruptedException;
 }

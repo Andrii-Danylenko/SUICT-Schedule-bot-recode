@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.constants.ApiEndpoints;
-import rozkladbot.constants.AppConstants;
-import rozkladbot.constants.LoggingConstants;
 import rozkladbot.entities.*;
 import rozkladbot.enums.OfflineReadingMode;
 import rozkladbot.exceptions.CustomScheduleFetchException;
@@ -21,17 +19,29 @@ import rozkladbot.utils.date.DateUtils;
 import rozkladbot.utils.deserializers.LessonDeserializer;
 import rozkladbot.utils.web.requester.ParamsBuilder;
 import rozkladbot.utils.web.requester.Requester;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import static rozkladbot.constants.AppConstants.CURRENT_WEEK_LOCAL_SCHEDULE_PATH;
+import static rozkladbot.constants.AppConstants.GROUP;
+import static rozkladbot.constants.AppConstants.GROUP_NAME;
+import static rozkladbot.constants.AppConstants.NEXT_WEEK_LOCAL_SCHEDULE_PATH;
 import static rozkladbot.constants.ErrorConstants.REQUEST_CREATION_FAILED;
+import static rozkladbot.constants.LoggingConstants.EXECUTOR_EXCEPTION_MESSAGE;
+import static rozkladbot.enums.OfflineReadingMode.THIS_WEEK;
 
 @Service("scheduleServiceImpl")
 public class ScheduleServiceImpl implements ScheduleService {
@@ -72,7 +82,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 user.getGroup().getGroupId(),
                 queryDateStart,
                 queryDateStart,
-                OfflineReadingMode.THIS_WEEK);
+                THIS_WEEK);
     }
 
     @Override
@@ -85,7 +95,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 user.getGroup().getGroupId(),
                 queryDateStart,
                 queryDateStart,
-                OfflineReadingMode.THIS_WEEK);
+                THIS_WEEK);
     }
 
     @Override
@@ -99,7 +109,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 user.getGroup().getGroupId(),
                 queryDateStart,
                 queryDateEnd,
-                OfflineReadingMode.THIS_WEEK);
+                THIS_WEEK);
     }
 
     @Override
@@ -173,18 +183,18 @@ public class ScheduleServiceImpl implements ScheduleService {
                 throw new RequestCreationFailedException(REQUEST_CREATION_FAILED);
             }
         }, Executors.newSingleThreadExecutor()).exceptionally((ex) -> {
-            if (ex != null) logger.error(LoggingConstants.EXECUTOR_EXCEPTION_MESSAGE, ex.getMessage());
+            if (ex != null) logger.error(EXECUTOR_EXCEPTION_MESSAGE, ex.getMessage());
             String result;
-            if (mode.equals(OfflineReadingMode.THIS_WEEK)) {
+            if (mode.equals(THIS_WEEK)) {
                 result = localFileReader.readLocalFile(
-                        AppConstants.CURRENT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
-                                params.get("groupName"),
-                                Long.parseLong(params.get("group"))));
+                        CURRENT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
+                                params.get(GROUP_NAME),
+                                Long.parseLong(params.get(GROUP))));
             } else if (mode.equals(OfflineReadingMode.NEXT_WEEK)) {
                 result = localFileReader.readLocalFile(
-                        AppConstants.NEXT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
-                                params.get("groupName"),
-                                Long.parseLong(params.get("group"))));
+                        NEXT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
+                                params.get(GROUP_NAME),
+                                Long.parseLong(params.get(GROUP))));
             } else {
                 throw new CustomScheduleFetchException();
             }
