@@ -69,8 +69,9 @@ public final class KeyBoardFactory {
     public static InlineKeyboardMarkup getFacultiesKeyboardInline(List<Faculty> institutes) {
         List<List<InlineKeyboardButton>> buttons =
                 buildKeyBoardFromData(institutes.stream()
-                        .map(faculty -> String.valueOf(faculty.getFacultyId())
-                        ).sorted().toList(), 1, false);
+                        .sorted(Comparator.comparingLong(Faculty::getFacultyId))
+                        .map(faculty -> String.valueOf(faculty.getFacultyId()))
+                        .toList(), 1, false);
         buttons.add(getLinkButton(AppConstants.DEVELOPER_TG_LINK, BotMessageConstants.DOES_NOT_CONTAIN_FACULTY));
         buttons.add(getBackButton().getKeyboard().getFirst());
         return new InlineKeyboardMarkup(buttons);
@@ -78,7 +79,7 @@ public final class KeyBoardFactory {
 
     public static InlineKeyboardMarkup getCourseKeyboardInline(List<String> courses, boolean isRegistered) {
         List<List<InlineKeyboardButton>> buttons =
-                buildKeyBoardFromData(courses, 1, isRegistered);
+                buildKeyBoardFromData(courses.stream().sorted().toList(), 1, isRegistered);
         buttons.add(getLinkButton(AppConstants.DEVELOPER_TG_LINK, BotMessageConstants.DOES_NOT_CONTAIN_COURSE));
         buttons.add(getBackButton().getKeyboard().getFirst());
         return new InlineKeyboardMarkup(buttons);
@@ -86,7 +87,7 @@ public final class KeyBoardFactory {
 
     public static InlineKeyboardMarkup getGroupKeyboardInline(List<Group> groups, boolean isRegistered) {
         List<List<InlineKeyboardButton>> buttons =
-                buildKeyBoardFromData(groups.stream().map(Group::getName).toList(), 4, isRegistered);
+                buildKeyBoardFromData(groups.stream().map(Group::getName).sorted().toList(), 4, isRegistered);
         buttons.add(getLinkButton(AppConstants.DEVELOPER_TG_LINK, BotMessageConstants.DOES_NOT_CONTAIN_GROUP));
         buttons.add(getBackButton().getKeyboard().getFirst());
         return new InlineKeyboardMarkup(buttons);

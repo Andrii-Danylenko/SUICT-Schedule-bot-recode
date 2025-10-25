@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import rozkladbot.constants.ApiEndpoints;
 import rozkladbot.constants.LoggingConstants;
@@ -44,6 +45,8 @@ public class Bootstrapper {
     private final FacultyJsonResponseDeserializer facultyJsonResponseDeserializer;
     private final GroupJsonResponseDeserializer groupJsonResponseDeserializer;
     private final CourseJsonResponseDeserializer courseJsonResponseDeserializer;
+    @Value("${bootstrapper.update.university-data}")
+    private boolean DOES_NEED_TO_UPDATE_UNIVERSITY_DATA;
 
     @Autowired
     public Bootstrapper(
@@ -75,9 +78,11 @@ public class Bootstrapper {
     public void init() {
         logger.info(LoggingConstants.APPLICATION_INIT_JOB_STARTED);
         loadUsers();
-//        updateInstitutes();
-//        updateFaculties();
-//        updateCourses();
+        if (DOES_NEED_TO_UPDATE_UNIVERSITY_DATA) {
+            updateInstitutes();
+            updateFaculties();
+            updateCourses();
+        }
         logger.info(LoggingConstants.APPLICATION_INIT_JOB_FINISHED);
     }
 
@@ -163,14 +168,6 @@ public class Bootstrapper {
             }
         } catch (Exception exception) {
             exception.printStackTrace();
-        }
-    }
-
-    private void safeSleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
         }
     }
 }
