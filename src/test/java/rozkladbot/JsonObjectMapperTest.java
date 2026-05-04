@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import rozkladbot.constants.ApiEndpoints;
 import rozkladbot.entities.Lesson;
 import rozkladbot.utils.deserializers.LessonDeserializer;
-import rozkladbot.utils.web.requester.RequesterImpl;
+import rozkladbot.utils.web.requester.WebRequestServiceImpl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -19,7 +19,7 @@ public class JsonObjectMapperTest {
     @Autowired
     private LessonDeserializer lessonDeserializer;
     @Autowired
-    private RequesterImpl requester;
+    private WebRequestServiceImpl requester;
     private static final HashMap<String, String> params = getParams();
 
     @Test

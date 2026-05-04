@@ -2,7 +2,13 @@ package rozkladbot.entities;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
+@AllArgsConstructor
 public class ScheduleTable {
     private Deque<Day> days;
 
@@ -10,24 +16,14 @@ public class ScheduleTable {
         days = new ArrayDeque<>();
     }
 
-    public ScheduleTable(Deque<Day> days) {
-        this.days = days;
-    }
-
     public String toString() {
         StringBuilder builder = new StringBuilder();
         if (days.size() > 1) {
-            days.forEach(day -> builder.append(day.toStringIfMany()).append("\n"));
+            days.forEach(day -> builder.append(day.toStringFormatted(true)).append("\n"));
         } else {
-            days.forEach(day -> builder.append(day.toStringIfOne()).append("\n"));
+            days.forEach(day -> builder.append(day.toStringFormatted(false)).append("\n"));
         }
         return builder.toString();
     }
 
-    public Deque<Day> getDays() {
-        return days;
-    }
-    public void setDays(Deque<Day> days) {
-        this.days = days;
-    }
 }

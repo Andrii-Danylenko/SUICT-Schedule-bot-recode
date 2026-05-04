@@ -86,9 +86,4 @@ public class RouterImpl implements Router {
             adminCommandsHandler.resolveStates(update, user);
         }
     }
-
-
-    public boolean isUserActive(long chatId) {
-        return userCache.existsByKey(chatId);
-    }
 }

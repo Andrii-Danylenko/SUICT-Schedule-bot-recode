@@ -12,6 +12,7 @@ import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.abilitybots.api.sender.SilentSender;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.telegram.caching.ThreadCache;
+import rozkladbot.telegram.caching.UserCache;
 import rozkladbot.telegram.router.Router;
 
 import java.util.concurrent.CompletableFuture;
@@ -25,15 +26,18 @@ import static org.telegram.abilitybots.api.util.AbilityUtils.getChatId;
 public class ScheduleBot extends AbilityBot {
     private final Router router;
     private final ThreadCache threadCache;
+    private final UserCache userCache;
 
     @Autowired
     public ScheduleBot(
             ThreadCache threadCache,
             Environment environment,
+            UserCache userCache,
             @Lazy Router router) {
         super(environment.getProperty("telegram.bot.api.key"), environment.getProperty("telegram.bot.name"));
         this.router = router;
         this.threadCache = threadCache;
+        this.userCache = userCache;
     }
 
     @Bean
@@ -81,7 +85,7 @@ public class ScheduleBot extends AbilityBot {
 
         return Reply.of(action, upd -> {
             long chatId = getChatId(upd);
-            return router.isUserActive(chatId) && (upd.hasMessage() || upd.hasCallbackQuery());
+            return userCache.existsByKey(chatId) && (upd.hasMessage() || upd.hasCallbackQuery());
         });
     }
 

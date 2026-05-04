@@ -12,7 +12,7 @@ import rozkladbot.services.GroupService;
 import rozkladbot.telegram.utils.files.writer.LocalFileWriter;
 import rozkladbot.utils.date.DateUtils;
 import rozkladbot.utils.web.requester.ParamsBuilder;
-import rozkladbot.utils.web.requester.Requester;
+import rozkladbot.utils.web.requester.WebRequestService;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -32,18 +32,18 @@ import static rozkladbot.constants.LoggingConstants.SCHEDULE_DUMPING_SKIPPING_FI
 public class ScheduleDumper {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleDumper.class);
     private final GroupService groupService;
-    private final Requester requester;
+    private final WebRequestService webRequestService;
     private final LocalFileWriter localFileWriter;
     private final ParamsBuilder paramsBuilder;
 
     public ScheduleDumper(
             GroupService groupService,
-            Requester requester,
+            WebRequestService webRequestService,
             LocalFileWriter localFileWriter,
             ParamsBuilder paramsBuilder
     ) {
         this.groupService = groupService;
-        this.requester = requester;
+        this.webRequestService = webRequestService;
         this.localFileWriter = localFileWriter;
         this.paramsBuilder = paramsBuilder;
     }
@@ -92,7 +92,7 @@ public class ScheduleDumper {
                     dateFrom,
                     dateTo
             );
-            String response = requester.makeRequest(params, ApiEndpoints.API_SCHEDULE);
+            String response = webRequestService.makeRequest(params, ApiEndpoints.API_SCHEDULE);
             localFileWriter.writeFile(directoryPath, fileName, response);
             logger.info(SCHEDULE_DUMPED_SUCCESSFULLY, fileName);
         } else {

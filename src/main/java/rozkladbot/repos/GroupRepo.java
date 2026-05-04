@@ -39,4 +39,7 @@ public interface GroupRepo extends JpaRepository<Group, Long> {
 
     @Query("SELECT g FROM Group g JOIN FETCH User u on u.group = g")
     Set<Group> getAllGroupsThatAssignedToUsers();
+
+    @Query("SELECT g FROM Group g WHERE g.groupId = ?1 AND g.faculty.facultyId = ?2")
+    Group findGroupByIdAndFacultyId(Long groupId, Long facultyId);
 }

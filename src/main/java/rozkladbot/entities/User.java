@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "users")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -73,11 +77,7 @@ public class User implements UserDetails {
         this.isRegistered = isRegistered;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Override
+  @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(userRole.toString()));
@@ -89,51 +89,7 @@ public class User implements UserDetails {
         return "";
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
-    public UserState getUserState() {
-        return userState;
-    }
-
-    public void setUserState(UserState userState) {
-        this.userState = userState;
-    }
-
-    public UserRole getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
-    }
-
-    public int getLastSentMessageId() {
-        return lastSentMessageId;
-    }
-
-    public void setLastSentMessageId(int lastSentMessageId) {
-        this.lastSentMessageId = lastSentMessageId;
-    }
-
-    @Override
+  @Override
     public String toString() {
         return
                 """
@@ -156,23 +112,7 @@ public class User implements UserDetails {
                         userRole);
     }
 
-    public boolean isBroadcasted() {
-        return isBroadcasted;
-    }
-
-    public void setBroadcasted(boolean broadcasted) {
-        isBroadcasted = broadcasted;
-    }
-
-    public int getLastPinnedMessageId() {
-        return lastPinnedMessageId;
-    }
-
-    public void setLastPinnedMessageId(int lastPinnedMessageId) {
-        this.lastPinnedMessageId = lastPinnedMessageId;
-    }
-
-    @Override
+  @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -185,11 +125,4 @@ public class User implements UserDetails {
         return Objects.hashCode(id);
     }
 
-    public boolean isRegistered() {
-        return isRegistered;
-    }
-
-    public void setRegistered(boolean registered) {
-        isRegistered = registered;
-    }
 }

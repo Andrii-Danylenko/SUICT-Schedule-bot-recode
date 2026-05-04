@@ -3,8 +3,10 @@ package rozkladbot.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
+import lombok.Getter;
 import rozkladbot.utils.deserializers.PairLinksGroupDeserializer;
 
+@Getter
 @Entity
 @Table(name = "pair_links")
 public class PairLink {
@@ -35,27 +37,7 @@ public class PairLink {
                '}';
     }
 
-    public String getLink() {
-        return link;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public long getGroupId() {
-        return groupId;
-    }
-
-//    @Override
+  //    @Override
 //    public String toString() {
 //        return "Id: %d, name: %s [%s], link: %s%n".formatted(id, name, type, link);
 //    }

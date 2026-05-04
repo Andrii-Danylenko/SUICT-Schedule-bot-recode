@@ -1,5 +1,10 @@
 package rozkladbot.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class ScheduleForm {
     private Long institute;
     private Long faculty;
@@ -16,39 +21,7 @@ public class ScheduleForm {
     public ScheduleForm() {
     }
 
-    public Long getInstitute() {
-        return institute;
-    }
-
-    public void setInstitute(Long institute) {
-        this.institute = institute;
-    }
-
-    public Long getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(Long faculty) {
-        this.faculty = faculty;
-    }
-
-    public Long getCourse() {
-        return course;
-    }
-
-    public void setCourse(Long course) {
-        this.course = course;
-    }
-
-    public Long getGroup() {
-        return group;
-    }
-
-    public void setGroup(Long group) {
-        this.group = group;
-    }
-
-    @Override
+  @Override
     public String toString() {
         return "ScheduleForm{" +
                "institute='" + institute + '\'' +

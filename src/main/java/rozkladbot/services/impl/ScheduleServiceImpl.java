@@ -18,7 +18,7 @@ import rozkladbot.telegram.utils.parser.MessageParser;
 import rozkladbot.utils.date.DateUtils;
 import rozkladbot.utils.deserializers.LessonDeserializer;
 import rozkladbot.utils.web.requester.ParamsBuilder;
-import rozkladbot.utils.web.requester.Requester;
+import rozkladbot.utils.web.requester.WebRequestService;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -46,7 +46,7 @@ import static rozkladbot.enums.OfflineReadingMode.THIS_WEEK;
 @Service("scheduleServiceImpl")
 public class ScheduleServiceImpl implements ScheduleService {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleServiceImpl.class);
-    private final Requester requester;
+    private final WebRequestService webRequestService;
     private final ParamsBuilder paramsBuilder;
     private final LessonDeserializer lessonDeserializer;
     private final LocalFileReader localFileReader;
@@ -57,13 +57,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     public ScheduleServiceImpl(
             LocalFileReader localFileReader,
-            Requester requester,
+            WebRequestService webRequestService,
             ParamsBuilder paramsBuilder,
             LessonDeserializer lessonDeserializer,
             MessageParser messageParser,
             PairLinkService pairLinkService,
             GroupService groupService) {
-        this.requester = requester;
+        this.webRequestService = webRequestService;
         this.paramsBuilder = paramsBuilder;
         this.lessonDeserializer = lessonDeserializer;
         this.localFileReader = localFileReader;
@@ -177,7 +177,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private Deque<Lesson> getSchedule(Map<String, String> params, OfflineReadingMode mode) throws ExecutionException, InterruptedException {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                return requester.makeRequest(params, ApiEndpoints.API_SCHEDULE);
+                return webRequestService.makeRequest(params, ApiEndpoints.API_SCHEDULE);
             } catch (IOException | URISyntaxException | InterruptedException e) {
                 logger.error(REQUEST_CREATION_FAILED);
                 throw new RequestCreationFailedException(REQUEST_CREATION_FAILED);
@@ -228,7 +228,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         HashMap<String, String> params = paramsBuilder.createParams(
                 group,
                 course,
-                groupService.getById(group).getName(),
+                groupService.findByGroupIdAndFacultyId(group, faculty).getName(),
                 faculty,
                 institute,
                 queryDateStart,

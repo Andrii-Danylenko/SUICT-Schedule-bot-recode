@@ -24,7 +24,7 @@ import rozkladbot.utils.deserializers.FacultyJsonResponseDeserializer;
 import rozkladbot.utils.deserializers.GroupJsonResponseDeserializer;
 import rozkladbot.utils.deserializers.InstituteJsonResponseDeserializer;
 import rozkladbot.utils.web.requester.ParamsBuilder;
-import rozkladbot.utils.web.requester.Requester;
+import rozkladbot.utils.web.requester.WebRequestService;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Component
 public class Bootstrapper {
     private static final Logger logger = LoggerFactory.getLogger(Bootstrapper.class);
-    private final Requester requester;
+    private final WebRequestService webRequestService;
     private final ParamsBuilder paramsBuilder;
     private final UserCache userCache;
     private final UserService userService;
@@ -45,7 +45,7 @@ public class Bootstrapper {
     private final FacultyJsonResponseDeserializer facultyJsonResponseDeserializer;
     private final GroupJsonResponseDeserializer groupJsonResponseDeserializer;
     private final CourseJsonResponseDeserializer courseJsonResponseDeserializer;
-    @Value("${bootstrapper.update.university-data}")
+    @Value("${bootstrapper.update.university-data:false}")
     private boolean DOES_NEED_TO_UPDATE_UNIVERSITY_DATA;
 
     @Autowired
@@ -54,7 +54,7 @@ public class Bootstrapper {
             UserService userService,
             GroupService groupService,
             InstituteJsonResponseDeserializer instituteJsonResponseDeserializer,
-            Requester requester,
+            WebRequestService webRequestService,
             ParamsBuilder paramsBuilder,
             FacultyJsonResponseDeserializer facultyJsonResponseDeserializer,
             GroupJsonResponseDeserializer groupJsonResponseDeserializer,
@@ -66,7 +66,7 @@ public class Bootstrapper {
         this.groupService = groupService;
         this.facultyService = facultyService;
         this.instituteJsonResponseDeserializer = instituteJsonResponseDeserializer;
-        this.requester = requester;
+        this.webRequestService = webRequestService;
         this.paramsBuilder = paramsBuilder;
         this.facultyJsonResponseDeserializer = facultyJsonResponseDeserializer;
         this.groupJsonResponseDeserializer = groupJsonResponseDeserializer;
@@ -100,7 +100,7 @@ public class Bootstrapper {
     private void updateInstitutes() {
         try {
             List<Institute> institutes = instituteJsonResponseDeserializer.deserialize(
-                    requester.makeRequest(
+                    webRequestService.makeRequest(
                             paramsBuilder.buildFromValues(),
                             ApiEndpoints.API_INSTITUTIONS
                     )
@@ -116,7 +116,7 @@ public class Bootstrapper {
             List<Institute> institutes = instituteService.getAll();
             for (Institute inst : institutes) {
                 List<Faculty> faculties = facultyJsonResponseDeserializer.deserialize(
-                        requester.makeRequest(
+                        webRequestService.makeRequest(
                                 paramsBuilder.buildFromValues(),
                                 ApiEndpoints.API_FACULTIES.formatted(inst.getId())
                         )
@@ -137,7 +137,8 @@ public class Bootstrapper {
         try {
             List<Faculty> faculties = facultyService.getAll();
             for (Faculty faculty : faculties) {
-                List<CourseJsonResponse> courseJsonResponses = new LinkedList<>(courseJsonResponseDeserializer.deserialize(requester.makeRequest(
+                List<CourseJsonResponse> courseJsonResponses = new LinkedList<>(courseJsonResponseDeserializer.deserialize(
+                    webRequestService.makeRequest(
                         paramsBuilder.buildFromValues(),
                         ApiEndpoints.API_COURSES.formatted(faculty.getInstitute().getId(), faculty.getFacultyId())
                 )));
@@ -153,7 +154,7 @@ public class Bootstrapper {
 
     private void updateGroups(CourseJsonResponse course, Faculty faculty) {
         try {
-            List<Group> groups = groupJsonResponseDeserializer.deserialize(requester.makeRequest(
+            List<Group> groups = groupJsonResponseDeserializer.deserialize(webRequestService.makeRequest(
                     paramsBuilder.buildFromValues(),
                     ApiEndpoints.API_GROUPS.formatted(faculty.getInstitute().getId(), faculty.getFacultyId(), course.getId())
             )).stream().map(groupJsonResponse -> {

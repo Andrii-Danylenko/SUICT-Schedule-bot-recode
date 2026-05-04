@@ -81,4 +81,9 @@ public class GroupServiceImpl implements GroupService {
     public Set<Group> getAllGroupsThatAssignedToUsers() {
         return groupRepo.getAllGroupsThatAssignedToUsers();
     }
+
+  @Override
+  public Group findByGroupIdAndFacultyId(long groupId, long facultyId) {
+    return groupRepo.findGroupByIdAndFacultyId(groupId, facultyId);
+  }
 }

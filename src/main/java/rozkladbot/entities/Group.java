@@ -3,11 +3,15 @@ package rozkladbot.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import rozkladbot.entities.json.response.GroupJsonResponse;
 
 import java.util.List;
 import java.util.Objects;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "groups")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -39,39 +43,7 @@ public class Group {
     public Group() {
     }
 
-    public long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(long id) {
-        this.groupId = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Faculty getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(Faculty faculty) {
-        this.faculty = faculty;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    @Override
+  @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -84,15 +56,7 @@ public class Group {
         return Objects.hashCode(id);
     }
 
-    public long getCourse() {
-        return course;
-    }
-
-    public void setCourse(long course) {
-        this.course = course;
-    }
-
-    @Override
+  @Override
     public String toString() {
         return "Group{" +
                "id=" + groupId +
@@ -109,11 +73,4 @@ public class Group {
         return group;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 }

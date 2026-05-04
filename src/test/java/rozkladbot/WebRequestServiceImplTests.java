@@ -5,24 +5,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import rozkladbot.constants.ApiEndpoints;
-import rozkladbot.utils.web.requester.RequesterImpl;
+import rozkladbot.utils.web.requester.WebRequestServiceImpl;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
 @SpringBootTest
-public class RequesterImplTests {
+public class WebRequestServiceImplTests {
     @Autowired
-    private RequesterImpl requester;
+    private WebRequestServiceImpl requester;
     private static final HashMap<String, String> params = getParams();
 
 
     @Test
-    void validRequestTest() throws IOException, URISyntaxException, InterruptedException {
+    void validRequestTest() throws URISyntaxException {
         String result = requester.makeRequest(params, ApiEndpoints.API_SCHEDULE);
         Assertions.assertFalse(result.isEmpty());
-        System.out.println(result);
     }
 
     private static HashMap<String, String> getParams() {

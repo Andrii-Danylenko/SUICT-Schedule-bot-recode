@@ -2,12 +2,16 @@ package rozkladbot.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import rozkladbot.entities.json.response.InstituteJsonResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "institutes")
 public class Institute {
@@ -27,31 +31,7 @@ public class Institute {
         this.instituteName = instituteName;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getInstituteName() {
-        return instituteName;
-    }
-
-    public void setInstituteName(String instituteName) {
-        this.instituteName = instituteName;
-    }
-
-    public List<Faculty> getFacultyList() {
-        return facultyList;
-    }
-
-    public void setFacultyList(List<Faculty> facultyList) {
-        this.facultyList = facultyList;
-    }
-
-    @Override
+  @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
