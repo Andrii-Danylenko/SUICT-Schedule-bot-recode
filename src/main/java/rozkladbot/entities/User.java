@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDateTime;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +19,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Setter
-@Getter
+@Data
 @Entity
 @Table(name = "users")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -53,7 +52,8 @@ public class User implements UserDetails {
   private int lastSentMessageId;
   @Transient
   private boolean isRegistered = false;
-
+  @Transient
+  private LocalDateTime lastInteractionDate;
 
   public User() {
   }

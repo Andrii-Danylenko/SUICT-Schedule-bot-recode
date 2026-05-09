@@ -5,9 +5,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.entities.HandlerContext;
 import rozkladbot.entities.User;
-import rozkladbot.telegram.caching.UserCache;
+import rozkladbot.telegram.caching.UserMemoryCache;
 import rozkladbot.telegram.factories.HandlerFactory;
-import rozkladbot.telegram.handlers.*;
 import rozkladbot.telegram.handlers.commandresolver.CommandsResolver;
 import rozkladbot.telegram.utils.message.MessageUtils;
 
@@ -16,14 +15,14 @@ import static rozkladbot.enums.UserState.*;
 @Component("routerImpl")
 public class RouterImpl implements Router {
 
-  private final UserCache userCache;
+  private final UserMemoryCache userCache;
   private final CommandsResolver commandsResolver;
   private final HandlerFactory handlerFactory;
 
   @Autowired
   public RouterImpl(
       CommandsResolver commandsResolver,
-      UserCache userCache,
+      UserMemoryCache userCache,
       HandlerFactory handlerFactory
   ) {
     this.userCache = userCache;

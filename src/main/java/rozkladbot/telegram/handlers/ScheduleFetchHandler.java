@@ -13,7 +13,7 @@ import rozkladbot.enums.UserState;
 import rozkladbot.exceptions.CustomScheduleFetchException;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.telegram.factories.KeyBoardFactory;
-import rozkladbot.telegram.utils.delayed.executor.DelayedCommandCache;
+import rozkladbot.telegram.utils.delayed.executor.DelayedCommandMemoryCache;
 import rozkladbot.telegram.utils.message.MessageSender;
 import rozkladbot.utils.date.DateUtils;
 
@@ -26,12 +26,12 @@ public class ScheduleFetchHandler implements HandlerStrategy {
 
   private final ScheduleService scheduleService;
   private final MessageSender messageSender;
-  private final DelayedCommandCache delayedCommandCache;
+  private final DelayedCommandMemoryCache delayedCommandCache;
 
   public ScheduleFetchHandler(
       ScheduleService scheduleService,
       MessageSender messageSender,
-      DelayedCommandCache delayedCommandCache) {
+      DelayedCommandMemoryCache delayedCommandCache) {
     this.scheduleService = scheduleService;
     this.messageSender = messageSender;
     this.delayedCommandCache = delayedCommandCache;

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import rozkladbot.entities.DelayedCommand;
 import rozkladbot.entities.User;
 import rozkladbot.services.ScheduleService;
-import rozkladbot.telegram.caching.UserCache;
+import rozkladbot.telegram.caching.UserMemoryCache;
 
 import java.util.Map;
 import java.util.Set;
@@ -14,15 +14,15 @@ import java.util.concurrent.ExecutionException;
 
 @Component("delayedCommandExecutor")
 public class DelayedCommandExecutor {
-    private final DelayedCommandCache delayedCommandCache;
+    private final DelayedCommandMemoryCache delayedCommandCache;
     private final ScheduleService scheduleService;
-    private final UserCache userCache;
+    private final UserMemoryCache userCache;
 
     @Autowired
     public DelayedCommandExecutor(
-            DelayedCommandCache delayedCommandCache,
+            DelayedCommandMemoryCache delayedCommandCache,
             ScheduleService scheduleService,
-            UserCache userCache) {
+            UserMemoryCache userCache) {
         this.delayedCommandCache = delayedCommandCache;
         this.scheduleService = scheduleService;
         this.userCache = userCache;

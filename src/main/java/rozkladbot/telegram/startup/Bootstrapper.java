@@ -18,7 +18,7 @@ import rozkladbot.services.FacultyService;
 import rozkladbot.services.GroupService;
 import rozkladbot.services.InstituteService;
 import rozkladbot.services.UserService;
-import rozkladbot.telegram.caching.UserCache;
+import rozkladbot.telegram.caching.UserMemoryCache;
 import rozkladbot.json.deserializers.CourseJsonResponseDeserializer;
 import rozkladbot.json.deserializers.FacultyJsonResponseDeserializer;
 import rozkladbot.json.deserializers.GroupJsonResponseDeserializer;
@@ -36,7 +36,7 @@ public class Bootstrapper {
     private static final Logger logger = LoggerFactory.getLogger(Bootstrapper.class);
     private final WebRequestService webRequestService;
     private final QueryBuilder queryBuilder;
-    private final UserCache userCache;
+    private final UserMemoryCache userCache;
     private final UserService userService;
     private final InstituteService instituteService;
     private final GroupService groupService;
@@ -50,7 +50,7 @@ public class Bootstrapper {
 
     @Autowired
     public Bootstrapper(
-            UserCache userCache,
+            UserMemoryCache userCache,
             UserService userService,
             GroupService groupService,
             InstituteJsonResponseDeserializer instituteJsonResponseDeserializer,

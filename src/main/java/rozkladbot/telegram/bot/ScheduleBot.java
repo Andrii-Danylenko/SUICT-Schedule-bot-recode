@@ -11,8 +11,8 @@ import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.abilitybots.api.sender.SilentSender;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import rozkladbot.telegram.caching.ThreadCache;
-import rozkladbot.telegram.caching.UserCache;
+import rozkladbot.telegram.caching.ThreadMemoryCache;
+import rozkladbot.telegram.caching.UserMemoryCache;
 import rozkladbot.telegram.router.Router;
 
 import java.util.concurrent.CompletableFuture;
@@ -25,14 +25,14 @@ import static org.telegram.abilitybots.api.util.AbilityUtils.getChatId;
 @Component("scheduleBot")
 public class ScheduleBot extends AbilityBot {
     private final Router router;
-    private final ThreadCache threadCache;
-    private final UserCache userCache;
+    private final ThreadMemoryCache threadCache;
+    private final UserMemoryCache userCache;
 
     @Autowired
     public ScheduleBot(
-            ThreadCache threadCache,
+            ThreadMemoryCache threadCache,
             Environment environment,
-            UserCache userCache,
+            UserMemoryCache userCache,
             @Lazy Router router) {
         super(environment.getProperty("telegram.bot.api.key"), environment.getProperty("telegram.bot.name"));
         this.router = router;

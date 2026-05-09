@@ -1,7 +1,5 @@
 package rozkladbot.telegram.caching;
 
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -9,8 +7,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component("simpleCache")
-@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public abstract class SimpleCache<K, V> {
+public abstract class SimpleMemoryCache<K, V> {
     protected final ConcurrentHashMap<K, V> localCache = new ConcurrentHashMap<>();
 
     public V get(K key) {

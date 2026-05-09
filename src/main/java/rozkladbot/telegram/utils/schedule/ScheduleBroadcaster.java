@@ -14,26 +14,24 @@ import rozkladbot.constants.LoggingConstants;
 import rozkladbot.entities.User;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.services.UserService;
-import rozkladbot.telegram.caching.UserCache;
+import rozkladbot.telegram.caching.UserMemoryCache;
 import rozkladbot.telegram.utils.message.MessageSender;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Component("scheduleBroadcaster")
 public class ScheduleBroadcaster {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleBroadcaster.class);
     private final MessageSender messageSender;
-    private final UserCache userCache;
+    private final UserMemoryCache userCache;
     private final ScheduleService scheduleService;
     private final UserService userService;
 
     @Autowired
     public ScheduleBroadcaster(
             MessageSender messageSender,
-            UserCache userCache,
+            UserMemoryCache userCache,
             ScheduleService scheduleService,
             UserService userService) {
         this.messageSender = messageSender;

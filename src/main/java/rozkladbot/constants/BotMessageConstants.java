@@ -101,6 +101,11 @@ public class BotMessageConstants {
     public static final String APP_TERMINATION_FINISHED = "Закічив вимкнення додатку.";
     public static final String LOCAL_DATA_SYNC_STARTED = "Починаю синхронизацію локальних даних із БД...";
     public static final String LOCAL_DATA_SYNC_FINISHED = "Закічив синхронизацію локальних даних із БД.";
+    public static final String LAST_INTERACTION_TIME_WAS_TOO_LONG_AGO = """
+        Привіт!
+        Ти давно не користувався ботом. Твою сесію було ліквідовано. 
+        Якщо ти захочеш повернутися, то введи команду /start 
+        """;
 
     private BotMessageConstants() {
     }

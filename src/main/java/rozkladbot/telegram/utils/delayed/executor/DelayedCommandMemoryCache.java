@@ -2,7 +2,7 @@ package rozkladbot.telegram.utils.delayed.executor;
 
 import org.springframework.stereotype.Component;
 import rozkladbot.entities.DelayedCommand;
-import rozkladbot.telegram.caching.SimpleCache;
+import rozkladbot.telegram.caching.SimpleMemoryCache;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Component("delayedCommandCache")
-public class DelayedCommandCache extends SimpleCache<Long, Set<DelayedCommand>> {
+public class DelayedCommandMemoryCache extends SimpleMemoryCache<Long, Set<DelayedCommand>> {
     public Map<Long, Set<DelayedCommand>> getAll() {
         return this.localCache;
     }
