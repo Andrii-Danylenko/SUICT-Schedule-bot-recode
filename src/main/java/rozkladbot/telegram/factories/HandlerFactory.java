@@ -15,7 +15,8 @@ public class HandlerFactory {
   private final Map<String, HandlerStrategy> strategies;
 
   public HandlerFactory(List<HandlerStrategy> strategies) {
-    this.strategies = strategies.stream().collect(Collectors.toMap(strategy -> strategy.getClass().getSimpleName().toLowerCase(), Function.identity()));
+    this.strategies = strategies.stream().collect(Collectors.toMap(strategy ->
+        strategy.getClass().getSimpleName().toLowerCase(), Function.identity()));
   }
 
   public HandlerStrategy getStrategy(String strategyName) {
