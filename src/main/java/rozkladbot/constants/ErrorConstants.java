@@ -9,5 +9,6 @@ public final class ErrorConstants {
     public final static String MESSAGE_CANNOT_BE_PINNED = "Message could not be pinned!";
     public final static String WRONG_AMOUNT_OF_SPLIT_PARAMETERS = "Wrong amount of split parameters! Expected 3, got: %d";
     public final static String WRONG_AMOUNT_OF_QUERY_PARAMETERS = "The number of values must be even";
+    public final static String NO_SUCH_STRATEGY_FOUND = "No strategy found with following name: %s";
     private ErrorConstants() {}
 }

@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import rozkladbot.constants.ApiEndpoints;
 import rozkladbot.entities.Lesson;
-import rozkladbot.utils.deserializers.LessonDeserializer;
-import rozkladbot.utils.web.requester.WebRequestServiceImpl;
-
-import java.io.IOException;
+import rozkladbot.json.deserializers.LessonDeserializer;
+import rozkladbot.services.web.requestservice.WebRequestServiceImpl;
 import java.net.URISyntaxException;
 import java.util.Deque;
 import java.util.HashMap;
@@ -23,7 +21,7 @@ public class JsonObjectMapperTest {
     private static final HashMap<String, String> params = getParams();
 
     @Test
-    public void testJsonObjectMapper() throws IOException, URISyntaxException, InterruptedException {
+    public void testJsonObjectMapper() throws URISyntaxException {
         String json = requester.makeRequest(params, ApiEndpoints.API_SCHEDULE);
         Deque<Lesson> lessons = lessonDeserializer.deserialize(json);
         Assertions.assertFalse(lessons.isEmpty());

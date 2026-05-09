@@ -1,4 +1,4 @@
-package rozkladbot.utils.deserializers;
+package rozkladbot.json.deserializers;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

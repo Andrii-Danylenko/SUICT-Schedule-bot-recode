@@ -1,4 +1,4 @@
-package rozkladbot.utils.web.requester;
+package rozkladbot.services.web.urlbuilder;
 
 import org.springframework.stereotype.Component;
 import rozkladbot.utils.date.DateUtils;
@@ -15,9 +15,9 @@ import static rozkladbot.constants.AppConstants.QUERY_START_DATE;
 import static rozkladbot.constants.ErrorConstants.WRONG_AMOUNT_OF_QUERY_PARAMETERS;
 
 @Component
-public class ParamsBuilderImpl implements ParamsBuilder {
+public class QueryBuilderImpl implements QueryBuilder {
 
-    public HashMap<String, String> createParams(
+    public HashMap<String, String> buildQueryParams(
             long groupId,
             long course,
             String groupName,

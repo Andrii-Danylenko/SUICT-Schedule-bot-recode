@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.Getter;
-import rozkladbot.utils.deserializers.PairLinksGroupDeserializer;
+import rozkladbot.json.deserializers.PairLinksGroupDeserializer;
 
 @Getter
 @Entity

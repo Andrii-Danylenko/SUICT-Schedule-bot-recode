@@ -11,8 +11,8 @@ import rozkladbot.entities.Group;
 import rozkladbot.services.GroupService;
 import rozkladbot.telegram.utils.files.writer.LocalFileWriter;
 import rozkladbot.utils.date.DateUtils;
-import rozkladbot.utils.web.requester.ParamsBuilder;
-import rozkladbot.utils.web.requester.WebRequestService;
+import rozkladbot.services.web.urlbuilder.QueryBuilder;
+import rozkladbot.services.web.requestservice.WebRequestService;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -34,18 +34,18 @@ public class ScheduleDumper {
     private final GroupService groupService;
     private final WebRequestService webRequestService;
     private final LocalFileWriter localFileWriter;
-    private final ParamsBuilder paramsBuilder;
+    private final QueryBuilder queryBuilder;
 
     public ScheduleDumper(
             GroupService groupService,
             WebRequestService webRequestService,
             LocalFileWriter localFileWriter,
-            ParamsBuilder paramsBuilder
+            QueryBuilder queryBuilder
     ) {
         this.groupService = groupService;
         this.webRequestService = webRequestService;
         this.localFileWriter = localFileWriter;
-        this.paramsBuilder = paramsBuilder;
+        this.queryBuilder = queryBuilder;
     }
 
     @Async
@@ -83,7 +83,7 @@ public class ScheduleDumper {
 
     private void prepareForWriting(Path directoryPath, String fileName, Group group, LocalDate dateFrom, LocalDate dateTo, boolean isForced) throws IOException, URISyntaxException, InterruptedException {
         if (localFileWriter.checkIfAlreadyWritten(directoryPath, fileName, isForced)) {
-            Map<String, String> params = paramsBuilder.createParams(
+            Map<String, String> params = queryBuilder.buildQueryParams(
                     group.getGroupId(),
                     group.getCourse(),
                     group.getName(),

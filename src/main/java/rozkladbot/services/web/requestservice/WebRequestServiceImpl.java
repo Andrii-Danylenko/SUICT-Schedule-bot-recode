@@ -1,4 +1,4 @@
-package rozkladbot.utils.web.requester;
+package rozkladbot.services.web.requestservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

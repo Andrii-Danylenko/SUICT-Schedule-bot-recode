@@ -1,5 +1,9 @@
 package rozkladbot.enums;
 
+import java.util.Set;
+import lombok.Getter;
+
+@Getter
 public enum UserState {
     AWAITING_GREETINGS,
     UNREGISTERED,
@@ -20,5 +24,27 @@ public enum UserState {
     AWAITING_USERS_LIST,
     AWAITING_DATA_SYNC,
     AWAITING_MESSAGE_SENDING,
-    AWAITING_APPLICATION_TERMINATION
+    AWAITING_APPLICATION_TERMINATION;
+    public static Set<UserState> registerUserStates = Set.of(
+        UNREGISTERED,
+        AWAITING_INSTITUTE,
+        AWAITING_FACULTY,
+        AWAITING_COURSE,
+        AWAITING_GROUP,
+        AWAITING_REGISTRATION_DATA_CONFIRMATION
+    );
+    public static Set<UserState> scheduleUserStates = Set.of(
+        AWAITING_TODAY_SCHEDULE,
+        AWAITING_TOMORROW_SCHEDULE,
+        AWAITING_THIS_WEEK_SCHEDULE,
+        AWAITING_NEXT_WEEK_SCHEDULE,
+        AWAITING_CUSTOM_SCHEDULE_QUERY,
+        AWAITING_CUSTOM_SCHEDULE
+    );
+    public static Set<UserState> adminUserStates = Set.of(
+        AWAITING_USERS_LIST,
+        AWAITING_DATA_SYNC,
+        AWAITING_MESSAGE_SENDING,
+        AWAITING_APPLICATION_TERMINATION
+    );
 }

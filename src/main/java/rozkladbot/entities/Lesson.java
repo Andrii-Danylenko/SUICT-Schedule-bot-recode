@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.Objects;
-import rozkladbot.utils.deserializers.LocalDateDeserializer;
+import rozkladbot.json.deserializers.LocalDateDeserializer;
 
 
 @Data

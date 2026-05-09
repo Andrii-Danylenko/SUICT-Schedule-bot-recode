@@ -4,13 +4,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.RestTemplate;
 import rozkladbot.constants.ApiEndpoints;
-import rozkladbot.utils.web.requester.WebRequestServiceImpl;
+import rozkladbot.services.web.requestservice.WebRequestServiceImpl;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
-@SpringBootTest
+@SpringBootTest(classes = {WebRequestServiceImpl.class, RestTemplate.class})
 public class WebRequestServiceImplTests {
     @Autowired
     private WebRequestServiceImpl requester;

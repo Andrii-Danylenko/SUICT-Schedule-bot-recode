@@ -1,5 +1,4 @@
-package rozkladbot.utils.deserializers;
-
+package rozkladbot.json.deserializers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -9,21 +8,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import rozkladbot.constants.ErrorConstants;
-import rozkladbot.entities.json.response.CourseJsonResponse;
+import rozkladbot.entities.json.response.GroupJsonResponse;
 
 import java.util.Deque;
 
-@Component
-public class CourseJsonResponseDeserializer implements JsonDeserializer<CourseJsonResponse> {
-    private static final Logger logger = LoggerFactory.getLogger(CourseJsonResponseDeserializer.class);
+@Component("groupResponseJsonDeserializer")
+public class GroupJsonResponseDeserializer implements JsonDeserializer<GroupJsonResponse> {
+    private static final Logger logger = LoggerFactory.getLogger(GroupJsonResponseDeserializer.class);
     private final ObjectMapper mapper;
 
-    public CourseJsonResponseDeserializer(ObjectMapper mapper) {
+    public GroupJsonResponseDeserializer(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
     @Override
-    public Deque<CourseJsonResponse> deserialize(String json) {
+    public Deque<GroupJsonResponse> deserialize(String json) {
         try {
             JsonNode jsonNode = mapper.readTree(json);
             return mapper.readValue(jsonNode.toString(), new TypeReference<>() {

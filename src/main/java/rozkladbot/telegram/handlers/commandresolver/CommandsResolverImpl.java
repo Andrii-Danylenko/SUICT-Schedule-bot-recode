@@ -1,4 +1,4 @@
-package rozkladbot.telegram.handlers;
+package rozkladbot.telegram.handlers.commandresolver;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;

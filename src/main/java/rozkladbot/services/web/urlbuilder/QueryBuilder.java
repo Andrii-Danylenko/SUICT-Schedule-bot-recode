@@ -1,11 +1,11 @@
-package rozkladbot.utils.web.requester;
+package rozkladbot.services.web.urlbuilder;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 
-public interface ParamsBuilder {
+public interface QueryBuilder {
 
-    HashMap<String, String> createParams(
+    HashMap<String, String> buildQueryParams(
             long groupId,
             long course,
             String groupName,

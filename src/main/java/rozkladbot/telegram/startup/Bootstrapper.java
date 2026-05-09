@@ -19,12 +19,12 @@ import rozkladbot.services.GroupService;
 import rozkladbot.services.InstituteService;
 import rozkladbot.services.UserService;
 import rozkladbot.telegram.caching.UserCache;
-import rozkladbot.utils.deserializers.CourseJsonResponseDeserializer;
-import rozkladbot.utils.deserializers.FacultyJsonResponseDeserializer;
-import rozkladbot.utils.deserializers.GroupJsonResponseDeserializer;
-import rozkladbot.utils.deserializers.InstituteJsonResponseDeserializer;
-import rozkladbot.utils.web.requester.ParamsBuilder;
-import rozkladbot.utils.web.requester.WebRequestService;
+import rozkladbot.json.deserializers.CourseJsonResponseDeserializer;
+import rozkladbot.json.deserializers.FacultyJsonResponseDeserializer;
+import rozkladbot.json.deserializers.GroupJsonResponseDeserializer;
+import rozkladbot.json.deserializers.InstituteJsonResponseDeserializer;
+import rozkladbot.services.web.urlbuilder.QueryBuilder;
+import rozkladbot.services.web.requestservice.WebRequestService;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class Bootstrapper {
     private static final Logger logger = LoggerFactory.getLogger(Bootstrapper.class);
     private final WebRequestService webRequestService;
-    private final ParamsBuilder paramsBuilder;
+    private final QueryBuilder queryBuilder;
     private final UserCache userCache;
     private final UserService userService;
     private final InstituteService instituteService;
@@ -55,7 +55,7 @@ public class Bootstrapper {
             GroupService groupService,
             InstituteJsonResponseDeserializer instituteJsonResponseDeserializer,
             WebRequestService webRequestService,
-            ParamsBuilder paramsBuilder,
+            QueryBuilder queryBuilder,
             FacultyJsonResponseDeserializer facultyJsonResponseDeserializer,
             GroupJsonResponseDeserializer groupJsonResponseDeserializer,
             CourseJsonResponseDeserializer courseJsonResponseDeserializer,
@@ -67,7 +67,7 @@ public class Bootstrapper {
         this.facultyService = facultyService;
         this.instituteJsonResponseDeserializer = instituteJsonResponseDeserializer;
         this.webRequestService = webRequestService;
-        this.paramsBuilder = paramsBuilder;
+        this.queryBuilder = queryBuilder;
         this.facultyJsonResponseDeserializer = facultyJsonResponseDeserializer;
         this.groupJsonResponseDeserializer = groupJsonResponseDeserializer;
         this.courseJsonResponseDeserializer = courseJsonResponseDeserializer;
@@ -101,13 +101,13 @@ public class Bootstrapper {
         try {
             List<Institute> institutes = instituteJsonResponseDeserializer.deserialize(
                     webRequestService.makeRequest(
-                            paramsBuilder.buildFromValues(),
+                            queryBuilder.buildFromValues(),
                             ApiEndpoints.API_INSTITUTIONS
                     )
             ).stream().map(Institute::toInstituteFromJsonResponse).collect(Collectors.toCollection(LinkedList::new));
             instituteService.saveAll(institutes);
         } catch (Exception e) {
-            e.printStackTrace();
+          logger.error(e.getMessage());
         }
     }
 
@@ -117,7 +117,7 @@ public class Bootstrapper {
             for (Institute inst : institutes) {
                 List<Faculty> faculties = facultyJsonResponseDeserializer.deserialize(
                         webRequestService.makeRequest(
-                                paramsBuilder.buildFromValues(),
+                                queryBuilder.buildFromValues(),
                                 ApiEndpoints.API_FACULTIES.formatted(inst.getId())
                         )
                 ).stream().map(facultyJsonResponse -> {
@@ -129,7 +129,7 @@ public class Bootstrapper {
                 facultyService.saveAll(faculties);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+          logger.error(e.getMessage());
         }
     }
 
@@ -139,7 +139,7 @@ public class Bootstrapper {
             for (Faculty faculty : faculties) {
                 List<CourseJsonResponse> courseJsonResponses = new LinkedList<>(courseJsonResponseDeserializer.deserialize(
                     webRequestService.makeRequest(
-                        paramsBuilder.buildFromValues(),
+                        queryBuilder.buildFromValues(),
                         ApiEndpoints.API_COURSES.formatted(faculty.getInstitute().getId(), faculty.getFacultyId())
                 )));
                 for (CourseJsonResponse courseJsonResponse : courseJsonResponses) {
@@ -148,14 +148,14 @@ public class Bootstrapper {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+          logger.error(e.getMessage());
         }
     }
 
     private void updateGroups(CourseJsonResponse course, Faculty faculty) {
         try {
             List<Group> groups = groupJsonResponseDeserializer.deserialize(webRequestService.makeRequest(
-                    paramsBuilder.buildFromValues(),
+                    queryBuilder.buildFromValues(),
                     ApiEndpoints.API_GROUPS.formatted(faculty.getInstitute().getId(), faculty.getFacultyId(), course.getId())
             )).stream().map(groupJsonResponse -> {
                 Group group = Group.toGroupFromResponse(groupJsonResponse);
@@ -167,8 +167,8 @@ public class Bootstrapper {
             for (Group group : groups) {
                 groupService.save(group);
             }
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } catch (Exception e) {
+          logger.error(e.getMessage());
         }
     }
 }

@@ -8,7 +8,7 @@ import rozkladbot.constants.AppConstants;
 import rozkladbot.entities.PairLink;
 import rozkladbot.services.PairLinkService;
 import rozkladbot.telegram.utils.files.reader.LocalFileReader;
-import rozkladbot.utils.deserializers.PairLinksDeserializer;
+import rozkladbot.json.deserializers.PairLinksDeserializer;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;

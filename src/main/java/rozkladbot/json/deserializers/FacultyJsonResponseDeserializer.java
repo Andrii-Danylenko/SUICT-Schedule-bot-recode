@@ -1,4 +1,4 @@
-package rozkladbot.utils.deserializers;
+package rozkladbot.json.deserializers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -6,29 +6,25 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import rozkladbot.constants.AppConstants;
 import rozkladbot.constants.ErrorConstants;
-import rozkladbot.entities.User;
+import rozkladbot.entities.json.response.FacultyJsonResponse;
 
 import java.util.Deque;
 
-
-@Component("userDeserializer")
-public class UserDeserializer implements JsonDeserializer<User> {
-    private static final Logger logger = LoggerFactory.getLogger(UserDeserializer.class);
+@Component
+public class FacultyJsonResponseDeserializer implements JsonDeserializer<FacultyJsonResponse> {
+    private static final Logger logger = LoggerFactory.getLogger(FacultyJsonResponseDeserializer.class);
     private final ObjectMapper mapper;
 
-    @Autowired
-    public UserDeserializer(ObjectMapper mapper) {
+    public FacultyJsonResponseDeserializer(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
     @Override
-    public Deque<User> deserialize(String json) {
+    public Deque<FacultyJsonResponse> deserialize(String json) {
         try {
-            JsonNode jsonNode = mapper.readTree(json).get(AppConstants.JSON_TREE_USER_OBJECT_NAME);
+            JsonNode jsonNode = mapper.readTree(json);
             return mapper.readValue(jsonNode.toString(), new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {

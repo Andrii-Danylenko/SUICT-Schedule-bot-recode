@@ -2,15 +2,14 @@ package rozkladbot.telegram.handlers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.constants.BotMessageConstants;
-import rozkladbot.entities.User;
+import rozkladbot.entities.HandlerContext;
 import rozkladbot.enums.UserState;
 import rozkladbot.telegram.factories.KeyBoardFactory;
 import rozkladbot.telegram.utils.message.MessageSender;
 
 @Component
-public class NewUsersHandler {
+public class NewUsersHandler implements HandlerStrategy {
     private final MessageSender messageSender;
 
     @Autowired
@@ -18,12 +17,12 @@ public class NewUsersHandler {
         this.messageSender = messageSender;
     }
 
-    public void sendGreetings(User user, Update update) {
+    public void handleRequest(HandlerContext ctx) {
         messageSender.sendMessage(
-                user,
+            ctx.getUser(),
                 BotMessageConstants.GREETING_MESSAGE + BotMessageConstants.AVAILABLE_USER_COMMANDS,
                 KeyBoardFactory.getCommandsList(),
-                false, update);
-        user.setUserState(UserState.AWAITING_INSTITUTE);
+                false, ctx.getUpdate());
+        ctx.getUser().setUserState(UserState.AWAITING_INSTITUTE);
     }
 }

@@ -49,7 +49,7 @@ public class ScheduleBot extends AbilityBot {
         return Ability
                 .builder()
                 .name("start")
-                .info("SUICT Schedule Bot")
+                .info("ScheduleBot")
                 .locality(ALL)
                 .privacy(PUBLIC)
                 .action(ctx -> {

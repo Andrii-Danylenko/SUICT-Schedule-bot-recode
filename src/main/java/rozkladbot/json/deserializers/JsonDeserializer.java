@@ -1,4 +1,4 @@
-package rozkladbot.utils.deserializers;
+package rozkladbot.json.deserializers;
 
 import java.util.Deque;
 

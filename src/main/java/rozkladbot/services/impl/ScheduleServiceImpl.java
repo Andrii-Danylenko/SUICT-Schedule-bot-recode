@@ -16,9 +16,9 @@ import rozkladbot.services.ScheduleService;
 import rozkladbot.telegram.utils.files.reader.LocalFileReader;
 import rozkladbot.telegram.utils.parser.MessageParser;
 import rozkladbot.utils.date.DateUtils;
-import rozkladbot.utils.deserializers.LessonDeserializer;
-import rozkladbot.utils.web.requester.ParamsBuilder;
-import rozkladbot.utils.web.requester.WebRequestService;
+import rozkladbot.json.deserializers.LessonDeserializer;
+import rozkladbot.services.web.urlbuilder.QueryBuilder;
+import rozkladbot.services.web.requestservice.WebRequestService;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -47,7 +47,7 @@ import static rozkladbot.enums.OfflineReadingMode.THIS_WEEK;
 public class ScheduleServiceImpl implements ScheduleService {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleServiceImpl.class);
     private final WebRequestService webRequestService;
-    private final ParamsBuilder paramsBuilder;
+    private final QueryBuilder queryBuilder;
     private final LessonDeserializer lessonDeserializer;
     private final LocalFileReader localFileReader;
     private final MessageParser messageParser;
@@ -58,13 +58,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ScheduleServiceImpl(
             LocalFileReader localFileReader,
             WebRequestService webRequestService,
-            ParamsBuilder paramsBuilder,
+            QueryBuilder queryBuilder,
             LessonDeserializer lessonDeserializer,
             MessageParser messageParser,
             PairLinkService pairLinkService,
             GroupService groupService) {
         this.webRequestService = webRequestService;
-        this.paramsBuilder = paramsBuilder;
+        this.queryBuilder = queryBuilder;
         this.lessonDeserializer = lessonDeserializer;
         this.localFileReader = localFileReader;
         this.messageParser = messageParser;
@@ -225,7 +225,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             LocalDate queryDateStart,
             LocalDate queryDateEnd,
             OfflineReadingMode mode) throws ExecutionException, InterruptedException {
-        HashMap<String, String> params = paramsBuilder.createParams(
+        HashMap<String, String> params = queryBuilder.buildQueryParams(
                 group,
                 course,
                 groupService.findByGroupIdAndFacultyId(group, faculty).getName(),

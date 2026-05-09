@@ -1,4 +1,4 @@
-package rozkladbot.utils.web.requester;
+package rozkladbot.services.web.requestservice;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

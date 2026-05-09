@@ -3,87 +3,65 @@ package rozkladbot.telegram.router;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import rozkladbot.entities.HandlerContext;
 import rozkladbot.entities.User;
 import rozkladbot.telegram.caching.UserCache;
+import rozkladbot.telegram.factories.HandlerFactory;
 import rozkladbot.telegram.handlers.*;
+import rozkladbot.telegram.handlers.commandresolver.CommandsResolver;
 import rozkladbot.telegram.utils.message.MessageUtils;
 
 import static rozkladbot.enums.UserState.*;
 
 @Component("routerImpl")
 public class RouterImpl implements Router {
-    private final RegistrationHandler registrationHandler;
-    private final NewUsersHandler newUsersHandler;
-    private final UserCache userCache;
-    private final MainMenuHandler mainMenuHandler;
-    private final CommandsResolver commandsResolver;
-    private final SettingsHandler settingHandler;
-    private final ScheduleFetchHandler scheduleFetchHandler;
-    private final AdminCommandsHandler adminCommandsHandler;
 
-    @Autowired
-    public RouterImpl(
-            CommandsResolver commandsResolver,
-            RegistrationHandler registrationHandler,
-            UserCache userCache,
-            NewUsersHandler newUsersHandler,
-            MainMenuHandler mainMenuHandler,
-            SettingsHandler settingHandler,
-            ScheduleFetchHandler scheduleFetchHandler,
-            AdminCommandsHandler adminCommandsHandler) {
-        this.registrationHandler = registrationHandler;
-        this.userCache = userCache;
-        this.newUsersHandler = newUsersHandler;
-        this.mainMenuHandler = mainMenuHandler;
-        this.commandsResolver = commandsResolver;
-        this.settingHandler = settingHandler;
-        this.scheduleFetchHandler = scheduleFetchHandler;
-        this.adminCommandsHandler = adminCommandsHandler;
-    }
+  private final UserCache userCache;
+  private final CommandsResolver commandsResolver;
+  private final HandlerFactory handlerFactory;
 
-    @Override
-    public void route(Update update, long chatId) {
-        User user = userCache.get(chatId);
-        if (user == null) {
-            user = registrationHandler.formUser(update, chatId);
-            userCache.put(chatId, user);
-        }
-        boolean override = !update.hasMessage();
-        user.setLastSentMessageId(MessageUtils.getCorrectMessageIdWithOffset(update));
-        if (user.isRegistered()) {
-            commandsResolver.resolveCommand(update, user);
-        }
-        if (user.getUserState().equals(AWAITING_SETTINGS)) {
-            settingHandler.sendSettingsMenu(update, user, override);
-        }
-        if (user.getUserState().equals(AWAITING_GREETINGS)) {
-            newUsersHandler.sendGreetings(user, update);
-            return;
-        }
-        if (user.getUserState().equals(UNREGISTERED) ||
-            user.getUserState().equals(AWAITING_INSTITUTE) ||
-            user.getUserState().equals(AWAITING_FACULTY) ||
-            user.getUserState().equals(AWAITING_COURSE) ||
-            user.getUserState().equals(AWAITING_GROUP) ||
-            user.getUserState().equals(AWAITING_REGISTRATION_DATA_CONFIRMATION)) {
-            registrationHandler.registerUser(update, user);
-        }
-        if (user.getUserState().equals(AWAITING_THIS_WEEK_SCHEDULE) ||
-            user.getUserState().equals(AWAITING_TODAY_SCHEDULE) ||
-            user.getUserState().equals(AWAITING_TOMORROW_SCHEDULE) ||
-            user.getUserState().equals(AWAITING_NEXT_WEEK_SCHEDULE) ||
-            user.getUserState().equals(AWAITING_CUSTOM_SCHEDULE_QUERY) ||
-            user.getUserState().equals(AWAITING_CUSTOM_SCHEDULE)) {
-            scheduleFetchHandler.resolveStates(update, user, override);
-        }
-        if (user.getUserState().equals(MAIN_MENU)) {
-            mainMenuHandler.sendMenu(update, user, override);
-        }
-        if (user.getUserState().equals(AWAITING_USERS_LIST) ||
-            user.getUserState().equals(AWAITING_APPLICATION_TERMINATION) ||
-            user.getUserState().equals(AWAITING_DATA_SYNC) ||
-            user.getUserState().equals(AWAITING_MESSAGE_SENDING)) {
-            adminCommandsHandler.resolveStates(update, user);
-        }
+  @Autowired
+  public RouterImpl(
+      CommandsResolver commandsResolver,
+      UserCache userCache,
+      HandlerFactory handlerFactory
+  ) {
+    this.userCache = userCache;
+    this.commandsResolver = commandsResolver;
+    this.handlerFactory = handlerFactory;
+  }
+
+  @Override
+  public void route(Update update, long chatId) {
+    User user = userCache.get(chatId);
+    if (user == null) {
+      user = User.getDefaultUser(update, chatId);
+      userCache.put(chatId, user);
     }
+    boolean override = !update.hasMessage();
+    user.setLastSentMessageId(MessageUtils.getCorrectMessageIdWithOffset(update));
+    if (user.isRegistered()) {
+      commandsResolver.resolveCommand(update, user);
+    }
+    HandlerContext handlerContext = new HandlerContext(user, update, override);
+    if (user.getUserState().equals(AWAITING_SETTINGS)) {
+      handlerFactory.getStrategy("settingshandler").handleRequest(handlerContext);
+    }
+    if (user.getUserState().equals(AWAITING_GREETINGS)) {
+      handlerFactory.getStrategy("newusershandler").handleRequest(handlerContext);
+      return;
+    }
+    if (registerUserStates.contains(user.getUserState())) {
+      handlerFactory.getStrategy("registrationhandler").handleRequest(handlerContext);
+    }
+    if (scheduleUserStates.contains(user.getUserState())) {
+      handlerFactory.getStrategy("schedulefetchhandler").handleRequest(handlerContext);
+    }
+    if (user.getUserState().equals(MAIN_MENU)) {
+      handlerFactory.getStrategy("mainmenuhandler").handleRequest(handlerContext);
+    }
+    if (adminUserStates.contains(user.getUserState())) {
+      handlerFactory.getStrategy("admincommandshandler").handleRequest(handlerContext);
+    }
+  }
 }
