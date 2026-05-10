@@ -97,13 +97,12 @@ public class Day {
           clazz.getLessonFullName(),
           clazz.getType()));
     }
-    return lessons.isEmpty() ? builder.toString() : builder.append(
+    return lessons.isEmpty() ? builder.append(
         AppConstants.HOORAY_FREE_DAY.formatted(EmojiList.HAPPY, EmojiList.BEER)
-    ).toString();
+    ).toString() : builder.toString();
   }
 
   private String toStringIfOne() {
-    boolean hasPairs = false;
     StringBuilder builder = new StringBuilder();
     builder.append("%s <b>%s, %s %s %s</b>%n".formatted(
         EmojiList.CALENDAR,
@@ -112,7 +111,6 @@ public class Day {
         DateUtils.getMonthName(day),
         Day.getAmountOfPairs(lessons.size()))).append("\n");
     for (Lesson clazz : lessons) {
-      hasPairs = true;
       builder.append("""
           %s пара | <b>%s-%s</b>
           %s <b>%s</b> [%s]
@@ -135,9 +133,9 @@ public class Day {
                   " Посилання на пару: <a href=\"%s\">перейти</a>\n".formatted(
                       clazz.getPairLink())));
     }
-    return hasPairs ? builder.toString() : builder.append(
+    return lessons.isEmpty() ? builder.append(
             AppConstants.HOORAY_FREE_DAY.formatted(EmojiList.HAPPY, EmojiList.BEER))
-        .toString();
+        .toString() : builder.toString();
   }
 
   public static String getAmountOfPairs(int amountOfDays) {

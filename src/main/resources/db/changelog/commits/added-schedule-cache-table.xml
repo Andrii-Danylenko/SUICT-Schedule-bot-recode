@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet id="1" author="Andrii-Danylenko">
+    <createTable tableName="schedules_cache">
+      <column name="id" type="bigserial">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="group_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="schedule_type" type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="content" type="text">
+        <constraints nullable="true"/>
+      </column>
+      <column name="update_time" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addUniqueConstraint tableName="schedules_cache"
+      columnNames="group_id, schedule_type"
+      constraintName="UK_group_schedule_type"/>
+    <addForeignKeyConstraint baseTableName="schedules_cache"
+      baseColumnNames="group_id"
+      constraintName="FK_schedules"
+      referencedTableName="groups"
+      referencedColumnNames="id"/>
+  </changeSet>
+
+</databaseChangeLog>

@@ -4,16 +4,13 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rozkladbot.constants.BotButtons;
 import rozkladbot.constants.BotMessageConstants;
-import rozkladbot.entities.DelayedCommand;
 import rozkladbot.entities.HandlerContext;
 import rozkladbot.entities.ScheduleTable;
 import rozkladbot.entities.User;
-import rozkladbot.enums.Command;
 import rozkladbot.enums.UserState;
 import rozkladbot.exceptions.CustomScheduleFetchException;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.telegram.factories.KeyBoardFactory;
-import rozkladbot.telegram.utils.delayed.executor.DelayedCommandMemoryCache;
 import rozkladbot.telegram.utils.message.MessageSender;
 import rozkladbot.utils.date.DateUtils;
 
@@ -26,19 +23,15 @@ public class ScheduleFetchHandler implements HandlerStrategy {
 
   private final ScheduleService scheduleService;
   private final MessageSender messageSender;
-  private final DelayedCommandMemoryCache delayedCommandCache;
 
   public ScheduleFetchHandler(
       ScheduleService scheduleService,
-      MessageSender messageSender,
-      DelayedCommandMemoryCache delayedCommandCache) {
+      MessageSender messageSender) {
     this.scheduleService = scheduleService;
     this.messageSender = messageSender;
-    this.delayedCommandCache = delayedCommandCache;
   }
 
   public void handleRequest(HandlerContext ctx) {
-    DelayedCommand delayedCommand = null;
     User user = ctx.getUser();
     Update update = ctx.getUpdate();
     try {
@@ -53,19 +46,16 @@ public class ScheduleFetchHandler implements HandlerStrategy {
           update);
       switch (user.getUserState()) {
         case AWAITING_TODAY_SCHEDULE -> {
-          delayedCommand = new DelayedCommand(Command.GET_TODAY_SCHEDULE);
           scheduleTable = scheduleService.getTodayLessons(user);
           messageToSend = BotMessageConstants.TODAY_SCHEDULE + scheduleTable.toString();
           user.setUserState(UserState.IDLE);
         }
         case AWAITING_TOMORROW_SCHEDULE -> {
-          delayedCommand = new DelayedCommand(Command.GET_TOMORROW_SCHEDULE);
           scheduleTable = scheduleService.getTomorrowLessons(user);
           messageToSend = BotMessageConstants.TOMORROW_SCHEDULE + scheduleTable.toString();
           user.setUserState(UserState.IDLE);
         }
         case AWAITING_THIS_WEEK_SCHEDULE -> {
-          delayedCommand = new DelayedCommand(Command.GET_THIS_WEEK_SCHEDULE);
           scheduleTable = scheduleService.getWeeklyLessons(user);
           messageToSend = BotMessageConstants.WEEKLY_SCHEDULE + scheduleTable.toString();
           user.setUserState(UserState.IDLE);
@@ -110,7 +100,6 @@ public class ScheduleFetchHandler implements HandlerStrategy {
           user.setUserState(UserState.IDLE);
         }
         case AWAITING_NEXT_WEEK_SCHEDULE -> {
-          delayedCommand = new DelayedCommand(Command.GET_NEXT_WEEK_SCHEDULE);
           scheduleTable = scheduleService.getNextWeekLessons(user);
           messageToSend = BotMessageConstants.NEXT_WEEK_SCHEDULE + scheduleTable.toString();
           user.setUserState(UserState.IDLE);
@@ -132,10 +121,6 @@ public class ScheduleFetchHandler implements HandlerStrategy {
     } catch (ExecutionException | InterruptedException | URISyntaxException |
              CustomScheduleFetchException |
              IOException e) {
-      if (delayedCommand != null) {
-        // Just in case Telegram API throws an exception into me
-        delayedCommandCache.add(user.getId(), delayedCommand);
-      }
       messageSender.sendMessage(
           user,
           BotMessageConstants.SCHEDULE_FETCHING_FAILED,

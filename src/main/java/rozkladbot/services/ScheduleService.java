@@ -28,7 +28,8 @@ public interface ScheduleService {
             long institute,
             long faculty,
             long course,
-            long group,
+            long groupOfficialId,
+            long groupId,
             LocalDate queryDateStart,
             LocalDate queryDateEnd,
             OfflineReadingMode mode) throws ExecutionException, InterruptedException;

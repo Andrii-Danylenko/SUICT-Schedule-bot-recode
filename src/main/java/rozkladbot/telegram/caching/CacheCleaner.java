@@ -5,6 +5,7 @@ import static rozkladbot.constants.BotMessageConstants.LAST_INTERACTION_TIME_WAS
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import rozkladbot.constants.AppConstants;
@@ -21,6 +22,7 @@ public class CacheCleaner {
   private final Predicate<User> userPredicate = user -> user.getLastInteractionDate().isBefore(
       LocalDateTime.now().minusDays(4));
 
+  @Async
   @Scheduled(cron = AppConstants.USER_CACHE_CLEANING_CRON, zone = AppConstants.APPLICATION_TIME_ZONE)
   public void cleanUserCache() {
     for (User user : userMemoryCache.getAllValues()) {

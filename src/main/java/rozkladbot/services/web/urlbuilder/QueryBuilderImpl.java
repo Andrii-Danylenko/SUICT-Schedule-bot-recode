@@ -8,6 +8,7 @@ import java.util.HashMap;
 import static rozkladbot.constants.AppConstants.COURSE;
 import static rozkladbot.constants.AppConstants.FACULTY;
 import static rozkladbot.constants.AppConstants.GROUP;
+import static rozkladbot.constants.AppConstants.GROUP_ID;
 import static rozkladbot.constants.AppConstants.GROUP_NAME;
 import static rozkladbot.constants.AppConstants.INSTITUTION;
 import static rozkladbot.constants.AppConstants.QUERY_END_DATE;
@@ -17,35 +18,37 @@ import static rozkladbot.constants.ErrorConstants.WRONG_AMOUNT_OF_QUERY_PARAMETE
 @Component
 public class QueryBuilderImpl implements QueryBuilder {
 
-    public HashMap<String, String> buildQueryParams(
-            long groupId,
-            long course,
-            String groupName,
-            long facultyId,
-            long institutionId,
-            LocalDate startDate,
-            LocalDate endDate) {
+  public HashMap<String, String> buildQueryParams(
+      long groupOfficialId,
+      long groupId,
+      long course,
+      String groupName,
+      long facultyId,
+      long institutionId,
+      LocalDate startDate,
+      LocalDate endDate) {
 
-        return buildFromValues(
-                GROUP, String.valueOf(groupId),
-                COURSE, String.valueOf(course),
-                GROUP_NAME, groupName,
-                FACULTY, String.valueOf(facultyId),
-                INSTITUTION, String.valueOf(institutionId),
-                QUERY_START_DATE, DateUtils.getDateAsString(startDate),
-                QUERY_END_DATE, DateUtils.getDateAsString(endDate)
-        );
-    }
+    return buildFromValues(
+        GROUP, String.valueOf(groupOfficialId),
+        GROUP_ID, String.valueOf(groupId),
+        COURSE, String.valueOf(course),
+        GROUP_NAME, groupName,
+        FACULTY, String.valueOf(facultyId),
+        INSTITUTION, String.valueOf(institutionId),
+        QUERY_START_DATE, DateUtils.getDateAsString(startDate),
+        QUERY_END_DATE, DateUtils.getDateAsString(endDate)
+    );
+  }
 
-    @Override
-    public HashMap<String, String> buildFromValues(String... values) {
-        if (values.length % 2 != 0) {
-            throw new IllegalArgumentException(WRONG_AMOUNT_OF_QUERY_PARAMETERS);
-        }
-        HashMap<String, String> map = new HashMap<>();
-        for (int i = 0; i < values.length; i += 2) {
-            map.put(values[i], values[i + 1]);
-        }
-        return map;
+  @Override
+  public HashMap<String, String> buildFromValues(String... values) {
+    if (values.length % 2 != 0) {
+      throw new IllegalArgumentException(WRONG_AMOUNT_OF_QUERY_PARAMETERS);
     }
+    HashMap<String, String> map = new HashMap<>();
+    for (int i = 0; i < values.length; i += 2) {
+      map.put(values[i], values[i + 1]);
+    }
+    return map;
+  }
 }

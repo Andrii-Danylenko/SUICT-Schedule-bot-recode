@@ -39,6 +39,7 @@ public class AppConstants {
   public static final String COURSE = "course";
   public static final String INSTITUTION = "institution";
   public static final String GROUP = "group";
+  public static final String GROUP_ID = "groupId";
   public static final String GROUP_NAME = GROUP + "Name";
   public static final String QUERY_START_DATE = "dateFrom";
   public static final String QUERY_END_DATE = "dateTo";

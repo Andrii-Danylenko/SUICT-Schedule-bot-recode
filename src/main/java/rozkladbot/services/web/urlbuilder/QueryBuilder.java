@@ -6,6 +6,7 @@ import java.util.HashMap;
 public interface QueryBuilder {
 
     HashMap<String, String> buildQueryParams(
+            long groupOfficialId,
             long groupId,
             long course,
             String groupName,

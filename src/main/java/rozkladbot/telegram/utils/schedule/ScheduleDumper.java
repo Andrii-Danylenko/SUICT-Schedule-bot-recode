@@ -85,6 +85,7 @@ public class ScheduleDumper {
         if (localFileWriter.checkIfAlreadyWritten(directoryPath, fileName, isForced)) {
             Map<String, String> params = queryBuilder.buildQueryParams(
                     group.getGroupId(),
+                    group.getId(),
                     group.getCourse(),
                     group.getName(),
                     group.getFaculty().getFacultyId(),
