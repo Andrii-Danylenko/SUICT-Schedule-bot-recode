@@ -14,6 +14,7 @@ import rozkladbot.constants.ApiEndpoints;
 import rozkladbot.constants.AppConstants;
 import rozkladbot.entities.*;
 import rozkladbot.enums.CachePeriod;
+import rozkladbot.enums.ScheduleServiceType;
 import rozkladbot.enums.ScheduleType;
 import rozkladbot.exceptions.CustomScheduleFetchException;
 import rozkladbot.exceptions.RequestCreationFailedException;
@@ -46,11 +47,11 @@ import static rozkladbot.constants.LoggingConstants.EXECUTOR_EXCEPTION_MESSAGE;
 import static rozkladbot.enums.CachePeriod.NEXT_WEEK;
 import static rozkladbot.enums.CachePeriod.THIS_WEEK;
 
-@Service("scheduleServiceImpl")
+@Service("skedyScheduleServiceImpl")
 @RequiredArgsConstructor
-public class ScheduleServiceImpl implements ScheduleService {
+public class SkedyScheduleServiceImpl implements ScheduleService {
 
-  private static final Logger logger = LoggerFactory.getLogger(ScheduleServiceImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(SkedyScheduleServiceImpl.class);
   private final ScheduleTableNormalizer scheduleTableNormalizer;
   private final WebRequestService webRequestService;
   private final QueryBuilder queryBuilder;
@@ -227,5 +228,10 @@ public class ScheduleServiceImpl implements ScheduleService {
           }
         }
     );
+  }
+
+  @Override
+  public boolean supports(ScheduleServiceType serviceType) {
+    return ScheduleServiceType.SKEDY == serviceType;
   }
 }

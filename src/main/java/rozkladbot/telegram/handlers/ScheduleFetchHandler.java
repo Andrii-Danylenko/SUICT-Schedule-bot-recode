@@ -8,10 +8,12 @@ import rozkladbot.constants.BotMessageConstants;
 import rozkladbot.entities.HandlerContext;
 import rozkladbot.entities.ScheduleTable;
 import rozkladbot.entities.User;
+import rozkladbot.enums.ScheduleServiceType;
 import rozkladbot.enums.UserState;
 import rozkladbot.exceptions.CustomScheduleFetchException;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.telegram.factories.KeyBoardFactory;
+import rozkladbot.telegram.factories.ScheduleServiceFactory;
 import rozkladbot.telegram.utils.message.MessageSender;
 import rozkladbot.utils.date.DateUtils;
 
@@ -22,22 +24,27 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class ScheduleFetchHandler implements HandlerStrategy {
 
-  private final ScheduleService scheduleService;
   private final MessageSender messageSender;
   private final ScheduleTableNormalizer scheduleTableNormalizer;
+  private final ScheduleServiceFactory scheduleServiceFactory;
 
   public ScheduleFetchHandler(
-      ScheduleService scheduleService,
       MessageSender messageSender,
+      ScheduleServiceFactory scheduleServiceFactory,
       ScheduleTableNormalizer scheduleTableNormalizer) {
-    this.scheduleService = scheduleService;
     this.messageSender = messageSender;
+    this.scheduleServiceFactory = scheduleServiceFactory;
     this.scheduleTableNormalizer = scheduleTableNormalizer;
   }
 
   public void handleRequest(HandlerContext ctx) {
     User user = ctx.getUser();
     Update update = ctx.getUpdate();
+    ScheduleService scheduleService = scheduleServiceFactory.getScheduleService(
+        ScheduleServiceType.scheduleServiceFromInstituteName(
+            user.getGroup().getFaculty().getInstitute().getInstituteName()
+        )
+    );
     try {
       boolean isCustom = false;
       ScheduleTable scheduleTable;
