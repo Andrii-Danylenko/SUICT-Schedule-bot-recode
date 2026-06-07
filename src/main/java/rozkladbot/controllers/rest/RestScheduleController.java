@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import rozkladbot.entities.Day;
 import rozkladbot.entities.Lesson;
 import rozkladbot.entities.ScheduleTable;
-import rozkladbot.enums.OfflineReadingMode;
+import rozkladbot.enums.CachePeriod;
 import rozkladbot.services.ScheduleService;
 import rozkladbot.utils.date.DateUtils;
 
@@ -49,7 +49,7 @@ public class RestScheduleController {
           group,
           0,
           DateUtils.parseFromString(startDate), DateUtils.parseFromString(endDate),
-          OfflineReadingMode.NONE);
+          CachePeriod.NONE);
       // Filter by day name in ukrainian
       if (dayName != null) {
         String convertedDayName = DateUtils.convertLatinDayNameToUkrainian(dayName);

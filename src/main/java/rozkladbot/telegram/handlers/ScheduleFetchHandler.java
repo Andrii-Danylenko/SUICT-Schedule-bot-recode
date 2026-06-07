@@ -2,6 +2,7 @@ package rozkladbot.telegram.handlers;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import rozkladbot.components.ScheduleTableNormalizer;
 import rozkladbot.constants.BotButtons;
 import rozkladbot.constants.BotMessageConstants;
 import rozkladbot.entities.HandlerContext;
@@ -23,12 +24,15 @@ public class ScheduleFetchHandler implements HandlerStrategy {
 
   private final ScheduleService scheduleService;
   private final MessageSender messageSender;
+  private final ScheduleTableNormalizer scheduleTableNormalizer;
 
   public ScheduleFetchHandler(
       ScheduleService scheduleService,
-      MessageSender messageSender) {
+      MessageSender messageSender,
+      ScheduleTableNormalizer scheduleTableNormalizer) {
     this.scheduleService = scheduleService;
     this.messageSender = messageSender;
+    this.scheduleTableNormalizer = scheduleTableNormalizer;
   }
 
   public void handleRequest(HandlerContext ctx) {
@@ -70,32 +74,17 @@ public class ScheduleFetchHandler implements HandlerStrategy {
         }
         case AWAITING_CUSTOM_SCHEDULE -> {
           scheduleTable = scheduleService.getScheduleWithCustomParameters(user, update);
-          int scheduleTableSize = scheduleTable.getDays().size();
           int i = 0;
           do {
             messageSender.sendMessage(
                 user,
-                scheduleService.splitBigTableIntoSmall(scheduleTable).toString(),
+                scheduleTableNormalizer.splitBigTableIntoSmall(scheduleTable).toString(),
                 null,
                 i == 0,
                 update);
             i++;
-          } while (scheduleTable.getDays().size() > 7);
-          if (!scheduleTable.getDays().isEmpty() && scheduleTableSize > 7) {
-            messageSender.sendMessage(
-                user,
-                scheduleService.splitBigTableIntoSmall(scheduleTable).toString(),
-                null,
-                false,
-                update);
-          }
-          messageSender.sendMessage(
-              user,
-              BotMessageConstants.BACK_TO_MENU,
-              KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU,
-                  BotButtons.BACK_TO_MENU_DATA),
-              false,
-              update);
+          } while (!scheduleTable.getDays().isEmpty());
+          messageToSend = BotMessageConstants.BACK_TO_MENU;
           isCustom = true;
           user.setUserState(UserState.IDLE);
         }
@@ -109,14 +98,12 @@ public class ScheduleFetchHandler implements HandlerStrategy {
           user.setUserState(UserState.IDLE);
         }
       }
-      if (!isCustom) {
-        messageSender.sendMessage(
-            user,
-            messageToSend,
-            KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA),
-            true,
-            update);
-      }
+      messageSender.sendMessage(
+          user,
+          messageToSend,
+          KeyBoardFactory.getCustomButton(BotButtons.BACK_TO_MENU, BotButtons.BACK_TO_MENU_DATA),
+          !isCustom,
+          update);
 
     } catch (ExecutionException | InterruptedException | URISyntaxException |
              CustomScheduleFetchException |

@@ -1,5 +1,6 @@
 package rozkladbot.repos;
 
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +17,5 @@ public interface ScheduleCacheRepo extends JpaRepository<ScheduleCache, Long> {
 
   ScheduleCache findByGroupId(Long groupId);
 
-  ScheduleCache findByGroupIdAndScheduleType(long groupId, ScheduleType scheduleType);
+  Optional<ScheduleCache> findByGroupIdAndScheduleType(long groupId, ScheduleType scheduleType);
 }

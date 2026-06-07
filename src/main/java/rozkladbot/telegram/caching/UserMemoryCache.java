@@ -6,10 +6,13 @@ import rozkladbot.entities.User;
 
 @Component("simpleUserCache")
 public class UserMemoryCache extends SimpleMemoryCache<Long, User> {
+
   @Override
   public User get(Long key) {
     User user = super.get(key);
-    user.setLastInteractionDate(LocalDateTime.now());
+    if (user != null) {
+      user.setLastInteractionDate(LocalDateTime.now());
+    }
     return user;
   }
 

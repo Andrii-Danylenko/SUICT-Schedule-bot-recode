@@ -8,23 +8,23 @@ import org.springframework.stereotype.Component;
 import rozkladbot.entities.User;
 import rozkladbot.services.UserService;
 import rozkladbot.telegram.caching.UserMemoryCache;
-import rozkladbot.telegram.utils.schedule.ScheduleDumper;
+import rozkladbot.telegram.utils.schedule.ScheduleCacheFileWriter;
 
 @Component("localDataSynchronizer")
 public class LocalDataSynchronizer {
     private static final Logger logger = LoggerFactory.getLogger(LocalDataSynchronizer.class);
     private final UserService userService;
     private final UserMemoryCache localUserCache;
-    private final ScheduleDumper scheduleDumper;
+    private final ScheduleCacheFileWriter scheduleCacheFileWriter;
 
     @Autowired
     public LocalDataSynchronizer(
             UserService userService,
             UserMemoryCache localUserCache,
-            ScheduleDumper scheduleDumper) {
+            ScheduleCacheFileWriter scheduleCacheFileWriter) {
         this.userService = userService;
         this.localUserCache = localUserCache;
-        this.scheduleDumper = scheduleDumper;
+        this.scheduleCacheFileWriter = scheduleCacheFileWriter;
     }
 
     public synchronized void synchronize(String message) {
@@ -49,7 +49,7 @@ public class LocalDataSynchronizer {
     }
 
     private synchronized void synchronizeSchedules() {
-        scheduleDumper.dumpSchedule(true);
+        scheduleCacheFileWriter.dumpSchedule(true);
     }
 
     private String[] getSyncKeys(String message) {

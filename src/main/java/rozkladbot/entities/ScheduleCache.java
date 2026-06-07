@@ -34,8 +34,8 @@ public class ScheduleCache {
   @Column(name = "content", columnDefinition = "TEXT")
   private String content;
 
-  @UpdateTimestamp
   @Column(name = "update_time")
+  @UpdateTimestamp
   private LocalDateTime updateTime;
 
   public ScheduleCache(long groupId, ScheduleType scheduleType, String content) {

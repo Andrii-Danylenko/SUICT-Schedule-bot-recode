@@ -2,17 +2,18 @@ package rozkladbot.services.impl;
 
 import java.time.DayOfWeek;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import rozkladbot.components.ScheduleTableNormalizer;
 import rozkladbot.constants.ApiEndpoints;
 import rozkladbot.constants.AppConstants;
 import rozkladbot.entities.*;
-import rozkladbot.enums.OfflineReadingMode;
+import rozkladbot.enums.CachePeriod;
 import rozkladbot.enums.ScheduleType;
 import rozkladbot.exceptions.CustomScheduleFetchException;
 import rozkladbot.exceptions.RequestCreationFailedException;
@@ -29,17 +30,11 @@ import rozkladbot.services.web.requestservice.WebRequestService;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayDeque;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 import static rozkladbot.constants.AppConstants.CURRENT_WEEK_LOCAL_SCHEDULE_PATH;
 import static rozkladbot.constants.AppConstants.GROUP;
@@ -48,14 +43,15 @@ import static rozkladbot.constants.AppConstants.GROUP_NAME;
 import static rozkladbot.constants.AppConstants.NEXT_WEEK_LOCAL_SCHEDULE_PATH;
 import static rozkladbot.constants.ErrorConstants.REQUEST_CREATION_FAILED;
 import static rozkladbot.constants.LoggingConstants.EXECUTOR_EXCEPTION_MESSAGE;
-import static rozkladbot.enums.OfflineReadingMode.NEXT_WEEK;
-import static rozkladbot.enums.OfflineReadingMode.THIS_WEEK;
+import static rozkladbot.enums.CachePeriod.NEXT_WEEK;
+import static rozkladbot.enums.CachePeriod.THIS_WEEK;
 
 @Service("scheduleServiceImpl")
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
 
   private static final Logger logger = LoggerFactory.getLogger(ScheduleServiceImpl.class);
+  private final ScheduleTableNormalizer scheduleTableNormalizer;
   private final WebRequestService webRequestService;
   private final QueryBuilder queryBuilder;
   private final LessonDeserializer lessonDeserializer;
@@ -123,7 +119,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         user.getGroup().getId(),
         queryDateStart,
         queryDateEnd,
-        OfflineReadingMode.NEXT_WEEK);
+        CachePeriod.NEXT_WEEK);
   }
 
   @Override
@@ -143,50 +139,22 @@ public class ScheduleServiceImpl implements ScheduleService {
           user.getGroup().getId(),
           queryDateStart,
           queryDateEnd,
-          OfflineReadingMode.NONE
+          CachePeriod.NONE
       );
     } catch (RuntimeException | ExecutionException e) {
       throw new CustomScheduleFetchException();
     }
   }
 
-  private Deque<Day> splitByDays(Deque<Lesson> lessons, LocalDate startDate, LocalDate endDate) {
-    TreeMap<LocalDate, List<Lesson>> lessonsByDay = lessons
-        .stream()
-        .filter(
-            lesson -> !lesson.getDate().isBefore(startDate) && !lesson.getDate().isAfter(endDate))
-        .collect(Collectors.groupingBy(Lesson::getDate, TreeMap::new, Collectors.toList()));
-    ensureNoBreaks(lessonsByDay, startDate, endDate);
-    Deque<Day> days = new ArrayDeque<>();
-    for (Map.Entry<LocalDate, List<Lesson>> entry : lessonsByDay.entrySet()) {
-      Day day = new Day();
-      day.setDay(entry.getKey());
-      day.setLessons(entry.getValue());
-      day.setDayOfWeek(DateUtils.getFullDayName(entry.getKey()));
-      days.add(day);
-    }
-    for (Day day : days) {
-      day.getLessons().sort(Comparator.comparing(Lesson::getPairNumber));
-    }
-    return days;
-  }
-
-  private void ensureNoBreaks(TreeMap<LocalDate, List<Lesson>> lessonsByDay, LocalDate startDate,
-      LocalDate endDate) {
-    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-      lessonsByDay.putIfAbsent(date, Collections.emptyList());
-    }
-  }
-
-  private Deque<Lesson> getSchedule(Map<String, String> params, OfflineReadingMode mode)
+  private Deque<Lesson> getSchedule(Map<String, String> params, CachePeriod mode)
       throws ExecutionException, InterruptedException {
     return CompletableFuture.supplyAsync(() -> {
-      ScheduleType type = THIS_WEEK.equals(mode) ? ScheduleType.THIS_WEEK : ScheduleType.NEXT_WEEK;
-      ScheduleCache cache = scheduleCacheService.findByGroupIdAndScheduleType(
+      ScheduleType type = ScheduleType.fromCachePeriod(mode);
+      Optional<ScheduleCache> cache = scheduleCacheService.findByGroupIdAndScheduleType(
           Long.parseLong(params.get(AppConstants.GROUP_ID)),
           type);
-      if (cache != null && StringUtils.isNotBlank(cache.getContent())) {
-        return cache.getContent();
+      if (scheduleCacheService.isCacheValid(cache)) {
+        return cache.get().getContent();
       }
       try {
         String content = webRequestService.makeRequest(params, ApiEndpoints.API_SCHEDULE);
@@ -210,7 +178,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             CURRENT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
                 params.get(GROUP_NAME),
                 Long.parseLong(params.get(GROUP))));
-      } else if (mode.equals(OfflineReadingMode.NEXT_WEEK)) {
+      } else if (mode.equals(CachePeriod.NEXT_WEEK)) {
         result = localFileReader.readLocalFile(
             NEXT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
                 params.get(GROUP_NAME),
@@ -222,23 +190,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     }).thenApply(lessonDeserializer::deserialize).get();
   }
 
-  public ScheduleTable splitBigTableIntoSmall(ScheduleTable scheduleTable) {
-    if (scheduleTable.getDays().size() <= 7) {
-      return scheduleTable;
-    }
-    ScheduleTable scheduleToReturn = new ScheduleTable();
-    int scheduleTableSize = scheduleTable.getDays().size();
-    for (int partition = 1; scheduleTableSize > 0; partition++) {
-      scheduleToReturn.getDays().add(scheduleTable.getDays().pollFirst());
-      scheduleTableSize = scheduleTable.getDays().size();
-      // 7 is week length + 1 is offset
-      if (partition % 8 == 0) {
-        return scheduleToReturn;
-      }
-    }
-    return scheduleToReturn;
-  }
-
   public ScheduleTable getSchedule(
       long institute,
       long faculty,
@@ -247,7 +198,7 @@ public class ScheduleServiceImpl implements ScheduleService {
       long groupId,
       LocalDate queryDateStart,
       LocalDate queryDateEnd,
-      OfflineReadingMode mode) throws ExecutionException, InterruptedException {
+      CachePeriod mode) throws ExecutionException, InterruptedException {
     HashMap<String, String> params = queryBuilder.buildQueryParams(
         groupOfficialId,
         groupId,
@@ -260,7 +211,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     );
     Deque<Lesson> lessons = getSchedule(params, mode);
     appendPairLinks(groupOfficialId, lessons);
-    return new ScheduleTable(splitByDays(lessons, queryDateStart, queryDateEnd));
+    return new ScheduleTable(
+        scheduleTableNormalizer.splitByDays(lessons, queryDateStart, queryDateEnd));
   }
 
   private void appendPairLinks(long groupId, Deque<Lesson> lessons) {
