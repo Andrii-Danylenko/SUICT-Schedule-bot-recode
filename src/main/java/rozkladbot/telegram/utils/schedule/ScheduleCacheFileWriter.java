@@ -67,17 +67,11 @@ public class ScheduleCacheFileWriter {
       try {
         logger.info(SCHEDULE_DUMPING_BEGAN_FOR_GROUP, group.getGroupId(), group.getName());
         Path directoryPath = Paths.get(AppConstants.GROUP_SCHEDULES_FOLDER_NAME);
-        String fileName = AppConstants.THIS_WEEK_SCHEDULE_FILE_NAME.formatted(group.getName(),
+        String fileName = AppConstants.SCHEDULE_FILE_NAME.formatted(group.getName(),
             group.getGroupId());
         prepareForWriting(directoryPath, fileName, group,
             DateUtils.getStartOfWeek(DateUtils.getTodayDateString()),
             DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(7),
-            isForced);
-        fileName = AppConstants.NEXT_WEEK_SCHEDULE_FILE_NAME.formatted(group.getName(),
-            group.getGroupId());
-        prepareForWriting(directoryPath, fileName, group,
-            DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(7),
-            DateUtils.getStartOfWeek(DateUtils.getTodayDateString()).plusDays(14),
             isForced);
         alreadyDumpedGroups.add(groupNumber);
       } catch (IOException | URISyntaxException | InterruptedException e) {

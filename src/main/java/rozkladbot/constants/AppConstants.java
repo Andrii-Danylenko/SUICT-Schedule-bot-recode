@@ -1,12 +1,10 @@
 package rozkladbot.constants;
 
+import java.io.File;
+
 public class AppConstants {
 
-  public static final String GROUP_SCHEDULES_FOLDER_NAME = "groupsSchedules";
-  public static final String CURRENT_WEEK_LOCAL_SCHEDULE_PATH =
-      GROUP_SCHEDULES_FOLDER_NAME + "/%s(%d)_thisWeek.json";
-  public static final String NEXT_WEEK_LOCAL_SCHEDULE_PATH =
-      GROUP_SCHEDULES_FOLDER_NAME + "/%s(%d)_nextWeek.json";
+  public static final String PATH_SEPARATOR = File.separator;
   public static final String GROUPS_LINKS_FOLDER_NAME = "groupsPairLinks";
   public static final String HOORAY_FREE_DAY = "Пар немає %s! Відпочиваємо%s!%n";
   public static final String DEVELOPER_TG_LINK = "https://t.me/ineedmoreweekends";
@@ -19,8 +17,10 @@ public class AppConstants {
   public static final String APP_LOCALE_COUNTRY = "UA";
   public static final String SCHEDULE_DUMP_CRON = "0 0 3 * * *";
   public static final String USER_CACHE_CLEANING_CRON = "0 0 2 * * *";
-  public static final String THIS_WEEK_SCHEDULE_FILE_NAME = "%s(%d)_thisWeek.json";
-  public static final String NEXT_WEEK_SCHEDULE_FILE_NAME = "%s(%d)_nextWeek.json";
+  public static final String GROUP_SCHEDULES_FOLDER_NAME = "groupsSchedules";
+  public static final String SCHEDULE_FILE_NAME = "%s(%d).json";
+  public static final String LOCAL_SCHEDULE_PATH =
+      GROUP_SCHEDULES_FOLDER_NAME + PATH_SEPARATOR + SCHEDULE_FILE_NAME;
   public static final String MONDAY = "Понеділок";
   public static final String JSON_TREE_SCHEDULE_OBJECT_NAME = "schedule";
   public static final String JSON_TREE_PAIR_LINKS_OBJECT_NAME = "pairLinks";
@@ -55,6 +55,7 @@ public class AppConstants {
   public static final String CUSTOM_SCHEDULE_COMMAND = "/custom";
   public static final String SETTINGS = "Налаштування";
   public static final String SETTINGS_COMMAND = "/settings";
+
   private AppConstants() {
   }
 }

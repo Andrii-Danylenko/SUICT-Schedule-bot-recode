@@ -12,9 +12,6 @@
       <column name="group_id" type="bigint">
         <constraints nullable="false"/>
       </column>
-      <column name="schedule_type" type="varchar(50)">
-        <constraints nullable="false"/>
-      </column>
       <column name="content" type="text">
         <constraints nullable="true"/>
       </column>
@@ -23,7 +20,7 @@
       </column>
     </createTable>
     <addUniqueConstraint tableName="schedules_cache"
-      columnNames="group_id, schedule_type"
+      columnNames="group_id"
       constraintName="UK_group_schedule_type"/>
     <addForeignKeyConstraint baseTableName="schedules_cache"
       baseColumnNames="group_id"

@@ -14,7 +14,6 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import rozkladbot.entities.ScheduleCache;
-import rozkladbot.enums.ScheduleType;
 import rozkladbot.repos.ScheduleCacheRepo;
 import rozkladbot.services.ScheduleCacheService;
 
@@ -38,7 +37,7 @@ public class ScheduleCacheServiceImpl implements ScheduleCacheService {
 
   @Override
   @Transactional
-  @CachePut(value = "schedules", key = "#result.groupId + '_' + #result.scheduleType.name()")
+  @CachePut(value = "schedules", key = "#result.groupId")
   public ScheduleCache save(ScheduleCache value) {
     return scheduleCacheRepo.save(value);
   }
@@ -51,32 +50,27 @@ public class ScheduleCacheServiceImpl implements ScheduleCacheService {
 
   @Transactional
   @Override
-  public ScheduleCache updateContent(long groupId, ScheduleType type, String content) {
-    if (ScheduleType.CUSTOM == type) {
-      return null;
-    }
-    Optional<ScheduleCache> existing = findByGroupIdAndScheduleType(groupId, type);
+  public ScheduleCache updateContent(long groupId, String content) {
+    Optional<ScheduleCache> existing = findByGroupIdAndScheduleType(groupId);
     if (existing.isPresent()) {
       ScheduleCache existingSchedule = existing.get();
       existingSchedule.setContent(content);
-      existingSchedule.setScheduleType(type);
       existingSchedule.setUpdateTime(LocalDateTime.now());
       return existingSchedule;
     }
     return scheduleCacheServiceProvider.getObject()
-        .save(new ScheduleCache(groupId, type, content));
+        .save(new ScheduleCache(groupId, content));
   }
 
   @Override
   public ScheduleCache getByGroupId(long groupId) {
-    return scheduleCacheRepo.findByGroupId(groupId);
+    return scheduleCacheRepo.findByGroupId(groupId).orElse(null);
   }
 
   @Override
-  @Cacheable(value = "schedules", key = "#groupId + '_' + #scheduleType.name()", unless = "#result == null")
-  public Optional<ScheduleCache> findByGroupIdAndScheduleType(long groupId,
-      ScheduleType scheduleType) {
-    return scheduleCacheRepo.findByGroupIdAndScheduleType(groupId, scheduleType)
+  @Cacheable(value = "schedules", key = "#groupId", unless = "#result == null")
+  public Optional<ScheduleCache> findByGroupIdAndScheduleType(long groupId) {
+    return scheduleCacheRepo.findByGroupId(groupId)
         .stream()
         .findFirst();
   }

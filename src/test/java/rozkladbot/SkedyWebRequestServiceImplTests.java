@@ -6,15 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 import rozkladbot.constants.ApiEndpoints;
-import rozkladbot.services.web.requestservice.WebRequestServiceImpl;
+import rozkladbot.services.web.requestservice.SkedyWebRequestServiceImpl;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
-@SpringBootTest(classes = {WebRequestServiceImpl.class, RestTemplate.class})
-public class WebRequestServiceImplTests {
+@SpringBootTest(classes = {SkedyWebRequestServiceImpl.class, RestTemplate.class})
+public class SkedyWebRequestServiceImplTests {
     @Autowired
-    private WebRequestServiceImpl requester;
+    private SkedyWebRequestServiceImpl requester;
     private static final HashMap<String, String> params = getParams();
 
 

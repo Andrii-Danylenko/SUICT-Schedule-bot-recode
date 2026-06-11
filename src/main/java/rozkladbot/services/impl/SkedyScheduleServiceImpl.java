@@ -15,7 +15,6 @@ import rozkladbot.constants.AppConstants;
 import rozkladbot.entities.*;
 import rozkladbot.enums.CachePeriod;
 import rozkladbot.enums.ScheduleServiceType;
-import rozkladbot.enums.ScheduleType;
 import rozkladbot.exceptions.CustomScheduleFetchException;
 import rozkladbot.exceptions.RequestCreationFailedException;
 import rozkladbot.services.GroupService;
@@ -37,11 +36,10 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static rozkladbot.constants.AppConstants.CURRENT_WEEK_LOCAL_SCHEDULE_PATH;
+import static rozkladbot.constants.AppConstants.LOCAL_SCHEDULE_PATH;
 import static rozkladbot.constants.AppConstants.GROUP;
 import static rozkladbot.constants.AppConstants.GROUP_ID;
 import static rozkladbot.constants.AppConstants.GROUP_NAME;
-import static rozkladbot.constants.AppConstants.NEXT_WEEK_LOCAL_SCHEDULE_PATH;
 import static rozkladbot.constants.ErrorConstants.REQUEST_CREATION_FAILED;
 import static rozkladbot.constants.LoggingConstants.EXECUTOR_EXCEPTION_MESSAGE;
 import static rozkladbot.enums.CachePeriod.NEXT_WEEK;
@@ -150,10 +148,8 @@ public class SkedyScheduleServiceImpl implements ScheduleService {
   private Deque<Lesson> getSchedule(Map<String, String> params, CachePeriod mode)
       throws ExecutionException, InterruptedException {
     return CompletableFuture.supplyAsync(() -> {
-      ScheduleType type = ScheduleType.fromCachePeriod(mode);
       Optional<ScheduleCache> cache = scheduleCacheService.findByGroupIdAndScheduleType(
-          Long.parseLong(params.get(AppConstants.GROUP_ID)),
-          type);
+          Long.parseLong(params.get(AppConstants.GROUP_ID)));
       if (scheduleCacheService.isCacheValid(cache)) {
         return cache.get().getContent();
       }
@@ -161,7 +157,6 @@ public class SkedyScheduleServiceImpl implements ScheduleService {
         String content = webRequestService.makeRequest(params, ApiEndpoints.API_SCHEDULE);
         scheduleCacheService.updateContent(
             Long.parseLong(params.get(GROUP_ID)),
-            type,
             content
         );
         return content;
@@ -173,21 +168,10 @@ public class SkedyScheduleServiceImpl implements ScheduleService {
       if (ex != null) {
         logger.error(EXECUTOR_EXCEPTION_MESSAGE, ex.getMessage());
       }
-      String result;
-      if (mode.equals(THIS_WEEK)) {
-        result = localFileReader.readLocalFile(
-            CURRENT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
-                params.get(GROUP_NAME),
-                Long.parseLong(params.get(GROUP))));
-      } else if (mode.equals(CachePeriod.NEXT_WEEK)) {
-        result = localFileReader.readLocalFile(
-            NEXT_WEEK_LOCAL_SCHEDULE_PATH.formatted(
-                params.get(GROUP_NAME),
-                Long.parseLong(params.get(GROUP))));
-      } else {
-        throw new CustomScheduleFetchException();
-      }
-      return result;
+      return localFileReader.readLocalFile(
+          LOCAL_SCHEDULE_PATH.formatted(
+              params.get(GROUP_NAME),
+              Long.parseLong(params.get(GROUP))));
     }).thenApply(lessonDeserializer::deserialize).get();
   }
 
